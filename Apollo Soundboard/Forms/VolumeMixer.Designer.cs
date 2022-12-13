@@ -243,6 +243,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(818, 323);
+            this.MinimumSize = new System.Drawing.Size(818, 323);
             this.Name = "VolumeMixer";
             this.Text = "Volume Mixer";
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();

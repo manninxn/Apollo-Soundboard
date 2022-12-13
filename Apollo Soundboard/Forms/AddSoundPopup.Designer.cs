@@ -115,6 +115,8 @@
             this.Controls.Add(this.HotkeySelectorButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximumSize = new System.Drawing.Size(572, 264);
+            this.MinimumSize = new System.Drawing.Size(572, 264);
             this.Name = "AddSoundPopup";
             this.Text = "Add Sound";
             this.ResumeLayout(false);

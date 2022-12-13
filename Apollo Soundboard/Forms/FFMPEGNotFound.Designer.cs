@@ -73,7 +73,7 @@
             this.No.UseVisualStyleBackColor = false;
             this.No.Click += new System.EventHandler(this.No_Click);
             // 
-            // FFMPEGNotFOund
+            // FFMPEGNotFound
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -83,7 +83,9 @@
             this.Controls.Add(this.Yes);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "FFMPEGNotFOund";
+            this.MaximumSize = new System.Drawing.Size(408, 194);
+            this.MinimumSize = new System.Drawing.Size(408, 194);
+            this.Name = "FFMPEGNotFound";
             this.Text = "Error";
             this.ResumeLayout(false);
             this.PerformLayout();

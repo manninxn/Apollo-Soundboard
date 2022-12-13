@@ -38,7 +38,11 @@ namespace Apollo_Soundboard
 
         private static Soundboard form;
         public string FilePath { get; set; }
-        public string Hotkey { get { return String.Join("+", Hotkeys.Select(i => i.ToString()).ToList()); } }
+        public string Hotkey { 
+            get {
+                return String.Join("+", Hotkeys.Select(i => i.ToString()).ToList()); 
+            } 
+        }
         private List<Keys> Hotkeys { get; set; }
 
         public static void SetForm(Soundboard _form)

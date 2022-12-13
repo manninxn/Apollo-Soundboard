@@ -3,6 +3,9 @@ using Apollo_Soundboard.Properties;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System;
 using System.Diagnostics;
 
 namespace Apollo_Soundboard
@@ -84,7 +87,7 @@ namespace Apollo_Soundboard
 
         bool saved = true;
 
-        WaveIn? micStream; DirectSoundOut? virtualCable;
+        WaveIn? micStream; DirectSoundOut? virtualCable; BindingSource source;
 
         #endregion
 
@@ -137,7 +140,9 @@ namespace Apollo_Soundboard
 
             StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => i.ToString()).ToList());
 
-            dataGridView1.DataSource = SoundItem.AllSounds;
+            var bindingList = new BindingList<SoundItem>(SoundItem.AllSounds);
+            source = new BindingSource(bindingList, null);
+            SoundGrid.DataSource = source;
         }
 
         #region Helper Methods
@@ -167,8 +172,12 @@ namespace Apollo_Soundboard
 
         public void RefreshGrid()
         {
-            dataGridView1.DataSource = typeof(List<SoundItem>);
-            dataGridView1.DataSource = SoundItem.AllSounds;
+            // SoundGrid.
+            //SoundGrid.DataSource = null;
+            // if (SoundItem.AllSounds.Count > 0)
+            //      SoundGrid.DataSource = SoundItem.AllSounds;
+            //SoundGrid.DataSource = SoundItem.AllSounds;
+            source.ResetBindings(false);
         }
 
         public void RefreshInjector()
@@ -280,10 +289,10 @@ namespace Apollo_Soundboard
         private void RemoveSound_Click(object sender, EventArgs e)
         {
             saved = false;
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (SoundGrid.SelectedRows.Count > 0)
             {
 
-                var row = dataGridView1.SelectedRows[0];
+                var row = SoundGrid.SelectedRows[0];
                 SoundItem sound = SoundItem.AllSounds[row.Index];
 
                 sound.Destroy();
@@ -332,10 +341,10 @@ namespace Apollo_Soundboard
 
         private void EditButton_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (SoundGrid.SelectedRows.Count > 0)
             {
 
-                var row = dataGridView1.SelectedRows[0];
+                var row = SoundGrid.SelectedRows[0];
                 SoundItem sound = SoundItem.AllSounds[row.Index];
 
                 AddSoundPopup popup = new AddSoundPopup(sound.FilePath, sound.GetHotkeys());
@@ -415,6 +424,23 @@ namespace Apollo_Soundboard
             if (e.CloseReason != CloseReason.ApplicationExitCall) ExitApplication();
         }
 
+        private void SoundGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Debug.WriteLine(e.RowIndex);
+            if (e.RowIndex < 0) return;
+            SoundItem sound = SoundItem.AllSounds[e.RowIndex];
+
+            AddSoundPopup popup = new AddSoundPopup(sound.FilePath, sound.GetHotkeys());
+            var result = popup.ShowDialog();
+            Debug.WriteLine(result);
+            if (result == DialogResult.OK)
+            {
+                sound.SetHotkeys(popup.Hotkeys);
+                sound.FilePath = popup.FileName;
+                RefreshGrid();
+                saved = false;
+            }
+        }
     }
 
     //lol

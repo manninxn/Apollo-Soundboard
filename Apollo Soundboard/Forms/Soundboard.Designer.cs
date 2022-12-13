@@ -84,7 +84,7 @@ namespace Apollo_Soundboard
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soundboard));
             this.PrimaryOutputComboBox = new Apollo_Soundboard.FlatCombo();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.SoundGrid = new System.Windows.Forms.DataGridView();
             this.AddSoundButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -106,7 +106,7 @@ namespace Apollo_Soundboard
             this.EditButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.MicrophoneSelectComboBox = new Apollo_Soundboard.FlatCombo();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -125,15 +125,15 @@ namespace Apollo_Soundboard
             this.PrimaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.PrimaryOutputComboBox_DrawItem);
             this.PrimaryOutputComboBox.SelectedIndexChanged += new System.EventHandler(this.PrimaryOutputComboBox_SelectedIndexChanged);
             // 
-            // dataGridView1
+            // SoundGrid
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.SoundGrid.AllowUserToAddRows = false;
+            this.SoundGrid.AllowUserToDeleteRows = false;
+            this.SoundGrid.AllowUserToResizeRows = false;
+            this.SoundGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.SoundGrid.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.SoundGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.SoundGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -141,15 +141,14 @@ namespace Apollo_Soundboard
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.EnableHeadersVisualStyles = false;
-            this.dataGridView1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.dataGridView1.Location = new System.Drawing.Point(7, 31);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
+            this.SoundGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.SoundGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.SoundGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.SoundGrid.EnableHeadersVisualStyles = false;
+            this.SoundGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.SoundGrid.Location = new System.Drawing.Point(7, 31);
+            this.SoundGrid.MultiSelect = false;
+            this.SoundGrid.Name = "SoundGrid";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -157,15 +156,16 @@ namespace Apollo_Soundboard
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridView1.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.SystemColors.Control;
-            this.dataGridView1.RowTemplate.Height = 29;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(601, 591);
-            this.dataGridView1.TabIndex = 2;
+            this.SoundGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.SoundGrid.RowHeadersVisible = false;
+            this.SoundGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.SoundGrid.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.SoundGrid.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.SystemColors.Control;
+            this.SoundGrid.RowTemplate.Height = 29;
+            this.SoundGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.SoundGrid.Size = new System.Drawing.Size(601, 591);
+            this.SoundGrid.TabIndex = 2;
+            this.SoundGrid.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SoundGrid_CellDoubleClick);
             // 
             // AddSoundButton
             // 
@@ -217,13 +217,13 @@ namespace Apollo_Soundboard
             this.SecondaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecondaryOutputComboBox_DrawItem);
             this.SecondaryOutputComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryOutputComboBox_SelectedIndexChanged);
             // 
-            // checkBox1
+            // MicInjectorToggle
             // 
             this.MicInjectorToggle.AutoSize = true;
             this.MicInjectorToggle.ForeColor = System.Drawing.SystemColors.Control;
             this.MicInjectorToggle.Location = new System.Drawing.Point(499, 628);
             this.MicInjectorToggle.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.MicInjectorToggle.Name = "checkBox1";
+            this.MicInjectorToggle.Name = "MicInjectorToggle";
             this.MicInjectorToggle.Size = new System.Drawing.Size(109, 24);
             this.MicInjectorToggle.TabIndex = 8;
             this.MicInjectorToggle.Text = "Mic Injector";
@@ -437,7 +437,7 @@ namespace Apollo_Soundboard
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.AddSoundButton);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.SoundGrid);
             this.Controls.Add(this.PrimaryOutputComboBox);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -449,7 +449,7 @@ namespace Apollo_Soundboard
             this.Text = "Apollo Soundboard";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Soundboard_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -459,7 +459,7 @@ namespace Apollo_Soundboard
 
         #endregion
         private FlatCombo PrimaryOutputComboBox;
-        private DataGridView dataGridView1;
+        private DataGridView SoundGrid;
         private Button AddSoundButton;
         private Label label1;
         private Label label2;

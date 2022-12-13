@@ -83,6 +83,8 @@
             this.Controls.Add(this.NoSave);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(577, 161);
+            this.MinimumSize = new System.Drawing.Size(577, 161);
             this.Name = "UnsavedChanges";
             this.Text = "You have unsaved changes!";
             this.ResumeLayout(false);
