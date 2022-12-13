@@ -20,7 +20,7 @@ namespace Apollo_Soundboard
             PressedKeys[e.KeyCode] = true;
             foreach (SoundItem sound in SoundItem.AllSounds)
             {
-                if (sound.GetHotkeys().All(x =>
+                if (SoundItem.ClearSounds.Count > 0 && sound.GetHotkeys().All(x =>
                 {
                     bool result;
                     bool found = PressedKeys.TryGetValue(x, out result);
@@ -30,7 +30,7 @@ namespace Apollo_Soundboard
                     sound.Play();
                 }
             }
-            if (SoundItem.ClearSounds.All(x =>
+            if (SoundItem.ClearSounds.Count > 0 && SoundItem.ClearSounds.All(x =>
             {
                 bool result;
                 bool found = PressedKeys.TryGetValue(x, out result);
