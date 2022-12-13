@@ -44,7 +44,7 @@ namespace Apollo_Soundboard
         {
             get
             {
-                return _primary;
+                return _primary - 1;
             }
             set
             {
@@ -60,7 +60,7 @@ namespace Apollo_Soundboard
         {
             get
             {
-                return _secondary;
+                return _secondary - 1;
             }
             set
             {
@@ -99,9 +99,9 @@ namespace Apollo_Soundboard
             InitializeComponent();
 
 
-            var Devices = new List<string>();
-            var DevicesWithNone = new List<string>() { "None" };
-            var Microphones = new List<string>();
+            var Devices = new List<string>() { "Default Device" };
+            var DevicesWithNone = new List<string>() { "None", "Default Device" };
+            var Microphones = new List<string>() { "Default Device" };
 
             var enumerator = new MMDeviceEnumerator();
 
@@ -110,7 +110,7 @@ namespace Apollo_Soundboard
                 Devices.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].ToString());
                 DevicesWithNone.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].ToString());
             }
-
+            
             for (int i = 0; i < WaveIn.DeviceCount; i++)
                 Microphones.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].ToString());
 
@@ -151,12 +151,14 @@ namespace Apollo_Soundboard
             if (secondaryOutput <= 0) return;
 
             micStream = new WaveIn();
+            
+            micStream.BufferMilliseconds = 30;
+            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Microphone).Channels);
+            Debug.WriteLine(Microphone);
             micStream.DeviceNumber = Microphone;
 
-            micStream.BufferMilliseconds = 30;
-            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(-1).Channels);
-
             WaveInProvider waveIn = new(micStream);
+            
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = Settings.Default.MicrophoneGain;
 
