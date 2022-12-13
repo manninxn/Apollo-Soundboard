@@ -2,30 +2,20 @@
 
 namespace Apollo_Soundboard
 {
-    public class ItemEntry
-    {
-        public string file { get; set; }
-        public int[] activationKeysNumbers { get; set; }
-    }
-    public class ItemList
-    {
-        public ItemEntry[] soundboardEntries { get; set; }
-    }
+
     public static class Serializer
     {
         public static string Serialize(List<SoundItem> sounds)
         {
-            ItemList itemList = new ItemList();
-            List<ItemEntry> entries = new List<ItemEntry>();
+            Dictionary<string, int[]> entries = new();
+
             foreach (SoundItem sound in sounds)
             {
-                ItemEntry entry = new ItemEntry();
-                entry.file = sound.FilePath;
-                entry.activationKeysNumbers = sound.GetHotkeys().Select(i => (int)i).ToArray();
-                entries.Add(entry);
+                entries.Add(sound.FilePath, sound.GetHotkeys().Select(i => (int)i).ToArray());
             }
-            itemList.soundboardEntries = entries.ToArray();
-            string jsonString = JsonSerializer.Serialize(itemList);
+
+            string jsonString = JsonSerializer.Serialize(entries);
+
             return jsonString;
         }
 
@@ -37,26 +27,23 @@ namespace Apollo_Soundboard
 
         public static List<SoundItem> Deserialize(string json)
         {
-            ItemList? itemList = JsonSerializer.Deserialize<ItemList>(json);
-            var sounds = new List<SoundItem>();
-            if (itemList == null) return sounds;
+            Dictionary<string, int[]> entries = JsonSerializer.Deserialize<Dictionary<string, int[]>>(json);
 
-            foreach (ItemEntry item in itemList.soundboardEntries)
+            var sounds = new List<SoundItem>();
+            if (entries == null) return sounds;
+
+            foreach (KeyValuePair<string, int[]> item in entries)
             {
                 SoundItem sound = new SoundItem();
                 var keys = new List<Keys>();
-                foreach (int i in item.activationKeysNumbers)
-                {
-                    keys.Add((Keys)i);
-                }
-                sound.FilePath = item.file;
-                sound.SetHotkeys(keys);
+
+                sound.SetHotkeys(Array.ConvertAll<int, Keys>(item.Value, (i) => { return ((Keys)i); }).ToList());
+                sound.FilePath = item.Key;
+
                 sounds.Add(sound);
             }
 
             return sounds;
-
-
 
         }
 
