@@ -115,9 +115,9 @@
             this.label4.ForeColor = System.Drawing.SystemColors.Control;
             this.label4.Location = new System.Drawing.Point(18, 81);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(45, 20);
+            this.label4.Size = new System.Drawing.Size(51, 20);
             this.label4.TabIndex = 7;
-            this.label4.Text = "-2 dB";
+            this.label4.Text = "-100%";
             // 
             // label5
             // 
@@ -135,9 +135,9 @@
             this.label6.ForeColor = System.Drawing.SystemColors.Control;
             this.label6.Location = new System.Drawing.Point(749, 81);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(39, 20);
+            this.label6.Size = new System.Drawing.Size(45, 20);
             this.label6.TabIndex = 9;
-            this.label6.Text = "2 dB";
+            this.label6.Text = "100%";
             // 
             // label7
             // 
@@ -145,9 +145,9 @@
             this.label7.ForeColor = System.Drawing.SystemColors.Control;
             this.label7.Location = new System.Drawing.Point(749, 161);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(39, 20);
+            this.label7.Size = new System.Drawing.Size(45, 20);
             this.label7.TabIndex = 13;
-            this.label7.Text = "2 dB";
+            this.label7.Text = "100%";
             // 
             // label8
             // 
@@ -165,9 +165,9 @@
             this.label9.ForeColor = System.Drawing.SystemColors.Control;
             this.label9.Location = new System.Drawing.Point(18, 161);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(45, 20);
+            this.label9.Size = new System.Drawing.Size(51, 20);
             this.label9.TabIndex = 11;
-            this.label9.Text = "-2 dB";
+            this.label9.Text = "-100%";
             // 
             // trackBar2
             // 
@@ -186,9 +186,9 @@
             this.label10.ForeColor = System.Drawing.SystemColors.Control;
             this.label10.Location = new System.Drawing.Point(749, 245);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(39, 20);
+            this.label10.Size = new System.Drawing.Size(45, 20);
             this.label10.TabIndex = 17;
-            this.label10.Text = "2 dB";
+            this.label10.Text = "100%";
             // 
             // label11
             // 
@@ -206,9 +206,9 @@
             this.label12.ForeColor = System.Drawing.SystemColors.Control;
             this.label12.Location = new System.Drawing.Point(18, 245);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(45, 20);
+            this.label12.Size = new System.Drawing.Size(51, 20);
             this.label12.TabIndex = 15;
-            this.label12.Text = "-2 dB";
+            this.label12.Text = "-100%";
             // 
             // trackBar3
             // 

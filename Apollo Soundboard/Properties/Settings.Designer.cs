@@ -97,7 +97,7 @@ namespace Apollo_Soundboard.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public float PrimaryGain {
             get {
                 return ((float)(this["PrimaryGain"]));
@@ -109,7 +109,7 @@ namespace Apollo_Soundboard.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public float SecondaryGain {
             get {
                 return ((float)(this["SecondaryGain"]));
@@ -121,7 +121,7 @@ namespace Apollo_Soundboard.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public float MicrophoneGain {
             get {
                 return ((float)(this["MicrophoneGain"]));
