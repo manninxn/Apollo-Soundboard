@@ -480,6 +480,46 @@ namespace Apollo_Soundboard
                 RefreshGrid();
             }
         }
+
+        private void AddSoundButton_DragDrop(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
+            {
+                var ext = System.IO.Path.GetExtension(file);
+                if (ext.Equals(".mp3", StringComparison.CurrentCultureIgnoreCase) ||
+                    ext.Equals(".wav", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    AddSoundPopup popup = new AddSoundPopup(file, new List<Keys>());
+                    var result = popup.ShowDialog();
+                    Debug.WriteLine(result);
+                    if (result == DialogResult.OK)
+                    {
+                        new SoundItem(popup.Hotkeys, popup.FileName);
+                        RefreshGrid();
+                        saved = false;
+                    }
+                    return;
+                }
+            }
+        }
+
+        private void AddSoundButton_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
+            {
+                var ext = System.IO.Path.GetExtension(file);
+                if (ext.Equals(".mp3", StringComparison.CurrentCultureIgnoreCase) ||
+                    ext.Equals(".wav", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    e.Effect = DragDropEffects.Copy;
+                    return;
+                }
+            }
+        }
     }
 
     //lol
