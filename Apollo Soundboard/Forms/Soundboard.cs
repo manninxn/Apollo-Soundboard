@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System;
 using System.Diagnostics;
+using NUT_Soundboard.Importers;
 
 namespace Apollo_Soundboard
 {
@@ -44,7 +45,7 @@ namespace Apollo_Soundboard
         {
             get
             {
-                return _primary - 1;
+                return _primary;
             }
             set
             {
@@ -60,7 +61,7 @@ namespace Apollo_Soundboard
         {
             get
             {
-                return _secondary - 1;
+                return _secondary;
             }
             set
             {
@@ -124,10 +125,15 @@ namespace Apollo_Soundboard
             SecondaryOutputComboBox.DataSource = DevicesWithNone;
             MicrophoneSelectComboBox.DataSource = Microphones;
 
-            SecondaryOutputComboBox.SelectedIndex = secondaryTemp;
-            PrimaryOutputComboBox.SelectedIndex = primaryTemp;
-            MicrophoneSelectComboBox.SelectedIndex = micTemp;
-
+            try
+            {
+                SecondaryOutputComboBox.SelectedIndex = secondaryTemp;
+                PrimaryOutputComboBox.SelectedIndex = primaryTemp;
+                MicrophoneSelectComboBox.SelectedIndex = micTemp;
+            } catch
+            {
+                Debug.WriteLine("Device index exceeded list");
+            }
             LoadFile();
 
             MicInjectorToggle.Checked = MicInjector;
@@ -162,9 +168,9 @@ namespace Apollo_Soundboard
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = Settings.Default.MicrophoneGain;
 
-            Debug.WriteLine(DirectSoundOut.Devices.ElementAt(secondaryOutput).Description);
-            virtualCable = new(DirectSoundOut.Devices.ElementAt(secondaryOutput).Guid);
-            Debug.WriteLine(DirectSoundOut.Devices.ElementAt(secondaryOutput).Description);
+            Debug.WriteLine(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Description);
+            virtualCable = new(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Guid);
+            Debug.WriteLine(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Description);
             virtualCable.Init(volumeSampleProvider);
 
             micStream.StartRecording();
@@ -179,6 +185,7 @@ namespace Apollo_Soundboard
             // if (SoundItem.AllSounds.Count > 0)
             //      SoundGrid.DataSource = SoundItem.AllSounds;
             //SoundGrid.DataSource = SoundItem.AllSounds;
+            source.DataSource = SoundItem.AllSounds;
             source.ResetBindings(false);
         }
 
@@ -245,7 +252,6 @@ namespace Apollo_Soundboard
         }
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadFile();
             OpenFileDialog saveFileSelector = new OpenFileDialog();
             //openfiledialog filter is only audio files
             saveFileSelector.Filter = "JSON files (*.JSON)|*.JSON";
@@ -441,6 +447,36 @@ namespace Apollo_Soundboard
                 sound.FilePath = popup.FileName;
                 RefreshGrid();
                 saved = false;
+            }
+        }
+
+        private void eXPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog saveFileSelector = new OpenFileDialog();
+            //openfiledialog filter is only audio files
+            saveFileSelector.Filter = "JSON files (*.JSON)|*.JSON";
+            DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
+            if (result == DialogResult.OK) // Test result.
+            {
+                saved = false;
+                fileName = string.Empty;
+                SoundItem.AllSounds = EXPImporter.Import(saveFileSelector.FileName);
+                RefreshGrid();
+            }
+        }
+
+        private void soundpadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog saveFileSelector = new OpenFileDialog();
+            //openfiledialog filter is only audio files
+            saveFileSelector.Filter = "Soundpad files (*.spl)|*.spl";
+            DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
+            if (result == DialogResult.OK) // Test result.
+            {
+                saved = false;
+                fileName = string.Empty;
+                SoundItem.AllSounds = SoundpadImporter.Import(saveFileSelector.FileName);
+                RefreshGrid();
             }
         }
     }

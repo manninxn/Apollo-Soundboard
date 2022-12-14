@@ -1,4 +1,5 @@
 ﻿using Gma.System.MouseKeyHook;
+using System.Diagnostics;
 
 namespace Apollo_Soundboard
 {
@@ -17,7 +18,18 @@ namespace Apollo_Soundboard
 
         private static void KeyboardListener(object sender, KeyEventArgs e)
         {
-            PressedKeys[e.KeyCode] = true;
+            Keys keyCode = e.KeyCode switch
+            {
+                Keys.LShiftKey => Keys.ShiftKey,
+                Keys.LControlKey => Keys.ControlKey,
+                Keys.RShiftKey => Keys.ShiftKey,
+                Keys.RControlKey=> Keys.ControlKey,
+                Keys.LMenu => Keys.Alt,
+                Keys.RMenu => Keys.Alt,
+                _ => e.KeyCode
+            };
+            
+            PressedKeys[keyCode] = true;
             foreach (SoundItem sound in SoundItem.AllSounds)
             {
                 if (sound.GetHotkeys().Count > 0 && sound.GetHotkeys().All(x =>
@@ -42,7 +54,17 @@ namespace Apollo_Soundboard
         }
         private static void KeyUpListener(object sender, KeyEventArgs e)
         {
-            PressedKeys[e.KeyCode] = false;
+            Keys keyCode = e.KeyCode switch
+            {
+                Keys.LShiftKey => Keys.ShiftKey,
+                Keys.LControlKey => Keys.ControlKey,
+                Keys.RShiftKey => Keys.ShiftKey,
+                Keys.RControlKey => Keys.ControlKey,
+                Keys.LMenu => Keys.Alt,
+                Keys.RMenu => Keys.Alt,
+                _ => e.KeyCode
+            };
+            PressedKeys[keyCode] = false;
 
         }
 

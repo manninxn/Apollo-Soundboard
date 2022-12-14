@@ -93,9 +93,9 @@ namespace Apollo_Soundboard
 
         public void Play()
         {
-            PlayThroughDevice(FilePath, form.primaryOutput, Settings.Default.PrimaryGain);
+            PlayThroughDevice(FilePath, form.primaryOutput - 1, Settings.Default.PrimaryGain);
             if (form.secondaryOutput > 0)
-                PlayThroughDevice(FilePath, form.secondaryOutput - 1, Settings.Default.SecondaryGain);
+                PlayThroughDevice(FilePath, form.secondaryOutput - 2, Settings.Default.SecondaryGain);
         }
 
         public List<Keys> GetHotkeys()

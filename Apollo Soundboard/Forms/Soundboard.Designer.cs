@@ -95,6 +95,8 @@ namespace Apollo_Soundboard
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Import = new System.Windows.Forms.ToolStripMenuItem();
+            this.eXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,6 +108,7 @@ namespace Apollo_Soundboard
             this.EditButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.MicrophoneSelectComboBox = new Apollo_Soundboard.FlatCombo();
+            this.soundpadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -264,6 +267,7 @@ namespace Apollo_Soundboard
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.loadToolStripMenuItem,
+            this.Import,
             this.saveToolStripMenuItem,
             this.bToolStripMenuItem,
             this.quitToolStripMenuItem});
@@ -277,7 +281,7 @@ namespace Apollo_Soundboard
             this.newToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.newToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -286,16 +290,36 @@ namespace Apollo_Soundboard
             this.loadToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.loadToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            // 
+            // Import
+            // 
+            this.Import.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.Import.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.eXPToolStripMenuItem,
+            this.soundpadToolStripMenuItem});
+            this.Import.ForeColor = System.Drawing.SystemColors.Control;
+            this.Import.Name = "Import";
+            this.Import.Size = new System.Drawing.Size(224, 26);
+            this.Import.Text = "Import";
+            // 
+            // eXPToolStripMenuItem
+            // 
+            this.eXPToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.eXPToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
+            this.eXPToolStripMenuItem.Name = "eXPToolStripMenuItem";
+            this.eXPToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.eXPToolStripMenuItem.Text = "EXP";
+            this.eXPToolStripMenuItem.Click += new System.EventHandler(this.eXPToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.saveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -304,7 +328,7 @@ namespace Apollo_Soundboard
             this.bToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.bToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.bToolStripMenuItem.Name = "bToolStripMenuItem";
-            this.bToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.bToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.bToolStripMenuItem.Text = "Save As";
             this.bToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -313,7 +337,7 @@ namespace Apollo_Soundboard
             this.quitToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.quitToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -420,6 +444,15 @@ namespace Apollo_Soundboard
             this.MicrophoneSelectComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.MicrophoneSelectComboBox_DrawItem);
             this.MicrophoneSelectComboBox.SelectedIndexChanged += new System.EventHandler(this.MicrophoneSelectComboBox_SelectedIndexChanged);
             // 
+            // soundpadToolStripMenuItem
+            // 
+            this.soundpadToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.soundpadToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
+            this.soundpadToolStripMenuItem.Name = "soundpadToolStripMenuItem";
+            this.soundpadToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.soundpadToolStripMenuItem.Text = "Soundpad";
+            this.soundpadToolStripMenuItem.Click += new System.EventHandler(this.soundpadToolStripMenuItem_Click);
+            // 
             // Soundboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -481,6 +514,9 @@ namespace Apollo_Soundboard
         private ToolStripMenuItem volumeToolStripMenuItem;
         private ToolStripMenuItem volumeMixerToolStripMenuItem;
         private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem Import;
+        private ToolStripMenuItem eXPToolStripMenuItem;
+        private ToolStripMenuItem soundpadToolStripMenuItem;
     }
 
 }

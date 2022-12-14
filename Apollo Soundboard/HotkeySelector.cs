@@ -83,10 +83,19 @@ namespace Apollo_Soundboard
         int numKeys = 0;
         void Listen(object sender, KeyEventArgs e)
         {
+            Keys keyCode = e.KeyCode switch
+            {
+                Keys.LShiftKey => Keys.ShiftKey,
+                Keys.LControlKey => Keys.ControlKey,
+                Keys.RShiftKey => Keys.ShiftKey,
+                Keys.RControlKey => Keys.ControlKey,
+                Keys.LMenu => Keys.Alt,
+                Keys.RMenu => Keys.Alt,
+                _ => e.KeyCode
+            };
 
-
-            if (SelectedHotkeys.Contains(e.KeyCode)) SelectedHotkeys.Remove(e.KeyCode); else numKeys++;
-            SelectedHotkeys.Add(e.KeyCode);
+            if (SelectedHotkeys.Contains(keyCode)) SelectedHotkeys.Remove(keyCode); else numKeys++;
+            SelectedHotkeys.Add(keyCode);
 
             Text = String.Join("+", SelectedHotkeys.Select(i => i.ToString()).ToList());
             if (!MultiKey) isActive = false;

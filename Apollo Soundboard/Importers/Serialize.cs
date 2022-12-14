@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
+using Apollo_Soundboard;
 
-namespace Apollo_Soundboard
+namespace NUT_Soundboard.Importers
 {
 
     public static class Serializer
@@ -37,7 +38,7 @@ namespace Apollo_Soundboard
                 SoundItem sound = new SoundItem();
                 var keys = new List<Keys>();
 
-                sound.SetHotkeys(Array.ConvertAll<int, Keys>(item.Value, (i) => { return ((Keys)i); }).ToList());
+                sound.SetHotkeys(Array.ConvertAll(item.Value, (i) => { return (Keys)i; }).ToList());
                 sound.FilePath = item.Key;
 
                 sounds.Add(sound);
