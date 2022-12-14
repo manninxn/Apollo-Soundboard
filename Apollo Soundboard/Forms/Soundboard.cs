@@ -99,6 +99,9 @@ namespace Apollo_Soundboard
             Debug.WriteLine(primaryOutput);
             InitializeComponent();
 
+            var bindingList = new BindingList<SoundItem>(SoundItem.AllSounds);
+            source = new BindingSource(bindingList, null);
+            SoundGrid.DataSource = source;
 
             var Devices = new List<string>() { "Default Device" };
             var DevicesWithNone = new List<string>() { "None", "Default Device" };
@@ -146,9 +149,7 @@ namespace Apollo_Soundboard
 
             StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => i.ToString()).ToList());
 
-            var bindingList = new BindingList<SoundItem>(SoundItem.AllSounds);
-            source = new BindingSource(bindingList, null);
-            SoundGrid.DataSource = source;
+
         }
 
         #region Helper Methods
