@@ -83,7 +83,7 @@ namespace Apollo_Soundboard
 
         private void PlayThroughDevice(string filePath, Guid Device, float gain)
         {
-
+            Debug.WriteLine(Device);
             DirectSoundOut output = new(Device);
             PlayingSounds.Add(output);
 
