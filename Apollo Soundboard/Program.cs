@@ -1,7 +1,3 @@
-using Microsoft.Win32;
-using System.Runtime.InteropServices;
-using System.Threading;
-
 namespace Apollo_Soundboard
 {
     internal static class Program
@@ -29,14 +25,15 @@ namespace Apollo_Soundboard
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            if(args.Length == 0 )
+            if (args.Length == 0)
             {
                 Application.Run(new Soundboard(null));
-            } else
+            }
+            else
             {
                 Application.Run(new Soundboard(args[0]));
             }
-            
+
         }
 
 

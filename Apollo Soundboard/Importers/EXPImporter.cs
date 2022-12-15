@@ -1,10 +1,4 @@
-﻿using Apollo_Soundboard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Text.Json;
 
 namespace Apollo_Soundboard.Importers
 {
@@ -20,28 +14,28 @@ namespace Apollo_Soundboard.Importers
     internal class EXPImporter
     {
 
-            public static List<SoundItem> Import(string filePath)
+        public static List<SoundItem> Import(string filePath)
+        {
+            string json = File.ReadAllText(filePath);
+            ItemList? itemList = JsonSerializer.Deserialize<ItemList>(json);
+            var sounds = new List<SoundItem>();
+
+            if (itemList == null) return sounds;
+
+            foreach (ItemEntry item in itemList.soundboardEntries)
             {
-                string json = File.ReadAllText(filePath);
-                ItemList? itemList = JsonSerializer.Deserialize<ItemList>(json);
-                var sounds = new List<SoundItem>();
-
-                if (itemList == null) return sounds;
-
-                foreach (ItemEntry item in itemList.soundboardEntries)
-                {
-                    SoundItem sound = new SoundItem();
-                    var keys = new List<Keys>();
-                    foreach (int i in item.activationKeysNumbers)
+                SoundItem sound = new SoundItem();
+                var keys = new List<Keys>();
+                foreach (int i in item.activationKeysNumbers)
                 {
                     keys.Add((Keys)i);
                 }
-                    sound.FilePath = item.file;
-                    sound.SetHotkeys(keys);
-                    sounds.Add(sound);
-                }
-                return sounds;
+                sound.FilePath = item.file;
+                sound.SetHotkeys(keys);
+                sounds.Add(sound);
             }
-
+            return sounds;
         }
+
     }
+}

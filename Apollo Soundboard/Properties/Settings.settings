@@ -2,8 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Apollo_Soundboard.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="PrimaryOutput" Type="System.Guid" Scope="User">
-      <Value Profile="(Default)">00000000-0000-0000-0000-000000000000</Value>
+    <Setting Name="PrimaryOutput" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="StopAllSoundsHotkey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -11,8 +11,8 @@
     <Setting Name="FileName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="SecondaryOutput" Type="System.Guid" Scope="User">
-      <Value Profile="(Default)">00000000-0000-0000-0000-000000000000</Value>
+    <Setting Name="SecondaryOutput" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="MicInjector" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

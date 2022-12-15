@@ -1,10 +1,4 @@
-﻿using Apollo_Soundboard;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -42,14 +36,14 @@ namespace Apollo_Soundboard.Importers
             {
                 var obj = (Soundlist)serializer.Deserialize(fs);
                 Debug.WriteLine(obj.Sound[6].Key);
-                foreach(Sound sound in obj.Sound)
+                foreach (Sound sound in obj.Sound)
                 {
                     var soundItem = new SoundItem();
                     var keys = new List<Keys>();
                     soundItem.FilePath = sound.Url;
 
                     int keyCode;
-                    if(int.TryParse(sound.Key, out keyCode))
+                    if (int.TryParse(sound.Key, out keyCode))
                     {
                         keys.Add((Keys)keyCode);
                     }
@@ -57,7 +51,7 @@ namespace Apollo_Soundboard.Importers
                     int modifiers;
                     if (int.TryParse(sound.KeyModifiers, out modifiers))
                     {
-                        switch(modifiers)
+                        switch (modifiers)
                         {
                             case 1:
                                 keys.Add(Keys.Alt); break;

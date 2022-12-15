@@ -1,14 +1,10 @@
 using Apollo_Soundboard.Forms;
+using Apollo_Soundboard.Importers;
 using Apollo_Soundboard.Properties;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System;
 using System.Diagnostics;
-using Apollo_Soundboard.Importers;
-using System.Windows.Forms;
 
 namespace Apollo_Soundboard
 {
@@ -26,10 +22,11 @@ namespace Apollo_Soundboard
                 Settings.Default.FileName = value;
                 Settings.Default.Save();
 
-                if(value != string.Empty)
+                if (value != string.Empty)
                 {
                     this.Text = $"Apollo Soundboard - {Path.GetFileName(value)}";
-                } else
+                }
+                else
                 {
                     this.Text = "Apollo Soundboard";
                 }
@@ -39,20 +36,10 @@ namespace Apollo_Soundboard
 
         ListSortDirection sortDirection = ListSortDirection.Descending;
 
-        bool _micInjector = Settings.Default.MicInjector;
-        bool MicInjector
-        {
-            get { return _micInjector; }
-            set
-            {
-                _micInjector = value;
-                Settings.Default.MicInjector = value;
-                Settings.Default.Save();
-            }
-        }
 
-        Guid _primary = Settings.Default.PrimaryOutput;
-        public Guid primaryOutput
+
+        static int _primary = Settings.Default.PrimaryOutput;
+        public static int primaryOutput
         {
             get
             {
@@ -67,8 +54,8 @@ namespace Apollo_Soundboard
             }
         }
 
-        Guid _secondary = Settings.Default.SecondaryOutput;
-        public Guid secondaryOutput
+        static int _secondary = Settings.Default.SecondaryOutput;
+        public static int secondaryOutput
         {
             get
             {
@@ -83,8 +70,8 @@ namespace Apollo_Soundboard
         }
 
 
-        int _microphone = Settings.Default.Microphone;
-        int Microphone
+        static int _microphone = Settings.Default.Microphone;
+        public static int Microphone
         {
             get
             {
@@ -110,20 +97,19 @@ namespace Apollo_Soundboard
                 if (value) this.Text = this.Text.TrimEnd('*');
                 else
                 {
-                    if(!this.Text.EndsWith("*")) this.Text = this.Text + "*";
+                    if (!this.Text.EndsWith("*")) this.Text = this.Text + "*";
 
                 }
             }
         }
 
-        WaveIn? micStream; DirectSoundOut? virtualCable; BindingSource source;
+        BindingSource source;
 
-        public static Guid NoDeviceGuid = new Guid("a8103378-999f-4e9c-a82f-12e2ff5395ed");
         #endregion
 
         public Soundboard(string? file)
         {
-            int primaryIndex = 0, secondaryIndex = 0, microphoneIndex = 0;
+            int primaryIndex = primaryOutput + 1, secondaryIndex = secondaryOutput + 2, microphoneIndex = Microphone + 1;
             Debug.WriteLine(primaryOutput);
             InitializeComponent();
             fileName = file ?? Settings.Default.FileName;
@@ -131,29 +117,32 @@ namespace Apollo_Soundboard
             source = new BindingSource(bindingList, null);
             SoundGrid.DataSource = source;
 
-            var Devices = new Dictionary<Guid, string>() { };
-            var DevicesWithNone = new Dictionary<Guid, string>() { { NoDeviceGuid, "None" } };
-            var Microphones = new List<string>() { "Default Device" };
+            var Devices = new Dictionary<int, string>();
+            var DevicesWithNone = new Dictionary<int, string>() { { -2, "None" } };
+            var Microphones = new Dictionary<int, string>();
 
-
-
-            int secondaryTemp = 0;
-            int primaryTemp = 0;
-            int i = 0;
-            foreach (var device in DirectSoundOut.Devices)
-            {
-                if (device.Guid == secondaryOutput) secondaryTemp = i + 1;
-                else if (device.Guid == primaryOutput) primaryTemp = i;
-
-                Devices.Add(device.Guid, device.Description);
-                DevicesWithNone.Add(device.Guid, device.Description);
-                i++;
-            }
 
             var enumerator = new MMDeviceEnumerator();
+            for (int i = -1; i < WaveOut.DeviceCount; i++)
+            {
+                string name = "Primary Audio Driver";
+                if (i >= 0) name = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].FriendlyName;
+                var caps = WaveOut.GetCapabilities(i);
+                Devices.Add(i, name);
+                DevicesWithNone.Add(i, name);
+            }
 
-            for (i = 0; i < WaveIn.DeviceCount; i++)
-                Microphones.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].ToString());
+
+
+
+            for (int i = -1; i < WaveIn.DeviceCount; i++)
+            {
+                string name = "Primary Audio Driver";
+                if (i >= 0) name = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].FriendlyName;
+                var caps = WaveIn.GetCapabilities(i);
+                Microphones.Add(i, name);
+            }
+
 
             enumerator.Dispose();
 
@@ -164,25 +153,28 @@ namespace Apollo_Soundboard
             PrimaryOutputComboBox.DisplayMember = "Value";
             PrimaryOutputComboBox.ValueMember = "Key";
 
-            SecondaryOutputComboBox.DataSource = new BindingSource(Devices, null);
+            SecondaryOutputComboBox.DataSource = new BindingSource(DevicesWithNone, null);
             SecondaryOutputComboBox.DisplayMember = "Value";
             SecondaryOutputComboBox.ValueMember = "Key";
 
 
-            MicrophoneSelectComboBox.DataSource = Microphones;
+            MicrophoneSelectComboBox.DataSource = new BindingSource(Microphones, null);
+            MicrophoneSelectComboBox.DisplayMember = "Value";
+            MicrophoneSelectComboBox.ValueMember = "Key";
 
             try
             {
-                SecondaryOutputComboBox.SelectedIndex = secondaryTemp;
-                PrimaryOutputComboBox.SelectedIndex = primaryTemp;
-                MicrophoneSelectComboBox.SelectedIndex = Microphone;
-            } catch
+                SecondaryOutputComboBox.SelectedIndex = secondaryIndex;
+                PrimaryOutputComboBox.SelectedIndex = primaryIndex;
+                MicrophoneSelectComboBox.SelectedIndex = microphoneIndex;
+            }
+            catch
             {
                 Debug.WriteLine("Device index exceeded list");
             }
             LoadFile();
 
-            MicInjectorToggle.Checked = MicInjector;
+            MicInjectorToggle.Checked = MicInjector.Enabled;
 
 
 
@@ -196,55 +188,18 @@ namespace Apollo_Soundboard
         }
 
         #region Helper Methods
-        private void InjectMicrophone()
-        {
-            if (secondaryOutput == NoDeviceGuid) return;
 
-            micStream = new WaveIn();
-
-            micStream.BufferMilliseconds = 30;
-            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Microphone).Channels);
-            if (Microphone > 0) Debug.WriteLine(new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[Microphone - 1].ToString());
-            micStream.DeviceNumber = Microphone;
-
-            WaveInProvider waveIn = new(micStream);
-
-            var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
-            volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
-
-            virtualCable = new(secondaryOutput);
-
-            virtualCable.Init(volumeSampleProvider);
-
-            micStream.StartRecording();
-            virtualCable.Play();
-
-        }
 
         public void RefreshGrid()
         {
-            // SoundGrid.
-            //SoundGrid.DataSource = null;
-            // if (SoundItem.AllSounds.Count > 0)
-            //      SoundGrid.DataSource = SoundItem.AllSounds;
-            //SoundGrid.DataSource = SoundItem.AllSounds;
 
             SoundItem.AllSounds = sortDirection == ListSortDirection.Ascending ? SoundItem.AllSounds.OrderBy(i => i.Hotkey).ToList() : SoundItem.AllSounds.OrderByDescending(i => i.Hotkey).ToList();
             source.DataSource = SoundItem.AllSounds;
             source.ResetBindings(false);
-            
+
         }
 
-        public void RefreshInjector()
-        {
-            if (MicInjector && micStream != null && virtualCable != null)
-            {
-                micStream.StopRecording();
-                micStream.Dispose();
-                virtualCable.Dispose();
-                InjectMicrophone();
-            }
-        }
+
         private void LoadFile()
         {
             if (fileName != string.Empty)
@@ -264,7 +219,6 @@ namespace Apollo_Soundboard
                     Save(false);
                 }
             }
-            if (micStream != null) micStream.StopRecording();
             Debug.WriteLine(Settings.Default.FileName);
             Settings.Default.Save();
             Application.Exit();
@@ -382,20 +336,8 @@ namespace Apollo_Soundboard
         }
         private void MicInjectorToggle_CheckChanged(object sender, EventArgs e)
         {
-            MicInjector = MicInjectorToggle.Checked;
-            if (MicInjectorToggle.Checked)
-            {
-                InjectMicrophone();
-            }
-            else
-            {
-                if (micStream != null && virtualCable != null)
-                {
-                    micStream.StopRecording();
-                    micStream.Dispose();
-                    virtualCable.Dispose();
-                }
-            }
+            MicInjector.Enabled = MicInjectorToggle.Checked;
+
         }
 
         private void AddSoundButton_Click(object sender, EventArgs e)
@@ -439,25 +381,26 @@ namespace Apollo_Soundboard
 
 
 
-#endregion
+        #endregion
 
         #region Device Selectors
         private void MicrophoneSelectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Microphone = MicrophoneSelectComboBox.SelectedIndex;
-            RefreshInjector();
+            Microphone = ((KeyValuePair<int, string>)MicrophoneSelectComboBox.SelectedItem).Key;
+            MicInjector.Refresh();
         }
 
         private void PrimaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            primaryOutput = ((KeyValuePair<Guid, string>)PrimaryOutputComboBox.SelectedItem).Key;
-            RefreshInjector();
+            primaryOutput = ((KeyValuePair<int, string>)PrimaryOutputComboBox.SelectedItem).Key;
+            MicInjector.Refresh();
         }
 
         private void SecondaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            secondaryOutput = ((KeyValuePair<Guid, string>)SecondaryOutputComboBox.SelectedItem).Key;
-            RefreshInjector();
+            secondaryOutput = ((KeyValuePair<int, string>)SecondaryOutputComboBox.SelectedItem).Key;
+            Debug.WriteLine(secondaryOutput);
+            MicInjector.Refresh();
         }
         private void PrimaryOutputComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -500,11 +443,11 @@ namespace Apollo_Soundboard
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            
+
             base.OnFormClosing(e);
 
             if (e.CloseReason == CloseReason.WindowsShutDown) return;
-            
+
 
             if (e.CloseReason != CloseReason.ApplicationExitCall)
             {
@@ -614,23 +557,9 @@ namespace Apollo_Soundboard
             }
         }
 
-        private void Soundboard_Resize(object sender, EventArgs e)
-        {
-            if (FormWindowState.Minimized == this.WindowState)
-            {
-                NotifyIcon.Visible = true;
-                Hide();
-            }
-
-            else if (FormWindowState.Normal == this.WindowState)
-            {
-                NotifyIcon.Visible = false;
-            }
-        }
-
         private void quitToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            
+
             Show();
             ExitApplication();
         }
@@ -640,6 +569,7 @@ namespace Apollo_Soundboard
             sortDirection = sortDirection == ListSortDirection.Descending ? ListSortDirection.Ascending : ListSortDirection.Descending;
             RefreshGrid();
         }
+
     }
 
     //lol
