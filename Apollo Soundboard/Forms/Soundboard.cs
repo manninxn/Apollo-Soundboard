@@ -118,7 +118,7 @@ namespace Apollo_Soundboard
 
         WaveIn? micStream; DirectSoundOut? virtualCable; BindingSource source;
 
-        
+        public static Guid NoDeviceGuid = new Guid("a8103378-999f-4e9c-a82f-12e2ff5395ed");
         #endregion
 
         public Soundboard(string? file)
@@ -198,24 +198,21 @@ namespace Apollo_Soundboard
         #region Helper Methods
         private void InjectMicrophone()
         {
-            if (secondaryOutput == "None")
-            {
-                Debug.WriteLine("Disabled");
-                return;
-            }
-            micStream = new WasapiCapture(MicrophoneDevice, false, 0);
-            
-            //if(Microphone > 0) Debug.WriteLine(new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[Microphone - 1].ToString());
-            //micStream.DeviceNumber = Microphone;
+            if (secondaryOutput == NoDeviceGuid) return;
+
+            micStream = new WaveIn();
+
+            micStream.BufferMilliseconds = 30;
+            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Microphone).Channels);
+            if (Microphone > 0) Debug.WriteLine(new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[Microphone - 1].ToString());
+            micStream.DeviceNumber = Microphone;
 
             WaveInProvider waveIn = new(micStream);
-            
-
 
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
 
-            virtualCable = new(SecondaryDevice, AudioClientShareMode.Shared, false, 0);
+            virtualCable = new(secondaryOutput);
 
             virtualCable.Init(volumeSampleProvider);
 
@@ -447,7 +444,7 @@ namespace Apollo_Soundboard
         #region Device Selectors
         private void MicrophoneSelectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Microphone = ((KeyValuePair<Guid, string>)MicrophoneSelectComboBox.SelectedItem).Key;
+            Microphone = MicrophoneSelectComboBox.SelectedIndex;
             RefreshInjector();
         }
 

@@ -37,7 +37,7 @@ namespace Apollo_Soundboard
 
         public static List<SoundItem> AllSounds = new List<SoundItem>();
 
-        private static List<WasapiOut> PlayingSounds = new List<WasapiOut>();
+        private static List<DirectSoundOut> PlayingSounds = new List<DirectSoundOut>();
 
         private static Soundboard form;
 
@@ -81,10 +81,10 @@ namespace Apollo_Soundboard
         }
 
 
-        private void PlayThroughDevice(string filePath, MMDevice Device, float gain)
+        private void PlayThroughDevice(string filePath, Guid Device, float gain)
         {
 
-            var output = new WasapiOut(Device, AudioClientShareMode.Shared, false, 0);
+            DirectSoundOut output = new(Device);
             PlayingSounds.Add(output);
 
             AudioFileReader? reader = null;
@@ -127,10 +127,10 @@ namespace Apollo_Soundboard
         public void Play()
         {
             Debug.WriteLine($"Gain: {Gain}");
-            if (form.secondaryOutput != "None")
-                PlayThroughDevice(FilePath, form.SecondaryDevice, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            if (form.secondaryOutput != Soundboard.NoDeviceGuid)
+                PlayThroughDevice(FilePath, form.secondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
-            PlayThroughDevice(FilePath, form.PrimaryDevice, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+            PlayThroughDevice(FilePath, form.primaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
 
         }
 
@@ -145,7 +145,7 @@ namespace Apollo_Soundboard
 
         public static void StopAllSounds()
         {
-            foreach (WasapiOut sound in PlayingSounds)
+            foreach (DirectSoundOut sound in PlayingSounds)
             {
                 sound.Stop();
             }
