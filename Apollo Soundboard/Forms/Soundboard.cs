@@ -50,8 +50,8 @@ namespace Apollo_Soundboard
             }
         }
 
-        int _primary = Settings.Default.PrimaryOutput;
-        public int primaryOutput
+        Guid _primary = Settings.Default.PrimaryOutput;
+        public Guid primaryOutput
         {
             get
             {
@@ -66,8 +66,8 @@ namespace Apollo_Soundboard
             }
         }
 
-        int _secondary = Settings.Default.SecondaryOutput;
-        public int secondaryOutput
+        Guid _secondary = Settings.Default.SecondaryOutput;
+        public Guid secondaryOutput
         {
             get
             {
@@ -116,6 +116,8 @@ namespace Apollo_Soundboard
 
         WaveIn? micStream; DirectSoundOut? virtualCable; BindingSource source;
 
+        public static Guid NoDeviceGuid = new Guid("a8103378-999f-4e9c-a82f-12e2ff5395ed");
+
         #endregion
 
         public Soundboard(string? file)
@@ -128,29 +130,44 @@ namespace Apollo_Soundboard
             source = new BindingSource(bindingList, null);
             SoundGrid.DataSource = source;
 
-            var Devices = new List<string>() { "Default Device" };
-            var DevicesWithNone = new List<string>() { "None", "Default Device" };
+            var Devices = new Dictionary<Guid, string>() { };
+            var DevicesWithNone = new Dictionary<Guid, string>() { { NoDeviceGuid, "None" } };
             var Microphones = new List<string>() { "Default Device" };
+
+
+
+            int secondaryTemp = 0;
+            int primaryTemp = 0;
+            int i = 0;
+            foreach (var device in DirectSoundOut.Devices)
+            {
+                if (device.Guid == secondaryOutput) secondaryTemp = i + 1;
+                else if(device.Guid == primaryOutput) primaryTemp = i;
+
+                Devices.Add(device.Guid, device.Description);
+                DevicesWithNone.Add(device.Guid, device.Description);
+                i++;
+            }
 
             var enumerator = new MMDeviceEnumerator();
 
-            for (int i = 0; i < WaveOut.DeviceCount; i++)
-            {
-                Devices.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].ToString());
-                DevicesWithNone.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].ToString());
-            }
-            
-            for (int i = 0; i < WaveIn.DeviceCount; i++)
+            for (i = 0; i < WaveIn.DeviceCount; i++)
                 Microphones.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].ToString());
 
             enumerator.Dispose();
 
-            int secondaryTemp = secondaryOutput;
-            int primaryTemp = primaryOutput;
+
             int micTemp = Microphone;
 
-            PrimaryOutputComboBox.DataSource = Devices;
-            SecondaryOutputComboBox.DataSource = DevicesWithNone;
+            PrimaryOutputComboBox.DataSource = new BindingSource(Devices, null);
+            PrimaryOutputComboBox.DisplayMember = "Value";
+            PrimaryOutputComboBox.ValueMember = "Key";
+
+            SecondaryOutputComboBox.DataSource = new BindingSource(Devices, null);
+            SecondaryOutputComboBox.DisplayMember = "Value";
+            SecondaryOutputComboBox.ValueMember = "Key";
+
+
             MicrophoneSelectComboBox.DataSource = Microphones;
 
             try
@@ -180,7 +197,7 @@ namespace Apollo_Soundboard
         #region Helper Methods
         private void InjectMicrophone()
         {
-            if (secondaryOutput <= 0) return;
+            if (secondaryOutput == NoDeviceGuid) return;
 
             micStream = new WaveIn();
             
@@ -194,7 +211,7 @@ namespace Apollo_Soundboard
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
 
-            virtualCable = new(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Guid);
+            virtualCable = new(secondaryOutput);
 
             virtualCable.Init(volumeSampleProvider);
 
@@ -428,13 +445,13 @@ namespace Apollo_Soundboard
 
         private void PrimaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            primaryOutput = PrimaryOutputComboBox.SelectedIndex;
+            primaryOutput = ((KeyValuePair<Guid, string>)PrimaryOutputComboBox.SelectedItem).Key;
             RefreshInjector();
         }
 
         private void SecondaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            secondaryOutput = SecondaryOutputComboBox.SelectedIndex;
+            secondaryOutput = ((KeyValuePair<Guid, string>)SecondaryOutputComboBox.SelectedItem).Key;
             RefreshInjector();
         }
         private void PrimaryOutputComboBox_DrawItem(object sender, DrawItemEventArgs e)

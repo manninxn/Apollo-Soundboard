@@ -75,10 +75,10 @@ namespace Apollo_Soundboard
         }
 
 
-        private void PlayThroughDevice(string filePath, int deviceId, float gain)
+        private void PlayThroughDevice(string filePath, Guid deviceId, float gain)
         {
 
-            DirectSoundOut output = new(DirectSoundOut.Devices.ElementAt(deviceId).Guid);
+            DirectSoundOut output = new(deviceId);
             PlayingSounds.Add(output);
 
             AudioFileReader? reader = null;
@@ -121,8 +121,8 @@ namespace Apollo_Soundboard
         public void Play()
         {
             Debug.WriteLine($"Gain: {Gain}");
-            if (form.secondaryOutput > 0)
-                PlayThroughDevice(FilePath, form.secondaryOutput - 1, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            if (form.secondaryOutput == Soundboard.NoDeviceGuid)
+                PlayThroughDevice(FilePath, form.secondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
             PlayThroughDevice(FilePath, form.primaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
 
