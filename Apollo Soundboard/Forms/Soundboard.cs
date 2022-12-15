@@ -131,51 +131,51 @@ namespace Apollo_Soundboard
             source = new BindingSource(bindingList, null);
             SoundGrid.DataSource = source;
 
-            var Devices = new Dictionary<string, string>();
-            var DevicesWithNone = new Dictionary<string, string>() { { "None", "No Device" } };
-            var Microphones = new Dictionary<string, string>() { };
+            var Devices = new Dictionary<Guid, string>() { };
+            var DevicesWithNone = new Dictionary<Guid, string>() { { NoDeviceGuid, "None" } };
+            var Microphones = new List<string>() { "Default Device" };
 
-            
-            var enumerator = new MMDeviceEnumerator();
+
+
+            int secondaryTemp = 0;
+            int primaryTemp = 0;
             int i = 0;
-            foreach (var wasapi in enumerator.EnumerateAudioEndPoints(DataFlow.All, DeviceState.Active))
+            foreach (var device in DirectSoundOut.Devices)
             {
-                if (wasapi.DataFlow == DataFlow.Render)
-                {
-                    Devices.Add(wasapi.ID, wasapi.DeviceFriendlyName);
-                    DevicesWithNone.Add(wasapi.ID, wasapi.DeviceFriendlyName);
+                if (device.Guid == secondaryOutput) secondaryTemp = i + 1;
+                else if (device.Guid == primaryOutput) primaryTemp = i;
 
-                    if (wasapi.ID == primaryOutput) primaryIndex = i;
-                    else if (wasapi.ID == secondaryOutput) secondaryIndex = i + 1;
-                } else
-                {
-                    Microphones.Add(wasapi.ID, wasapi.FriendlyName);
-                    if (wasapi.ID == Microphone) microphoneIndex = i;
-                }
-                Console.WriteLine($"{wasapi.DataFlow} {wasapi.FriendlyName} {wasapi.DeviceFriendlyName} {wasapi.State} {wasapi.ID}");
+                Devices.Add(device.Guid, device.Description);
+                DevicesWithNone.Add(device.Guid, device.Description);
                 i++;
             }
+
+            var enumerator = new MMDeviceEnumerator();
+
+            for (i = 0; i < WaveIn.DeviceCount; i++)
+                Microphones.Add(enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].ToString());
+
             enumerator.Dispose();
 
-            
+
+            int micTemp = Microphone;
 
             PrimaryOutputComboBox.DataSource = new BindingSource(Devices, null);
             PrimaryOutputComboBox.DisplayMember = "Value";
             PrimaryOutputComboBox.ValueMember = "Key";
 
-            SecondaryOutputComboBox.DataSource = new BindingSource(DevicesWithNone, null);
+            SecondaryOutputComboBox.DataSource = new BindingSource(Devices, null);
             SecondaryOutputComboBox.DisplayMember = "Value";
             SecondaryOutputComboBox.ValueMember = "Key";
 
-            MicrophoneSelectComboBox.DataSource = new BindingSource(Microphones, null);
-            MicrophoneSelectComboBox.DisplayMember = "Value";
-            MicrophoneSelectComboBox.ValueMember = "Key";
+
+            MicrophoneSelectComboBox.DataSource = Microphones;
 
             try
             {
-                SecondaryOutputComboBox.SelectedIndex = secondaryIndex;
-                PrimaryOutputComboBox.SelectedIndex = primaryIndex;
-                MicrophoneSelectComboBox.SelectedIndex = microphoneIndex;
+                SecondaryOutputComboBox.SelectedIndex = secondaryTemp;
+                PrimaryOutputComboBox.SelectedIndex = primaryTemp;
+                MicrophoneSelectComboBox.SelectedIndex = Microphone;
             } catch
             {
                 Debug.WriteLine("Device index exceeded list");
