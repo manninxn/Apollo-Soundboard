@@ -26,9 +26,9 @@ namespace Apollo_Soundboard.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00000000-0000-0000-0000-000000000000")]
-        public string PrimaryOutput {
+        public global::System.Guid PrimaryOutput {
             get {
-                return ((string)(this["PrimaryOutput"]));
+                return ((global::System.Guid)(this["PrimaryOutput"]));
             }
             set {
                 this["PrimaryOutput"] = value;
@@ -62,9 +62,9 @@ namespace Apollo_Soundboard.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("00000000-0000-0000-0000-000000000000")]
-        public string SecondaryOutput {
+        public global::System.Guid SecondaryOutput {
             get {
-                return ((string)(this["SecondaryOutput"]));
+                return ((global::System.Guid)(this["SecondaryOutput"]));
             }
             set {
                 this["SecondaryOutput"] = value;
@@ -86,9 +86,9 @@ namespace Apollo_Soundboard.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public string Microphone {
+        public int Microphone {
             get {
-                return ((string)(this["Microphone"]));
+                return ((int)(this["Microphone"]));
             }
             set {
                 this["Microphone"] = value;

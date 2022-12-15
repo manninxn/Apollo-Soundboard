@@ -51,8 +51,8 @@ namespace Apollo_Soundboard
             }
         }
 
-        string _primary = Settings.Default.PrimaryOutput;
-        public string primaryOutput
+        Guid _primary = Settings.Default.PrimaryOutput;
+        public Guid primaryOutput
         {
             get
             {
@@ -67,8 +67,8 @@ namespace Apollo_Soundboard
             }
         }
 
-        string _secondary = Settings.Default.SecondaryOutput;
-        public string secondaryOutput
+        Guid _secondary = Settings.Default.SecondaryOutput;
+        public Guid secondaryOutput
         {
             get
             {
@@ -82,39 +82,9 @@ namespace Apollo_Soundboard
             }
         }
 
-        public MMDevice PrimaryDevice
-        {
-            get
-            {
-                var enumerator = new MMDeviceEnumerator();
-                MMDevice output = enumerator.GetDevice(primaryOutput);
-                enumerator.Dispose();
-                return output;
-            }
-        }
-        public MMDevice SecondaryDevice
-        {
-            get
-            {
-                var enumerator = new MMDeviceEnumerator();
-                MMDevice output = enumerator.GetDevice(secondaryOutput);
-                enumerator.Dispose();
-                return output;
-            }
-        }
-        public MMDevice MicrophoneDevice
-        {
-            get
-            {
-                var enumerator = new MMDeviceEnumerator();
-                MMDevice output = enumerator.GetDevice(Microphone);
-                enumerator.Dispose();
-                return output;
-            }
-        }
 
-        string _microphone = Settings.Default.Microphone;
-        string Microphone
+        int _microphone = Settings.Default.Microphone;
+        int Microphone
         {
             get
             {
@@ -146,7 +116,7 @@ namespace Apollo_Soundboard
             }
         }
 
-        WasapiCapture? micStream; WasapiOut? virtualCable; BindingSource source;
+        WaveIn? micStream; DirectSoundOut? virtualCable; BindingSource source;
 
         
         #endregion
@@ -477,19 +447,19 @@ namespace Apollo_Soundboard
         #region Device Selectors
         private void MicrophoneSelectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Microphone = ((KeyValuePair<string, string>)MicrophoneSelectComboBox.SelectedItem).Key;
+            Microphone = ((KeyValuePair<Guid, string>)MicrophoneSelectComboBox.SelectedItem).Key;
             RefreshInjector();
         }
 
         private void PrimaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            primaryOutput = ((KeyValuePair<string, string>)PrimaryOutputComboBox.SelectedItem).Key;
+            primaryOutput = ((KeyValuePair<Guid, string>)PrimaryOutputComboBox.SelectedItem).Key;
             RefreshInjector();
         }
 
         private void SecondaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            secondaryOutput = ((KeyValuePair<string, string>)SecondaryOutputComboBox.SelectedItem).Key;
+            secondaryOutput = ((KeyValuePair<Guid, string>)SecondaryOutputComboBox.SelectedItem).Key;
             RefreshInjector();
         }
         private void PrimaryOutputComboBox_DrawItem(object sender, DrawItemEventArgs e)
