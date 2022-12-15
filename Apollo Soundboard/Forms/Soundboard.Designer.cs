@@ -521,7 +521,6 @@ namespace Apollo_Soundboard
             this.Load += new System.EventHandler(this.Soundboard_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.File_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.File_DragEnter);
-            this.Resize += new System.EventHandler(this.Soundboard_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

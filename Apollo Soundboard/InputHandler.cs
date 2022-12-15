@@ -1,12 +1,4 @@
 ﻿using Gma.System.MouseKeyHook;
-using Microsoft.VisualBasic.Devices;
-using Newtonsoft.Json.Linq;
-using Apollo_Soundboard.Importers;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 
 namespace Apollo_Soundboard
 {
@@ -24,31 +16,27 @@ namespace Apollo_Soundboard
         static List<Keys> PressedKeys = new();
         private static void KeyboardListener(object sender, KeyEventArgs e)
         {
-            Keys keyCode = e.KeyCode switch
-            {
-                Keys.LShiftKey => Keys.ShiftKey,
-                Keys.LControlKey => Keys.ControlKey,
-                Keys.RShiftKey => Keys.ShiftKey,
-                Keys.RControlKey=> Keys.ControlKey,
-                Keys.LMenu => Keys.Alt,
-                Keys.RMenu => Keys.Alt,
-                _ => e.KeyCode
-            };
+            Keys keyCode = KeyMap.ParseModifierKey(e.KeyCode);
 
             if (!PressedKeys.Contains(keyCode))
             {
                 PressedKeys.Add(keyCode);
             }
 
-            foreach (SoundItem sound in SoundItem.AllSounds)
+            for (int i = 0; i < SoundItem.AllSounds.Count; i++)
             {
+                SoundItem sound = SoundItem.AllSounds[i];
+                if (sound.GetHotkeys().Count == 0) continue;
                 var lastN = PressedKeys.TakeLast(sound.GetHotkeys().Count());
-                var b = sound.GetHotkeys();
+
                 if (sound.HotkeyOrderMatters ? lastN.SequenceEqual(sound.GetHotkeys()) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), sound.GetHotkeys().OrderBy(e => e)))
                 {
                     sound.Play();
                 }
             }
+
+            if (SoundItem.ClearSounds.Count == 0) return;
+
             if (PressedKeys.TakeLast(SoundItem.ClearSounds.Count).SequenceEqual(SoundItem.ClearSounds))
             {
                 SoundItem.StopAllSounds();
@@ -56,17 +44,7 @@ namespace Apollo_Soundboard
         }
         private static void KeyUpListener(object sender, KeyEventArgs e)
         {
-            Keys keyCode = e.KeyCode switch
-            {
-                Keys.LShiftKey => Keys.ShiftKey,
-                Keys.LControlKey => Keys.ControlKey,
-                Keys.RShiftKey => Keys.ShiftKey,
-                Keys.RControlKey => Keys.ControlKey,
-                Keys.LMenu => Keys.Alt,
-                Keys.RMenu => Keys.Alt,
-                _ => e.KeyCode
-            };
-            PressedKeys.Remove(keyCode);
+            PressedKeys.Remove(KeyMap.ParseModifierKey(e.KeyCode));
 
         }
 
@@ -74,6 +52,19 @@ namespace Apollo_Soundboard
 
     public static class KeyMap
     {
+        public static Keys ParseModifierKey(Keys key)
+        {
+            return key switch
+            {
+                Keys.LShiftKey => Keys.ShiftKey,
+                Keys.LControlKey => Keys.ControlKey,
+                Keys.RShiftKey => Keys.ShiftKey,
+                Keys.RControlKey => Keys.ControlKey,
+                Keys.LMenu => Keys.Alt,
+                Keys.RMenu => Keys.Alt,
+                _ => key
+            };
+        }
         public static string KeyToChar(Keys key)
         {
             return key switch

@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Apollo_Soundboard;
 
 namespace Apollo_Soundboard.Importers
 {
@@ -40,24 +39,24 @@ namespace Apollo_Soundboard.Importers
         public static List<SoundItem> Deserialize(string json)
         {
 
-                List<SoundData>? entries = JsonSerializer.Deserialize<List<SoundData>>(json);
+            List<SoundData>? entries = JsonSerializer.Deserialize<List<SoundData>>(json);
 
-                var sounds = new List<SoundItem>();
-                if (entries == null) return sounds;
+            var sounds = new List<SoundItem>();
+            if (entries == null) return sounds;
 
-                foreach (SoundData item in entries)
-                {
-                    SoundItem sound = new SoundItem();
-                    var keys = new List<Keys>();
+            foreach (SoundData item in entries)
+            {
+                SoundItem sound = new SoundItem();
+                var keys = new List<Keys>();
 
-                    sound.SetHotkeys(Array.ConvertAll(item.Hotkeys, (i) => { return (Keys)i; }).ToList());
-                    sound.FilePath = item.FilePath;
-                    sound.Gain = item.Gain;
-                    sound.HotkeyOrderMatters = item.HotkeyOrderMatters;
-                    sounds.Add(sound);
-                }
+                sound.SetHotkeys(Array.ConvertAll(item.Hotkeys, (i) => { return (Keys)i; }).ToList());
+                sound.FilePath = item.FilePath;
+                sound.Gain = item.Gain;
+                sound.HotkeyOrderMatters = item.HotkeyOrderMatters;
+                sounds.Add(sound);
+            }
 
-                return sounds;
+            return sounds;
 
 
         }
@@ -68,8 +67,9 @@ namespace Apollo_Soundboard.Importers
             {
                 string json = File.ReadAllText(filePath);
                 return Deserialize(json);
-            } catch { return new List<SoundItem>(); }
             }
+            catch { return new List<SoundItem>(); }
+        }
 
 
     }
