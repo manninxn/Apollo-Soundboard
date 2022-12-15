@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace NUT_Soundboard.Importers
+namespace Apollo_Soundboard.Importers
 {
     public class ItemEntry
     {

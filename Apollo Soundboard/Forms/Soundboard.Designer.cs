@@ -174,6 +174,7 @@ namespace Apollo_Soundboard
             this.SoundGrid.Size = new System.Drawing.Size(601, 591);
             this.SoundGrid.TabIndex = 2;
             this.SoundGrid.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.SoundGrid_CellDoubleClick);
+            this.SoundGrid.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.SoundGrid_ColumnHeaderMouseClick);
             // 
             // AddSoundButton
             // 

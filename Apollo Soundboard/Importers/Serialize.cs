@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Apollo_Soundboard;
 
-namespace NUT_Soundboard.Importers
+namespace Apollo_Soundboard.Importers
 {
     public struct SoundData
     {

@@ -1,4 +1,5 @@
 ﻿using Apollo_Soundboard.Properties;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
@@ -40,10 +41,15 @@ namespace Apollo_Soundboard
 
         private static Soundboard form;
 
-        public string FilePath { get; set; }
+        public string FilePath;
+        public string FileName { get
+            {
+                return Path.GetFileName(FilePath);
+            }
+        }
         public string Hotkey { 
             get {
-                return String.Join("+", Hotkeys.Select(i => i.ToString()).ToList()); 
+                return String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList()); 
             } 
         }
         public float Gain = 0;
@@ -75,10 +81,10 @@ namespace Apollo_Soundboard
         }
 
 
-        private void PlayThroughDevice(string filePath, Guid deviceId, float gain)
+        private void PlayThroughDevice(string filePath, Guid Device, float gain)
         {
-
-            DirectSoundOut output = new(deviceId);
+            Debug.WriteLine(Device);
+            DirectSoundOut output = new(Device);
             PlayingSounds.Add(output);
 
             AudioFileReader? reader = null;
@@ -121,7 +127,7 @@ namespace Apollo_Soundboard
         public void Play()
         {
             Debug.WriteLine($"Gain: {Gain}");
-            if (form.secondaryOutput == Soundboard.NoDeviceGuid)
+            if (form.secondaryOutput != Soundboard.NoDeviceGuid)
                 PlayThroughDevice(FilePath, form.secondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
             PlayThroughDevice(FilePath, form.primaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));

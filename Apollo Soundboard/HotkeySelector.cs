@@ -97,7 +97,7 @@ namespace Apollo_Soundboard
             if (SelectedHotkeys.Contains(keyCode)) SelectedHotkeys.Remove(keyCode); else numKeys++;
             SelectedHotkeys.Add(keyCode);
 
-            Text = String.Join("+", SelectedHotkeys.Select(i => i.ToString()).ToList());
+            Text = String.Join("+", SelectedHotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             if (!MultiKey) isActive = false;
         }
 

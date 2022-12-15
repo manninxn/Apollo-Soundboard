@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace NUT_Soundboard.Importers
+namespace Apollo_Soundboard.Importers
 {
     [XmlRoot(ElementName = "Sound")]
     public class Sound
