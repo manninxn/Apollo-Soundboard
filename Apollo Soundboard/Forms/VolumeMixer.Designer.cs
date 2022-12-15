@@ -100,13 +100,14 @@
             // 
             // trackBar1
             // 
+            this.trackBar1.LargeChange = 10;
             this.trackBar1.Location = new System.Drawing.Point(18, 45);
-            this.trackBar1.Maximum = 20;
-            this.trackBar1.Minimum = -20;
+            this.trackBar1.Maximum = 100;
+            this.trackBar1.Minimum = -100;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(770, 56);
             this.trackBar1.TabIndex = 6;
-            this.trackBar1.TickFrequency = 2;
+            this.trackBar1.TickFrequency = 10;
             this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // label4
@@ -171,13 +172,14 @@
             // 
             // trackBar2
             // 
+            this.trackBar2.LargeChange = 10;
             this.trackBar2.Location = new System.Drawing.Point(18, 125);
-            this.trackBar2.Maximum = 20;
-            this.trackBar2.Minimum = -20;
+            this.trackBar2.Maximum = 100;
+            this.trackBar2.Minimum = -100;
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(770, 56);
             this.trackBar2.TabIndex = 10;
-            this.trackBar2.TickFrequency = 2;
+            this.trackBar2.TickFrequency = 10;
             this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar2_Scroll);
             // 
             // label10
@@ -212,13 +214,14 @@
             // 
             // trackBar3
             // 
+            this.trackBar3.LargeChange = 10;
             this.trackBar3.Location = new System.Drawing.Point(18, 209);
-            this.trackBar3.Maximum = 20;
-            this.trackBar3.Minimum = -20;
+            this.trackBar3.Maximum = 100;
+            this.trackBar3.Minimum = -100;
             this.trackBar3.Name = "trackBar3";
             this.trackBar3.Size = new System.Drawing.Size(770, 56);
             this.trackBar3.TabIndex = 14;
-            this.trackBar3.TickFrequency = 2;
+            this.trackBar3.TickFrequency = 10;
             this.trackBar3.ValueChanged += new System.EventHandler(this.trackBar3_Scroll);
             // 
             // VolumeMixer

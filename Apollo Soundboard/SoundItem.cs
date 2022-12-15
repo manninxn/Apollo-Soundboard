@@ -1,6 +1,8 @@
 ﻿using Apollo_Soundboard.Properties;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
+using Xabe.FFmpeg;
 
 namespace Apollo_Soundboard
 {
@@ -34,15 +36,20 @@ namespace Apollo_Soundboard
 
         public static List<SoundItem> AllSounds = new List<SoundItem>();
 
-        private static List<WaveOut> PlayingSounds = new List<WaveOut>();
+        private static List<DirectSoundOut> PlayingSounds = new List<DirectSoundOut>();
 
         private static Soundboard form;
+
         public string FilePath { get; set; }
         public string Hotkey { 
             get {
                 return String.Join("+", Hotkeys.Select(i => i.ToString()).ToList()); 
             } 
         }
+        public float Gain = 0;
+
+        public bool HotkeyOrderMatters = false;
+
         private List<Keys> Hotkeys { get; set; }
 
         public static void SetForm(Soundboard _form)
@@ -52,10 +59,12 @@ namespace Apollo_Soundboard
 
         public SoundItem() { }
 
-        public SoundItem(List<Keys> _KeyCodes, string _FilePath)
+        public SoundItem(List<Keys> _KeyCodes, string _FilePath, float _Gain = 0, bool _HotkeyOrderMatters = false)
         {
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
+            Gain = _Gain;
+            HotkeyOrderMatters = _HotkeyOrderMatters;
             AllSounds.Add(this);
         }
 
@@ -65,27 +74,45 @@ namespace Apollo_Soundboard
             form.RefreshGrid();
         }
 
+
         private void PlayThroughDevice(string filePath, int deviceId, float gain)
         {
+
+            DirectSoundOut output = new(DirectSoundOut.Devices.ElementAt(deviceId).Guid);
+            PlayingSounds.Add(output);
+
+            AudioFileReader? reader = null;
+
             try
             {
 
-                var reader = new AudioFileReader(FilePath);
-                reader.Volume = gain;
-                var waveOut = new WaveOut();
-                waveOut.DeviceNumber = deviceId;
-                waveOut.Init(reader);
-                waveOut.Play();
-                PlayingSounds.Add(waveOut);
-                waveOut.PlaybackStopped += new EventHandler<StoppedEventArgs>(delegate (object o, StoppedEventArgs a)
+                reader = new AudioFileReader(FilePath);
+
+                var volumeSampleProvider = new VolumeSampleProvider(reader.ToSampleProvider());
+                volumeSampleProvider.Volume = gain;
+
+                output.PlaybackStopped += (object o, StoppedEventArgs a) =>
                 {
-                    PlayingSounds.Remove(waveOut);
+                   
+                    PlayingSounds.Remove(output);
                     reader.Dispose();
-                    waveOut.Dispose();
-                });
+                    output.Dispose();
+                };
+
+
+                output.Init(volumeSampleProvider);
+
+                output.Play();
+
+
+                
             }
             catch
             {
+                //I'm honestly not sure if this is needed but it seems like it is
+                output.Dispose();
+                if (reader != null) { reader.Dispose(); }
+
                 Debug.WriteLine("Can't keep up! Too many sounds playing at once probably.");
             }
 
@@ -93,9 +120,12 @@ namespace Apollo_Soundboard
 
         public void Play()
         {
-            PlayThroughDevice(FilePath, form.primaryOutput - 1, Settings.Default.PrimaryGain);
+            Debug.WriteLine($"Gain: {Gain}");
             if (form.secondaryOutput > 0)
-                PlayThroughDevice(FilePath, form.secondaryOutput - 2, Settings.Default.SecondaryGain);
+                PlayThroughDevice(FilePath, form.secondaryOutput - 1, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+
+            PlayThroughDevice(FilePath, form.primaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+
         }
 
         public List<Keys> GetHotkeys()
@@ -109,11 +139,10 @@ namespace Apollo_Soundboard
 
         public static void StopAllSounds()
         {
-            foreach (WaveOut sound in PlayingSounds)
+            foreach (DirectSoundOut sound in PlayingSounds)
             {
                 sound.Stop();
             }
-            PlayingSounds.Clear();
         }
 
 

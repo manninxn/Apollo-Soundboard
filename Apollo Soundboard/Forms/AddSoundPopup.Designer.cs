@@ -34,6 +34,13 @@
             this.Browse = new System.Windows.Forms.Button();
             this.FilePathBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.GainBar = new Apollo_Soundboard.NoFocusTrackBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.HotkeyOrderMattersCheckbox = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.GainBar)).BeginInit();
             this.SuspendLayout();
             // 
             // HotkeySelectorButton
@@ -42,11 +49,11 @@
             this.HotkeySelectorButton.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.HotkeySelectorButton.InactiveColor = System.Drawing.SystemColors.ActiveCaption;
             this.HotkeySelectorButton.isActive = false;
-            this.HotkeySelectorButton.Location = new System.Drawing.Point(14, 132);
+            this.HotkeySelectorButton.Location = new System.Drawing.Point(106, 79);
             this.HotkeySelectorButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.HotkeySelectorButton.MultiKey = true;
             this.HotkeySelectorButton.Name = "HotkeySelectorButton";
-            this.HotkeySelectorButton.Size = new System.Drawing.Size(527, 31);
+            this.HotkeySelectorButton.Size = new System.Drawing.Size(434, 31);
             this.HotkeySelectorButton.TabIndex = 0;
             this.HotkeySelectorButton.Text = "Click to select hotkey";
             this.HotkeySelectorButton.UseVisualStyleBackColor = false;
@@ -57,7 +64,7 @@
             this.ConfirmAdd.FlatAppearance.BorderSize = 0;
             this.ConfirmAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ConfirmAdd.ForeColor = System.Drawing.SystemColors.Control;
-            this.ConfirmAdd.Location = new System.Drawing.Point(455, 171);
+            this.ConfirmAdd.Location = new System.Drawing.Point(454, 209);
             this.ConfirmAdd.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ConfirmAdd.Name = "ConfirmAdd";
             this.ConfirmAdd.Size = new System.Drawing.Size(86, 31);
@@ -102,12 +109,84 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "File Path";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.SystemColors.Control;
+            this.label6.Location = new System.Drawing.Point(497, 176);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(45, 20);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "100%";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.SystemColors.Control;
+            this.label5.Location = new System.Drawing.Point(269, 173);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(17, 20);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.ForeColor = System.Drawing.SystemColors.Control;
+            this.label4.Location = new System.Drawing.Point(14, 173);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(51, 20);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "-100%";
+            // 
+            // GainBar
+            // 
+            this.GainBar.LargeChange = 10;
+            this.GainBar.Location = new System.Drawing.Point(14, 137);
+            this.GainBar.Maximum = 100;
+            this.GainBar.Minimum = -100;
+            this.GainBar.Name = "GainBar";
+            this.GainBar.Size = new System.Drawing.Size(526, 56);
+            this.GainBar.TabIndex = 11;
+            this.GainBar.TabStop = false;
+            this.GainBar.TickFrequency = 10;
+            this.GainBar.ValueChanged += new System.EventHandler(this.GainBar_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label2.ForeColor = System.Drawing.SystemColors.Control;
+            this.label2.Location = new System.Drawing.Point(14, 114);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 20);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Gain";
+            // 
+            // HotkeyOrderMatters
+            // 
+            this.HotkeyOrderMattersCheckbox.AutoSize = true;
+            this.HotkeyOrderMattersCheckbox.ForeColor = System.Drawing.SystemColors.Control;
+            this.HotkeyOrderMattersCheckbox.Location = new System.Drawing.Point(14, 209);
+            this.HotkeyOrderMattersCheckbox.Name = "HotkeyOrderMatters";
+            this.HotkeyOrderMattersCheckbox.Size = new System.Drawing.Size(174, 24);
+            this.HotkeyOrderMattersCheckbox.TabIndex = 15;
+            this.HotkeyOrderMattersCheckbox.Text = "Hotkey Order Matters";
+            this.HotkeyOrderMattersCheckbox.UseVisualStyleBackColor = true;
+            this.HotkeyOrderMattersCheckbox.CheckedChanged += new System.EventHandler(this.HotkeyOrderMatters_CheckedChanged);
+            // 
             // AddSoundPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.ClientSize = new System.Drawing.Size(554, 217);
+            this.ClientSize = new System.Drawing.Size(554, 253);
+            this.Controls.Add(this.HotkeyOrderMattersCheckbox);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.GainBar);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.FilePathBox);
             this.Controls.Add(this.Browse);
@@ -115,10 +194,11 @@
             this.Controls.Add(this.HotkeySelectorButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.MaximumSize = new System.Drawing.Size(572, 264);
-            this.MinimumSize = new System.Drawing.Size(572, 264);
+            this.MaximumSize = new System.Drawing.Size(572, 300);
+            this.MinimumSize = new System.Drawing.Size(572, 300);
             this.Name = "AddSoundPopup";
             this.Text = "Add Sound";
+            ((System.ComponentModel.ISupportInitialize)(this.GainBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,5 +211,11 @@
         private Button Browse;
         private TextBox FilePathBox;
         private Label label1;
+        private Label label6;
+        private Label label5;
+        private Label label4;
+        private NoFocusTrackBar GainBar;
+        private Label label2;
+        private CheckBox HotkeyOrderMattersCheckbox;
     }
 }

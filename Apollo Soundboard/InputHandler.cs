@@ -1,4 +1,7 @@
 ﻿using Gma.System.MouseKeyHook;
+using Newtonsoft.Json.Linq;
+using NUT_Soundboard.Importers;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Apollo_Soundboard
@@ -14,8 +17,7 @@ namespace Apollo_Soundboard
             _GlobalHook.KeyUp += KeyUpListener;
         }
 
-        static Dictionary<Keys, bool> PressedKeys = new Dictionary<Keys, bool>();
-
+        static List<Keys> PressedKeys = new();
         private static void KeyboardListener(object sender, KeyEventArgs e)
         {
             Keys keyCode = e.KeyCode switch
@@ -28,26 +30,22 @@ namespace Apollo_Soundboard
                 Keys.RMenu => Keys.Alt,
                 _ => e.KeyCode
             };
-            
-            PressedKeys[keyCode] = true;
+
+            if (!PressedKeys.Contains(keyCode))
+            {
+                PressedKeys.Add(keyCode);
+            }
+
             foreach (SoundItem sound in SoundItem.AllSounds)
             {
-                if (sound.GetHotkeys().Count > 0 && sound.GetHotkeys().All(x =>
-                {
-                    bool result;
-                    bool found = PressedKeys.TryGetValue(x, out result);
-                    return result && found;
-                }))
+                var lastN = PressedKeys.TakeLast(sound.GetHotkeys().Count());
+                var b = sound.GetHotkeys();
+                if (sound.HotkeyOrderMatters ? lastN.SequenceEqual(sound.GetHotkeys()) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), sound.GetHotkeys().OrderBy(e => e)))
                 {
                     sound.Play();
                 }
             }
-            if (SoundItem.ClearSounds.Count > 0 && SoundItem.ClearSounds.All(x =>
-            {
-                bool result;
-                bool found = PressedKeys.TryGetValue(x, out result);
-                return result && found;
-            }))
+            if (PressedKeys.TakeLast(SoundItem.ClearSounds.Count).SequenceEqual(SoundItem.ClearSounds))
             {
                 SoundItem.StopAllSounds();
             }
@@ -64,7 +62,7 @@ namespace Apollo_Soundboard
                 Keys.RMenu => Keys.Alt,
                 _ => e.KeyCode
             };
-            PressedKeys[keyCode] = false;
+            PressedKeys.Remove(keyCode);
 
         }
 

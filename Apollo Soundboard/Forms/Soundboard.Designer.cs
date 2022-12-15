@@ -80,6 +80,7 @@ namespace Apollo_Soundboard
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soundboard));
@@ -109,8 +110,12 @@ namespace Apollo_Soundboard
             this.EditButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.MicrophoneSelectComboBox = new Apollo_Soundboard.FlatCombo();
+            this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.NotifyBar = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
+            this.NotifyBar.SuspendLayout();
             this.SuspendLayout();
             // 
             // PrimaryOutputComboBox
@@ -149,7 +154,7 @@ namespace Apollo_Soundboard
             this.SoundGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.SoundGrid.EnableHeadersVisualStyles = false;
             this.SoundGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.SoundGrid.Location = new System.Drawing.Point(7, 31);
+            this.SoundGrid.Location = new System.Drawing.Point(12, 31);
             this.SoundGrid.MultiSelect = false;
             this.SoundGrid.Name = "SoundGrid";
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -185,8 +190,6 @@ namespace Apollo_Soundboard
             this.AddSoundButton.Text = "Add";
             this.AddSoundButton.UseVisualStyleBackColor = false;
             this.AddSoundButton.Click += new System.EventHandler(this.AddSoundButton_Click);
-            this.AddSoundButton.DragDrop += new System.Windows.Forms.DragEventHandler(this.AddSoundButton_DragDrop);
-            this.AddSoundButton.DragEnter += new System.Windows.Forms.DragEventHandler(this.AddSoundButton_DragEnter);
             // 
             // label1
             // 
@@ -284,7 +287,8 @@ namespace Apollo_Soundboard
             this.newToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.newToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(233, 26);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -293,7 +297,8 @@ namespace Apollo_Soundboard
             this.loadToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.loadToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.loadToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(233, 26);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
@@ -305,7 +310,7 @@ namespace Apollo_Soundboard
             this.soundpadToolStripMenuItem});
             this.Import.ForeColor = System.Drawing.SystemColors.Control;
             this.Import.Name = "Import";
-            this.Import.Size = new System.Drawing.Size(143, 26);
+            this.Import.Size = new System.Drawing.Size(233, 26);
             this.Import.Text = "Import";
             // 
             // eXPToolStripMenuItem
@@ -331,7 +336,8 @@ namespace Apollo_Soundboard
             this.saveToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.saveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(233, 26);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -340,7 +346,9 @@ namespace Apollo_Soundboard
             this.bToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.bToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.bToolStripMenuItem.Name = "bToolStripMenuItem";
-            this.bToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.bToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.bToolStripMenuItem.Size = new System.Drawing.Size(233, 26);
             this.bToolStripMenuItem.Text = "Save As";
             this.bToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
@@ -349,7 +357,9 @@ namespace Apollo_Soundboard
             this.quitToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.quitToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(143, 26);
+            this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.X)));
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(233, 26);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -456,8 +466,31 @@ namespace Apollo_Soundboard
             this.MicrophoneSelectComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.MicrophoneSelectComboBox_DrawItem);
             this.MicrophoneSelectComboBox.SelectedIndexChanged += new System.EventHandler(this.MicrophoneSelectComboBox_SelectedIndexChanged);
             // 
+            // NotifyIcon
+            // 
+            this.NotifyIcon.ContextMenuStrip = this.NotifyBar;
+            this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
+            this.NotifyIcon.Text = "Apollo Soundboard";
+            this.NotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseClick);
+            // 
+            // NotifyBar
+            // 
+            this.NotifyBar.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.NotifyBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.quitToolStripMenuItem1});
+            this.NotifyBar.Name = "NotifyBar";
+            this.NotifyBar.Size = new System.Drawing.Size(107, 28);
+            // 
+            // quitToolStripMenuItem1
+            // 
+            this.quitToolStripMenuItem1.Name = "quitToolStripMenuItem1";
+            this.quitToolStripMenuItem1.Size = new System.Drawing.Size(106, 24);
+            this.quitToolStripMenuItem1.Text = "Quit";
+            this.quitToolStripMenuItem1.Click += new System.EventHandler(this.quitToolStripMenuItem1_Click);
+            // 
             // Soundboard
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
@@ -485,9 +518,13 @@ namespace Apollo_Soundboard
             this.Text = "Apollo Soundboard";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Soundboard_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.File_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.File_DragEnter);
+            this.Resize += new System.EventHandler(this.Soundboard_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.NotifyBar.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -520,6 +557,9 @@ namespace Apollo_Soundboard
         private ToolStripMenuItem Import;
         private ToolStripMenuItem eXPToolStripMenuItem;
         private ToolStripMenuItem soundpadToolStripMenuItem;
+        private NotifyIcon NotifyIcon;
+        private ContextMenuStrip NotifyBar;
+        private ToolStripMenuItem quitToolStripMenuItem1;
     }
 
 }

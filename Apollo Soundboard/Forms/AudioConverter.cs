@@ -38,9 +38,11 @@ namespace Apollo_Soundboard.Forms
 
                     stream.SetCodec(output.ToLower().EndsWith(".mp3") ? AudioCodec.mp3 : AudioCodec.wavpack);
                 }
+                string codec = output.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) ? "pcm_s16le" : "libmp3lame";
+                Debug.Write(codec);
                 await FFmpeg.Conversions.New()
                 .AddParameter($"-i \"{input}\"")
-                .AddParameter("-y -c:a copy")
+                .AddParameter($"-y -c:a {codec}")
                 .SetOutput(output)
                 .SetOverwriteOutput(true)
                 .Start();

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System;
 using System.Diagnostics;
 using NUT_Soundboard.Importers;
+using System.Windows.Forms;
 
 namespace Apollo_Soundboard
 {
@@ -16,7 +17,7 @@ namespace Apollo_Soundboard
     {
         #region Properties
 
-        string _fileName = Settings.Default.FileName;
+        string _fileName = "";
         string fileName
         {
             get { return _fileName; }
@@ -25,6 +26,15 @@ namespace Apollo_Soundboard
                 _fileName = value;
                 Settings.Default.FileName = value;
                 Settings.Default.Save();
+
+                if(value != string.Empty)
+                {
+                    this.Text = $"Apollo Soundboard - {Path.GetFileName(value)}";
+                } else
+                {
+                    this.Text = "Apollo Soundboard";
+                }
+
             }
         }
 
@@ -86,19 +96,34 @@ namespace Apollo_Soundboard
             }
         }
 
-        bool saved = true;
+        bool _saved = true;
+        bool saved
+        {
+            get
+            {
+                return _saved;
+            }
+            set
+            {
+                if (value) this.Text = this.Text.TrimEnd('*');
+                else
+                {
+                    if(!this.Text.EndsWith("*")) this.Text = this.Text + "*";
+
+                }
+            }
+        }
 
         WaveIn? micStream; DirectSoundOut? virtualCable; BindingSource source;
 
         #endregion
 
-
-        public Soundboard()
+        public Soundboard(string? file)
         {
-
+            
             Debug.WriteLine(primaryOutput);
             InitializeComponent();
-
+            fileName = file ?? Settings.Default.FileName;
             var bindingList = new BindingList<SoundItem>(SoundItem.AllSounds);
             source = new BindingSource(bindingList, null);
             SoundGrid.DataSource = source;
@@ -161,17 +186,16 @@ namespace Apollo_Soundboard
             
             micStream.BufferMilliseconds = 30;
             micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Microphone).Channels);
-            Debug.WriteLine(Microphone);
+            if(Microphone > 0) Debug.WriteLine(new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[Microphone - 1].ToString());
             micStream.DeviceNumber = Microphone;
 
             WaveInProvider waveIn = new(micStream);
             
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
-            volumeSampleProvider.Volume = Settings.Default.MicrophoneGain;
+            volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
 
-            Debug.WriteLine(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Description);
             virtualCable = new(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Guid);
-            Debug.WriteLine(DirectSoundOut.Devices.ElementAt(secondaryOutput - 1).Description);
+
             virtualCable.Init(volumeSampleProvider);
 
             micStream.StartRecording();
@@ -229,7 +253,7 @@ namespace Apollo_Soundboard
             {
                 SaveFileDialog saveFileSelector = new SaveFileDialog();
                 //openfiledialog filter is only audio files
-                saveFileSelector.Filter = "JSON files (*.JSON)|*.JSON";
+                saveFileSelector.Filter = "Apollo Soundboard files (*.asb)|*.asb";
                 DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
                 if (result == DialogResult.OK) // Test result.
                 {
@@ -255,10 +279,18 @@ namespace Apollo_Soundboard
         {
             OpenFileDialog saveFileSelector = new OpenFileDialog();
             //openfiledialog filter is only audio files
-            saveFileSelector.Filter = "JSON files (*.JSON)|*.JSON";
+            saveFileSelector.Filter = "Apollo Soundboard files (*.asb)|*.asb";
             DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
+                if (!saved)
+                {
+                    UnsavedChanges prompt = new UnsavedChanges();
+                    if (prompt.ShowDialog() == DialogResult.Yes)
+                    {
+                        Save(false);
+                    }
+                }
                 fileName = saveFileSelector.FileName;
                 LoadFile();
             }
@@ -271,6 +303,15 @@ namespace Apollo_Soundboard
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!saved)
+            {
+                UnsavedChanges prompt = new UnsavedChanges();
+                var result = prompt.ShowDialog();
+                if (result == DialogResult.Yes)
+                {
+                    Save(false);
+                }
+            }
             fileName = string.Empty;
             SoundItem.AllSounds.Clear();
             RefreshGrid();
@@ -342,7 +383,7 @@ namespace Apollo_Soundboard
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
             {
-                new SoundItem(popup.Hotkeys, popup.FileName);
+                new SoundItem(popup.Hotkeys, popup.FileName, popup.Gain, popup.HotkeyOrderMatters);
                 RefreshGrid();
                 saved = false;
             }
@@ -356,13 +397,15 @@ namespace Apollo_Soundboard
                 var row = SoundGrid.SelectedRows[0];
                 SoundItem sound = SoundItem.AllSounds[row.Index];
 
-                AddSoundPopup popup = new AddSoundPopup(sound.FilePath, sound.GetHotkeys());
+                AddSoundPopup popup = new AddSoundPopup(sound.FilePath, sound.GetHotkeys(), sound.Gain, sound.HotkeyOrderMatters);
                 var result = popup.ShowDialog();
                 Debug.WriteLine(result);
                 if (result == DialogResult.OK)
                 {
                     sound.SetHotkeys(popup.Hotkeys);
                     sound.FilePath = popup.FileName;
+                    sound.Gain = popup.Gain;
+                    sound.HotkeyOrderMatters = popup.HotkeyOrderMatters;
                     RefreshGrid();
                     saved = false;
                 }
@@ -430,7 +473,25 @@ namespace Apollo_Soundboard
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason != CloseReason.ApplicationExitCall) ExitApplication();
+
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            
+            base.OnFormClosing(e);
+            
+            if (e.CloseReason == CloseReason.WindowsShutDown) return;
+
+            if (e.CloseReason != CloseReason.ApplicationExitCall)
+            {
+                e.Cancel = true;
+                Hide();
+                NotifyIcon.Visible = true;
+                NotifyIcon.BalloonTipText = "Your soundboard hotkeys will still work.";
+                NotifyIcon.BalloonTipTitle = "Apollo is running in the background";
+                NotifyIcon.ShowBalloonTip(500);
+            }
         }
 
         private void SoundGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -455,7 +516,7 @@ namespace Apollo_Soundboard
         {
             OpenFileDialog saveFileSelector = new OpenFileDialog();
             //openfiledialog filter is only audio files
-            saveFileSelector.Filter = "JSON files (*.JSON)|*.JSON";
+            saveFileSelector.Filter = "JSON files (*.json)|*.json";
             DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
@@ -481,7 +542,7 @@ namespace Apollo_Soundboard
             }
         }
 
-        private void AddSoundButton_DragDrop(object sender, DragEventArgs e)
+        private void File_DragDrop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -505,7 +566,7 @@ namespace Apollo_Soundboard
             }
         }
 
-        private void AddSoundButton_DragEnter(object sender, DragEventArgs e)
+        private void File_DragEnter(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -520,6 +581,37 @@ namespace Apollo_Soundboard
                 }
             }
         }
+
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                this.Show();
+                NotifyIcon.Visible = false;
+            }
+        }
+
+        private void Soundboard_Resize(object sender, EventArgs e)
+        {
+            if (FormWindowState.Minimized == this.WindowState)
+            {
+                NotifyIcon.Visible = true;
+                Hide();
+            }
+
+            else if (FormWindowState.Normal == this.WindowState)
+            {
+                NotifyIcon.Visible = false;
+            }
+        }
+
+        private void quitToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            
+            Show();
+            ExitApplication();
+        }
+
     }
 
     //lol

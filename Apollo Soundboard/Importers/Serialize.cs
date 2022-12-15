@@ -3,19 +3,30 @@ using Apollo_Soundboard;
 
 namespace NUT_Soundboard.Importers
 {
-
+    public struct SoundData
+    {
+        public string FilePath { get; set; }
+        public float Gain { get; set; }
+        public int[] Hotkeys { get; set; }
+        public bool HotkeyOrderMatters { get; set; }
+    }
     public static class Serializer
     {
         public static string Serialize(List<SoundItem> sounds)
         {
-            Dictionary<string, int[]> entries = new();
+            List<SoundData> entries = new();
 
             foreach (SoundItem sound in sounds)
             {
-                entries.Add(sound.FilePath, sound.GetHotkeys().Select(i => (int)i).ToArray());
+                SoundData data = new SoundData();
+                data.Gain = sound.Gain;
+                data.FilePath = sound.FilePath;
+                data.Hotkeys = sound.GetHotkeys().Select(i => (int)i).ToArray();
+                data.HotkeyOrderMatters = sound.HotkeyOrderMatters;
+                entries.Add(data);
             }
 
-            string jsonString = JsonSerializer.Serialize(entries);
+            string jsonString = JsonSerializer.Serialize(entries, new JsonSerializerOptions() { WriteIndented = true });
 
             return jsonString;
         }
@@ -28,31 +39,38 @@ namespace NUT_Soundboard.Importers
 
         public static List<SoundItem> Deserialize(string json)
         {
-            Dictionary<string, int[]> entries = JsonSerializer.Deserialize<Dictionary<string, int[]>>(json);
 
-            var sounds = new List<SoundItem>();
-            if (entries == null) return sounds;
+                List<SoundData>? entries = JsonSerializer.Deserialize<List<SoundData>>(json);
 
-            foreach (KeyValuePair<string, int[]> item in entries)
-            {
-                SoundItem sound = new SoundItem();
-                var keys = new List<Keys>();
+                var sounds = new List<SoundItem>();
+                if (entries == null) return sounds;
 
-                sound.SetHotkeys(Array.ConvertAll(item.Value, (i) => { return (Keys)i; }).ToList());
-                sound.FilePath = item.Key;
+                foreach (SoundData item in entries)
+                {
+                    SoundItem sound = new SoundItem();
+                    var keys = new List<Keys>();
 
-                sounds.Add(sound);
-            }
+                    sound.SetHotkeys(Array.ConvertAll(item.Hotkeys, (i) => { return (Keys)i; }).ToList());
+                    sound.FilePath = item.FilePath;
+                    sound.Gain = item.Gain;
+                    sound.HotkeyOrderMatters = item.HotkeyOrderMatters;
+                    sounds.Add(sound);
+                }
 
-            return sounds;
+                return sounds;
+
 
         }
 
         public static List<SoundItem> DeserializeFile(string filePath)
         {
-            string json = File.ReadAllText(filePath);
-            return Deserialize(json);
-        }
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                return Deserialize(json);
+            } catch { return new List<SoundItem>(); }
+            }
+
 
     }
 }
