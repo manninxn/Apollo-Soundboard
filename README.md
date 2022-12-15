@@ -1,4 +1,4 @@
-# Apollo-Soundboard
+# Apollo Soundboard
 A free, open source soundboard written in .NET for Windows
 
 # How to Use
