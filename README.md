@@ -1,5 +1,5 @@
 # Apollo-Soundboard
-An open source soundboard written in .NET for Windows
+A free, open source soundboard written in .NET for Windows
 
 # How to Use
 Download the latest release and run *Apollo Soundboard.exe*
