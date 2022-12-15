@@ -1,4 +1,5 @@
 ﻿using Apollo_Soundboard.Properties;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
@@ -36,14 +37,19 @@ namespace Apollo_Soundboard
 
         public static List<SoundItem> AllSounds = new List<SoundItem>();
 
-        private static List<DirectSoundOut> PlayingSounds = new List<DirectSoundOut>();
+        private static List<WasapiOut> PlayingSounds = new List<WasapiOut>();
 
         private static Soundboard form;
 
-        public string FilePath { get; set; }
+        public string FilePath;
+        public string FileName { get
+            {
+                return Path.GetFileName(FilePath);
+            }
+        }
         public string Hotkey { 
             get {
-                return String.Join("+", Hotkeys.Select(i => i.ToString()).ToList()); 
+                return String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList()); 
             } 
         }
         public float Gain = 0;
@@ -75,10 +81,10 @@ namespace Apollo_Soundboard
         }
 
 
-        private void PlayThroughDevice(string filePath, int deviceId, float gain)
+        private void PlayThroughDevice(string filePath, MMDevice Device, float gain)
         {
 
-            DirectSoundOut output = new(DirectSoundOut.Devices.ElementAt(deviceId).Guid);
+            var output = new WasapiOut(Device, AudioClientShareMode.Shared, false, 0);
             PlayingSounds.Add(output);
 
             AudioFileReader? reader = null;
@@ -121,10 +127,10 @@ namespace Apollo_Soundboard
         public void Play()
         {
             Debug.WriteLine($"Gain: {Gain}");
-            if (form.secondaryOutput > 0)
-                PlayThroughDevice(FilePath, form.secondaryOutput - 1, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            if (form.secondaryOutput != "None")
+                PlayThroughDevice(FilePath, form.SecondaryDevice, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
-            PlayThroughDevice(FilePath, form.primaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+            PlayThroughDevice(FilePath, form.PrimaryDevice, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
 
         }
 
@@ -139,7 +145,7 @@ namespace Apollo_Soundboard
 
         public static void StopAllSounds()
         {
-            foreach (DirectSoundOut sound in PlayingSounds)
+            foreach (WasapiOut sound in PlayingSounds)
             {
                 sound.Stop();
             }

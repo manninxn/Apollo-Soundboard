@@ -1,4 +1,4 @@
-﻿namespace NUT_Soundboard.Forms
+﻿namespace Apollo_Soundboard.Forms
 {
     partial class FFMPEGNotFound
     {
