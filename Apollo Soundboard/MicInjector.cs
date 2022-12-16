@@ -1,4 +1,5 @@
 ﻿using Apollo_Soundboard.Properties;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
@@ -43,8 +44,17 @@ namespace Apollo_Soundboard
 
             micStream = new WaveInEvent();
 
+            
+
             micStream.BufferMilliseconds = 50;
             micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Microphone).Channels);
+
+            var enumerator = new MMDeviceEnumerator();
+            if(Soundboard.Microphone > -1) Debug.WriteLine($"{Soundboard.Microphone}: {WaveIn.GetCapabilities(Soundboard.Microphone).ProductName} || {enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[Soundboard.Microphone].FriendlyName}");
+
+            enumerator.Dispose();
+
+
             micStream.DeviceNumber = Soundboard.Microphone;
 
             WaveInProvider waveIn = new(micStream);

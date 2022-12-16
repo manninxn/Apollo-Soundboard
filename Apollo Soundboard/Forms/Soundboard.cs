@@ -129,7 +129,7 @@ namespace Apollo_Soundboard
                 if (i >= 0) name = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].FriendlyName;
                 var caps = WaveOut.GetCapabilities(i);
                 Devices.Add(i, name);
-                DevicesWithNone.Add(i, name);
+                DevicesWithNone.Add(i, caps.ProductName);
             }
 
 
@@ -138,9 +138,13 @@ namespace Apollo_Soundboard
             for (int i = -1; i < WaveIn.DeviceCount; i++)
             {
                 string name = "Primary Audio Driver";
-                if (i >= 0) name = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i].FriendlyName;
                 var caps = WaveIn.GetCapabilities(i);
-                Microphones.Add(i, name);
+                Microphones.Add(i, caps.ProductName);
+                if (i < 0) continue;
+                    var a = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i];
+                 name = a.DeviceFriendlyName;
+
+                
             }
 
 

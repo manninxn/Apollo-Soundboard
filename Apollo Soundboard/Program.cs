@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Apollo_Soundboard
 {
     internal static class Program
@@ -9,6 +11,13 @@ namespace Apollo_Soundboard
         [STAThread]
         static void Main(string[] args)
         {
+           StringBuilder stringBuilder= new StringBuilder();
+            foreach(Keys key in Enum.GetValues(typeof(Keys)))
+            {
+                stringBuilder.Append($"{(int)key} -- {key.ToString()}\n");
+            }
+            File.WriteAllText("Z:\\Github\\Apollo Soundboard\\Apollo Soundboard\\TextFile2.txt", stringBuilder.ToString());
+
             FileAssociations.EnsureAssociationsSet();
 
             const string appName = "Apollo Soundboard";

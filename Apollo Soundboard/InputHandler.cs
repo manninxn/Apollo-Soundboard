@@ -106,7 +106,7 @@ namespace Apollo_Soundboard
                 Keys.D7 => "7",
                 Keys.D8 => "8",
                 Keys.D9 => "9",
-                Keys.Oemplus => "Plus",
+                Keys.Oemplus => "Equals",
                 Keys.OemMinus => "Minus",
                 Keys.OemQuestion => "Forward Slash",
                 Keys.Oemcomma => "Comma",
