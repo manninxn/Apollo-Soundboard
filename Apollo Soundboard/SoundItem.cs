@@ -100,7 +100,7 @@ namespace Apollo_Soundboard
                 var volumeSampleProvider = new VolumeSampleProvider(reader.ToSampleProvider());
                 volumeSampleProvider.Volume = gain;
 
-                output.PlaybackStopped += (object o, StoppedEventArgs a) =>
+                output.PlaybackStopped += (object? o, StoppedEventArgs a) =>
                 {
 
                     PlayingSounds.Remove(output);
@@ -130,10 +130,10 @@ namespace Apollo_Soundboard
         public void Play()
         {
             Debug.WriteLine($"Gain: {Gain}");
-            if (Soundboard.secondaryOutput != -2)
-                PlayThroughDevice(FilePath, Soundboard.secondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            if (Devices.SecondaryOutput != -2)
+                PlayThroughDevice(FilePath, Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
-            PlayThroughDevice(FilePath, Soundboard.primaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+            PlayThroughDevice(FilePath, Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
 
         }
 

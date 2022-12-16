@@ -3,12 +3,14 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Apollo_Soundboard
 {
+    
     public static class MicInjector
     {
-        static WaveInEvent? micStream; static DirectSoundOut? virtualCable;
+        static WaveInEvent? micStream; static WaveOutEvent? virtualCable;
 
         private static bool _Enabled = Settings.Default.MicInjector;
 
@@ -32,40 +34,41 @@ namespace Apollo_Soundboard
             }
         }
 
-        static MicInjector()
+        public static void Initialize()
         {
-            Enabled = _Enabled;
+            if(_Enabled) Start();
+            Devices.DevicesUpdated += Devices_DevicesUpdated;
         }
 
+        private static void Devices_DevicesUpdated(object? sender, EventArgs e)
+        {
+
+            Debug.WriteLine("Updated");
+        }
 
         public static void Start()
         {
-            if (Soundboard.secondaryOutput == -2) return;
+            
+            if (Devices.SecondaryOutput == -2) return;
 
-            micStream = new WaveInEvent();
+            micStream = new();
 
             
 
             micStream.BufferMilliseconds = 50;
-            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Microphone).Channels);
+            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Devices.Microphone).Channels);
 
-            var enumerator = new MMDeviceEnumerator();
-            if(Soundboard.Microphone > -1) Debug.WriteLine($"{Soundboard.Microphone}: {WaveIn.GetCapabilities(Soundboard.Microphone).ProductName} || {enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[Soundboard.Microphone].FriendlyName}");
-
-            enumerator.Dispose();
-
-
-            micStream.DeviceNumber = Soundboard.Microphone;
+            micStream.DeviceNumber = Devices.Microphone;
 
             WaveInProvider waveIn = new(micStream);
 
-
+            
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
 
-
-            virtualCable = new(DirectSoundOut.Devices.ElementAt(Soundboard.secondaryOutput + 1).Guid);
-
+            virtualCable = new();
+            virtualCable.DesiredLatency = 150;
+            virtualCable.DeviceNumber = Devices.SecondaryOutput;
             virtualCable.Init(volumeSampleProvider);
 
             micStream.StartRecording();
@@ -74,14 +77,26 @@ namespace Apollo_Soundboard
         }
         public static void Stop()
         {
-
-            if (micStream != null && virtualCable != null)
+            try
             {
-                micStream.StopRecording();
-                virtualCable.Stop();
-                micStream.Dispose();
-                virtualCable.Dispose();
-                Debug.WriteLine("Stopped");
+                if (micStream != null && virtualCable != null)
+                {
+
+
+                    micStream.Dispose();
+
+                    virtualCable.Dispose();
+
+                    micStream = null;
+
+                    virtualCable = null;
+
+                }
+            } catch
+            {
+                micStream = null;
+
+                virtualCable = null;
             }
         }
         public static void Refresh()

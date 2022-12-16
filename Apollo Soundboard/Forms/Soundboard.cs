@@ -38,53 +38,6 @@ namespace Apollo_Soundboard
 
 
 
-        static int _primary = Settings.Default.PrimaryOutput;
-        public static int primaryOutput
-        {
-            get
-            {
-                return _primary;
-            }
-            set
-            {
-                _primary = value;
-                Settings.Default.PrimaryOutput = value;
-                Settings.Default.Save();
-
-            }
-        }
-
-        static int _secondary = Settings.Default.SecondaryOutput;
-        public static int secondaryOutput
-        {
-            get
-            {
-                return _secondary;
-            }
-            set
-            {
-                _secondary = value;
-                Settings.Default.SecondaryOutput = value;
-                Settings.Default.Save();
-            }
-        }
-
-
-        static int _microphone = Settings.Default.Microphone;
-        public static int Microphone
-        {
-            get
-            {
-                return _microphone;
-            }
-            set
-            {
-                _microphone = value;
-                Settings.Default.Microphone = value;
-                Settings.Default.Save();
-            }
-        }
-
         bool _saved = true;
         bool saved
         {
@@ -103,68 +56,40 @@ namespace Apollo_Soundboard
             }
         }
 
-        BindingSource source;
+        BindingSource SoundListBindingSource;
+
 
         #endregion
 
         public Soundboard(string? file)
         {
-            int primaryIndex = primaryOutput + 1, secondaryIndex = secondaryOutput + 2, microphoneIndex = Microphone + 1;
-            Debug.WriteLine(primaryOutput);
+
             InitializeComponent();
+            Devices.Initialize();
+            MicInjector.Initialize();
             fileName = file ?? Settings.Default.FileName;
             var bindingList = new BindingList<SoundItem>(SoundItem.AllSounds);
-            source = new BindingSource(bindingList, null);
-            SoundGrid.DataSource = source;
 
-            var Devices = new Dictionary<int, string>();
-            var DevicesWithNone = new Dictionary<int, string>() { { -2, "None" } };
-            var Microphones = new Dictionary<int, string>();
+            SoundListBindingSource = new BindingSource(bindingList, null);
+            SoundGrid.DataSource = SoundListBindingSource;
 
 
-            var enumerator = new MMDeviceEnumerator();
-            for (int i = -1; i < WaveOut.DeviceCount; i++)
-            {
-                string name = "Primary Audio Driver";
-                if (i >= 0) name = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)[i].FriendlyName;
-                var caps = WaveOut.GetCapabilities(i);
-                Devices.Add(i, name);
-                DevicesWithNone.Add(i, caps.ProductName);
-            }
+            int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
 
-
-
-
-            for (int i = -1; i < WaveIn.DeviceCount; i++)
-            {
-                string name = "Primary Audio Driver";
-                var caps = WaveIn.GetCapabilities(i);
-                Microphones.Add(i, caps.ProductName);
-                if (i < 0) continue;
-                    var a = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active)[i];
-                 name = a.DeviceFriendlyName;
-
-                
-            }
-
-
-            enumerator.Dispose();
-
-
-            int micTemp = Microphone;
-
-            PrimaryOutputComboBox.DataSource = new BindingSource(Devices, null);
+            
             PrimaryOutputComboBox.DisplayMember = "Value";
             PrimaryOutputComboBox.ValueMember = "Key";
+            PrimaryOutputComboBox.DataSource = Devices.PrimaryDeviceBindingSource;
 
-            SecondaryOutputComboBox.DataSource = new BindingSource(DevicesWithNone, null);
+           
             SecondaryOutputComboBox.DisplayMember = "Value";
             SecondaryOutputComboBox.ValueMember = "Key";
+            SecondaryOutputComboBox.DataSource = Devices.SecondaryDeviceBindingSource;
 
-
-            MicrophoneSelectComboBox.DataSource = new BindingSource(Microphones, null);
+            
             MicrophoneSelectComboBox.DisplayMember = "Value";
             MicrophoneSelectComboBox.ValueMember = "Key";
+            MicrophoneSelectComboBox.DataSource = Devices.MicrophoneBindingSource;
 
             try
             {
@@ -188,18 +113,53 @@ namespace Apollo_Soundboard
 
             StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => i.ToString()).ToList());
 
+            Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            Devices.DevicesUpdated += RefreshDeviceSelectors;
 
         }
 
         #region Helper Methods
 
+        public void RefreshDeviceSelectors(object? sender, EventArgs e)
+        { 
+            //bring it around town
+            Invoke(delegate()
+            {
+                bool temp = MicInjector.Enabled;
+                MicInjector.Enabled = false;
 
+                Devices.Initialize();
+
+                PrimaryOutputComboBox.DataSource = null;
+                PrimaryOutputComboBox.DisplayMember = "Value";
+                PrimaryOutputComboBox.ValueMember = "Key";
+                PrimaryOutputComboBox.DataSource = Devices.PrimaryDeviceBindingSource;
+                PrimaryOutputComboBox.SelectedIndex = 0;
+
+                SecondaryOutputComboBox.DataSource = null;
+                SecondaryOutputComboBox.DisplayMember = "Value";
+                SecondaryOutputComboBox.ValueMember = "Key";
+                SecondaryOutputComboBox.DataSource = Devices.SecondaryDeviceBindingSource;
+               SecondaryOutputComboBox.SelectedIndex = 0;
+
+                MicrophoneSelectComboBox.DataSource = null;
+                MicrophoneSelectComboBox.DisplayMember = "Value";
+                MicrophoneSelectComboBox.ValueMember = "Key";
+                MicrophoneSelectComboBox.DataSource = Devices.MicrophoneBindingSource;
+                MicrophoneSelectComboBox.SelectedIndex = 0;
+
+                MicInjector.Enabled = temp;
+
+            });
+            
+
+        }
         public void RefreshGrid()
         {
 
             SoundItem.AllSounds = sortDirection == ListSortDirection.Ascending ? SoundItem.AllSounds.OrderBy(i => i.Hotkey).ToList() : SoundItem.AllSounds.OrderByDescending(i => i.Hotkey).ToList();
-            source.DataSource = SoundItem.AllSounds;
-            source.ResetBindings(false);
+            SoundListBindingSource.DataSource = SoundItem.AllSounds;
+            SoundListBindingSource.ResetBindings(false);
 
         }
 
@@ -388,24 +348,7 @@ namespace Apollo_Soundboard
         #endregion
 
         #region Device Selectors
-        private void MicrophoneSelectComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Microphone = ((KeyValuePair<int, string>)MicrophoneSelectComboBox.SelectedItem).Key;
-            MicInjector.Refresh();
-        }
 
-        private void PrimaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            primaryOutput = ((KeyValuePair<int, string>)PrimaryOutputComboBox.SelectedItem).Key;
-            MicInjector.Refresh();
-        }
-
-        private void SecondaryOutputComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            secondaryOutput = ((KeyValuePair<int, string>)SecondaryOutputComboBox.SelectedItem).Key;
-            Debug.WriteLine(secondaryOutput);
-            MicInjector.Refresh();
-        }
         private void PrimaryOutputComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
             int index = e.Index >= 0 ? e.Index : 0;

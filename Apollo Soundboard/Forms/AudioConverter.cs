@@ -49,6 +49,7 @@ namespace Apollo_Soundboard.Forms
             }
             catch (FFmpegNotFoundException ex)
             {
+                Debug.WriteLine(ex.Message);
                 FFMPEGNotFound error = new FFMPEGNotFound();
                 if (error.ShowDialog() == DialogResult.Yes)
                 {

@@ -131,7 +131,7 @@ namespace Apollo_Soundboard
             this.PrimaryOutputComboBox.Size = new System.Drawing.Size(601, 28);
             this.PrimaryOutputComboBox.TabIndex = 1;
             this.PrimaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.PrimaryOutputComboBox_DrawItem);
-            this.PrimaryOutputComboBox.SelectedIndexChanged += new System.EventHandler(this.PrimaryOutputComboBox_SelectedIndexChanged);
+            this.PrimaryOutputComboBox.SelectionChangeCommitted += new System.EventHandler(Devices.PrimaryOutputSelect);
             // 
             // SoundGrid
             // 
@@ -225,7 +225,7 @@ namespace Apollo_Soundboard
             this.SecondaryOutputComboBox.Size = new System.Drawing.Size(601, 28);
             this.SecondaryOutputComboBox.TabIndex = 6;
             this.SecondaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecondaryOutputComboBox_DrawItem);
-            this.SecondaryOutputComboBox.SelectedIndexChanged += new System.EventHandler(this.SecondaryOutputComboBox_SelectedIndexChanged);
+            this.SecondaryOutputComboBox.SelectionChangeCommitted += new System.EventHandler(Devices.SecondaryOutputSelect);
             // 
             // MicInjectorToggle
             // 
@@ -465,7 +465,7 @@ namespace Apollo_Soundboard
             this.MicrophoneSelectComboBox.Size = new System.Drawing.Size(601, 28);
             this.MicrophoneSelectComboBox.TabIndex = 15;
             this.MicrophoneSelectComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.MicrophoneSelectComboBox_DrawItem);
-            this.MicrophoneSelectComboBox.SelectedIndexChanged += new System.EventHandler(this.MicrophoneSelectComboBox_SelectedIndexChanged);
+            this.MicrophoneSelectComboBox.SelectionChangeCommitted += new System.EventHandler(Devices.MicrophoneSelect);
             // 
             // NotifyIcon
             // 
