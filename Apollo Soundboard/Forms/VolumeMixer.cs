@@ -36,7 +36,7 @@ namespace Apollo_Soundboard
         {
             Settings.Default.MicrophoneGain = Remap(trackBar3.Value, trackBar3.Minimum, trackBar3.Maximum, -1, 1);
             Settings.Default.Save();
-            MicInjector.Refresh();
+            Soundboard.MicInjector.Refresh();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text;
 
 namespace Apollo_Soundboard
@@ -11,8 +12,8 @@ namespace Apollo_Soundboard
         [STAThread]
         static void Main(string[] args)
         {
-           StringBuilder stringBuilder= new StringBuilder();
-            foreach(Keys key in Enum.GetValues(typeof(Keys)))
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (Keys key in Enum.GetValues(typeof(Keys)))
             {
                 stringBuilder.Append($"{(int)key} -- {key.ToString()}\n");
             }
@@ -46,5 +47,48 @@ namespace Apollo_Soundboard
         }
 
 
+
+    }
+
+    public class OptimizedBindingList<I> : BindingList<I>
+    {
+        private readonly List<I> _baseList;
+
+        public OptimizedBindingList() : this(new List<I>())
+        {
+
+        }
+
+        public OptimizedBindingList(List<I> baseList) : base(baseList)
+        {
+            if (baseList == null)
+                throw new ArgumentNullException();
+            _baseList = baseList;
+        }
+
+        public void AddRange(IEnumerable<I> vals)
+        {
+            ICollection<I> collection = vals as ICollection<I>;
+            if (collection != null)
+            {
+                int requiredCapacity = Count + collection.Count;
+                if (requiredCapacity > _baseList.Capacity)
+                    _baseList.Capacity = requiredCapacity;
+            }
+
+            bool restore = RaiseListChangedEvents;
+            try
+            {
+                RaiseListChangedEvents = false;
+                foreach (I v in vals)
+                    Add(v); // We cant call _baseList.Add, otherwise Events wont get hooked.
+            }
+            finally
+            {
+                RaiseListChangedEvents = restore;
+                if (RaiseListChangedEvents)
+                    ResetBindings();
+            }
+        }
     }
 }

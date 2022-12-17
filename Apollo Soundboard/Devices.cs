@@ -1,23 +1,14 @@
 ﻿using Apollo_Soundboard.Properties;
 using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Apollo_Soundboard
 {
-    public static class Devices
+    public class DeviceManager
     {
-        static int _primary = Settings.Default.PrimaryOutput;
-        public static int PrimaryOutput
+        int _primary = Settings.Default.PrimaryOutput;
+        public int PrimaryOutput
         {
             get
             {
@@ -32,8 +23,8 @@ namespace Apollo_Soundboard
             }
         }
 
-        static int _secondary = Settings.Default.SecondaryOutput;
-        public static int SecondaryOutput
+        int _secondary = Settings.Default.SecondaryOutput;
+        public int SecondaryOutput
         {
             get
             {
@@ -48,8 +39,8 @@ namespace Apollo_Soundboard
         }
 
 
-        static int _microphone = Settings.Default.Microphone;
-        public static int Microphone
+        int _microphone = Settings.Default.Microphone;
+        public int Microphone
         {
             get
             {
@@ -63,27 +54,27 @@ namespace Apollo_Soundboard
             }
         }
 
-        public static SortedDictionary<int, string> PrimaryDevices = new();
-        public static SortedDictionary<int, string> SecondaryDevices = new() { { -2, "None" } };
-        public static SortedDictionary<int, string> Microphones = new();
+        public OptimizedBindingList<KeyValuePair<int, string>> PrimaryDevices = new();
+        public OptimizedBindingList<KeyValuePair<int, string>> SecondaryDevices = new();
+        public OptimizedBindingList<KeyValuePair<int, string>> Microphones = new();
 
-        public static BindingSource PrimaryDeviceBindingSource = new(PrimaryDevices, null);
-        public static BindingSource SecondaryDeviceBindingSource = new(SecondaryDevices, null);
-        public static BindingSource MicrophoneBindingSource = new(Microphones, null);
+        private MMDeviceEnumerator enumerator = new();
 
-        private static readonly MMDeviceEnumerator enumerator = new();
+        public event EventHandler<EventArgs>? DevicesUpdated;
 
-        public static event EventHandler<EventArgs>? DevicesUpdated;
-        static Devices()
+        public DeviceManager()
         {
             enumerator.RegisterEndpointNotificationCallback(new NotificationClientImplementation());
         }
-        public static void Initialize()
+        public void Refresh()
         {
-            
+            var tempPrimary = new OptimizedBindingList<KeyValuePair<int, string>>();
+            var tempSecondary = new OptimizedBindingList<KeyValuePair<int, string>>();
+            var tempMicrophones = new OptimizedBindingList<KeyValuePair<int, string>>();
+
             PrimaryDevices.Clear();
             SecondaryDevices.Clear();
-            SecondaryDevices.Add(-2, "None");
+            tempSecondary.Add(new(-2, "None"));
             Microphones.Clear();
 
             //fix mapping
@@ -96,71 +87,74 @@ namespace Apollo_Soundboard
             outputDevices.RemoveAt(defaultOutputIndex);
             outputDevices.Insert(0, defaultOutputDevice);
 
-            for (int i = -1; i < WaveOut.DeviceCount; i++)
-            {
-                string name = "Primary Audio Driver";
-                if (i >= 0) name = outputDevices[i].FriendlyName;
-                PrimaryDevices.Add(i, name);
-                SecondaryDevices.Add(i, name);
-                Debug.WriteLine($"Added {name}");
-            }
-
             var inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
             var defaultInputDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
-            int defaultInputIndex = inputDevices.FindIndex(delegate(MMDevice dev)
+            int defaultInputIndex = inputDevices.FindIndex(delegate (MMDevice dev)
             {
                 return dev.ID == defaultInputDevice.ID;
             });
             inputDevices.RemoveAt(defaultInputIndex);
             inputDevices.Insert(0, defaultInputDevice);
 
+
+            for (int i = -1; i < WaveOut.DeviceCount; i++)
+            {
+                string name = "Primary Audio Driver";
+
+                if (i >= 0) name = outputDevices[i].FriendlyName;
+                tempPrimary.Add(new(i, name));
+                tempSecondary.Add(new(i, name));
+
+                Debug.WriteLine($"Added {name}");
+            }
+
             for (int i = -1; i < WaveIn.DeviceCount; i++)
             {
                 string name = "Primary Audio Driver";
                 var caps = WaveIn.GetCapabilities(i);
-                
+
                 if (i >= 0) name = inputDevices[i].FriendlyName;
-                Microphones.Add(i, name);
+                tempMicrophones.Add(new(i, name));
+
                 Debug.WriteLine($"Added {name}");
 
             }
 
+            PrimaryDevices.AddRange(tempPrimary);
+            SecondaryDevices.AddRange(tempSecondary);
+            Microphones.AddRange(tempMicrophones);
 
-        PrimaryDeviceBindingSource = new(PrimaryDevices, null);
-        SecondaryDeviceBindingSource = new(SecondaryDevices, null);
-        MicrophoneBindingSource = new(Microphones, null);
-            
         }
 
-        public static void UpdateDevices()
+        public void OnDevicesUpdated()
         {
-            DevicesUpdated?.Invoke(null, new());
+            DevicesUpdated?.Invoke(this, new());
         }
 
 
         #region Selection
-        public static void MicrophoneSelect(object sender, EventArgs e)
+        public void MicrophoneSelect(object sender, EventArgs e)
         {
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
-           Microphone = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
-            //MicInjector.Refresh();
+            Microphone = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
+            Soundboard.MicInjector.Refresh();
         }
 
-        public static void PrimaryOutputSelect(object sender, EventArgs e)
+        public void PrimaryOutputSelect(object sender, EventArgs e)
         {
             ComboBox box = (ComboBox)sender;
-            if(box.SelectedItem == null) return;
+            if (box.SelectedItem == null) return;
             PrimaryOutput = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
-            //MicInjector.Refresh();
+            Soundboard.MicInjector.Refresh();
         }
 
-        public static void SecondaryOutputSelect(object sender, EventArgs e)
+        public void SecondaryOutputSelect(object sender, EventArgs e)
         {
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             SecondaryOutput = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
-            //MicInjector.Refresh();
+            Soundboard.MicInjector.Refresh();
         }
         #endregion
 
@@ -170,50 +164,36 @@ namespace Apollo_Soundboard
     //https://stackoverflow.com/questions/6163119/handling-changed-audio-device-event-in-c-sharp
     class NotificationClientImplementation : NAudio.CoreAudioApi.Interfaces.IMMNotificationClient
     {
-        string defaultDevice = "";
 
         public void OnDefaultDeviceChanged(DataFlow dataFlow, Role deviceRole, string defaultDeviceId)
         {
-            Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
-            if (defaultDeviceId != defaultDevice)
-                Devices.UpdateDevices();
-            defaultDevice = defaultDeviceId;
+            Soundboard.Devices.OnDevicesUpdated();
         }
 
         public void OnDeviceAdded(string deviceId)
         {
-            //Do some Work
-            Debug.WriteLine("OnDeviceAdded -->");
         }
 
         public void OnDeviceRemoved(string deviceId)
         {
 
-            Debug.WriteLine("OnDeviceRemoved -->");
-            //Do some Work
         }
 
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-            Debug.WriteLine("OnDeviceStateChanged\n Device Id -->{0} : Device State {1}", deviceId, newState);
-            //Do some Work
+
         }
 
         public NotificationClientImplementation()
         {
-            //_realEnumerator.RegisterEndpointNotificationCallback();
-            if (System.Environment.OSVersion.Version.Major < 6)
-            {
-                throw new NotSupportedException("This functionality is only supported on Windows Vista or newer.");
-            }
+
         }
 
         public void OnPropertyValueChanged(string deviceId, PropertyKey propertyKey)
         {
-            //Do some Work
-            //fmtid & pid are changed to formatId and propertyId in the latest version NAudio
-            Debug.WriteLine("OnPropertyValueChanged: formatId --> {0}  propertyId --> {1}", propertyKey.formatId.ToString(), propertyKey.propertyId.ToString());
+
         }
 
     }
+
 }

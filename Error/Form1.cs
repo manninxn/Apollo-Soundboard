@@ -1,10 +1,5 @@
-using Microsoft.VisualBasic;
-using NAudio;
-using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
-using System.Data;
-using System.Diagnostics;
 
 namespace Error
 {

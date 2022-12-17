@@ -7,6 +7,7 @@ namespace Apollo_Soundboard
 {
     public class SoundItem
     {
+
         public static string _ClearSounds = Settings.Default.StopAllSoundsHotkey;
 
         public static List<Keys> ClearSounds
@@ -32,12 +33,9 @@ namespace Apollo_Soundboard
         }
 
 
-
-        public static List<SoundItem> AllSounds = new List<SoundItem>();
+        public static OptimizedBindingList<SoundItem> AllSounds = new OptimizedBindingList<SoundItem>();
 
         private static List<WaveOut> PlayingSounds = new List<WaveOut>();
-
-        private static Soundboard form;
 
         public string FilePath;
         public string FileName
@@ -60,10 +58,6 @@ namespace Apollo_Soundboard
 
         private List<Keys> Hotkeys { get; set; }
 
-        public static void SetForm(Soundboard _form)
-        {
-            form = _form;
-        }
 
         public SoundItem() { }
 
@@ -79,7 +73,6 @@ namespace Apollo_Soundboard
         public void Destroy()
         {
             AllSounds.Remove(this);
-            form.RefreshGrid();
         }
 
 
@@ -130,10 +123,10 @@ namespace Apollo_Soundboard
         public void Play()
         {
             Debug.WriteLine($"Gain: {Gain}");
-            if (Devices.SecondaryOutput != -2)
-                PlayThroughDevice(FilePath, Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            if (Soundboard.Devices.SecondaryOutput != -2)
+                PlayThroughDevice(FilePath, Soundboard.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
-            PlayThroughDevice(FilePath, Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+            PlayThroughDevice(FilePath, Soundboard.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
 
         }
 

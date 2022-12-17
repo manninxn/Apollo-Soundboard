@@ -1,8 +1,6 @@
 using Apollo_Soundboard.Forms;
 using Apollo_Soundboard.Importers;
 using Apollo_Soundboard.Properties;
-using NAudio.CoreAudioApi;
-using NAudio.Wave;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -61,35 +59,79 @@ namespace Apollo_Soundboard
 
         #endregion
 
+        #region Managers
+
+        private static Soundboard _soundboard;
+
+        private DeviceManager _Devices = new();
+
+        public static DeviceManager Devices
+        {
+            get
+            {
+                return _soundboard._Devices;
+            }
+            set
+            {
+                _soundboard._Devices = value;
+            }
+        }
+
+        private MicInjector _MicInjector = new();
+
+        public static MicInjector MicInjector
+        {
+            get
+            {
+                return _soundboard._MicInjector;
+            }
+            set
+            {
+                _soundboard._MicInjector = value;
+            }
+        }
+
+
+
+        #endregion
+
+
+
         public Soundboard(string? file)
         {
 
+            if (_soundboard != null) return;
+
+            _soundboard = this;
             InitializeComponent();
-            Devices.Initialize();
-            MicInjector.Initialize();
+
+
+
             fileName = file ?? Settings.Default.FileName;
-            var bindingList = new BindingList<SoundItem>(SoundItem.AllSounds);
-
-            SoundListBindingSource = new BindingSource(bindingList, null);
-            SoundGrid.DataSource = SoundListBindingSource;
+            SoundGrid.DataSource = SoundItem.AllSounds;
 
 
-            int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
 
-            
             PrimaryOutputComboBox.DisplayMember = "Value";
             PrimaryOutputComboBox.ValueMember = "Key";
-            PrimaryOutputComboBox.DataSource = Devices.PrimaryDeviceBindingSource;
+            PrimaryOutputComboBox.DataSource = Devices.PrimaryDevices;
 
-           
+
             SecondaryOutputComboBox.DisplayMember = "Value";
             SecondaryOutputComboBox.ValueMember = "Key";
-            SecondaryOutputComboBox.DataSource = Devices.SecondaryDeviceBindingSource;
+            SecondaryOutputComboBox.DataSource = Devices.SecondaryDevices;
 
-            
+
             MicrophoneSelectComboBox.DisplayMember = "Value";
             MicrophoneSelectComboBox.ValueMember = "Key";
-            MicrophoneSelectComboBox.DataSource = Devices.MicrophoneBindingSource;
+            MicrophoneSelectComboBox.DataSource = Devices.Microphones;
+
+
+            MicInjector.Initialize();
+            MicInjectorToggle.Checked = MicInjector.Enabled;
+
+            int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
+            Devices.Refresh();
 
             try
             {
@@ -97,70 +139,51 @@ namespace Apollo_Soundboard
                 PrimaryOutputComboBox.SelectedIndex = primaryIndex;
                 MicrophoneSelectComboBox.SelectedIndex = microphoneIndex;
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.WriteLine("Device index exceeded list");
+                Debug.WriteLine(ex.Message);
             }
             LoadFile();
 
-            MicInjectorToggle.Checked = MicInjector.Enabled;
 
 
 
             InputHandler.Subscribe();
 
-            SoundItem.SetForm(this);
-
             StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => i.ToString()).ToList());
 
-            Debug.WriteLine(Thread.CurrentThread.ManagedThreadId);
-            Devices.DevicesUpdated += RefreshDeviceSelectors;
+            Devices.DevicesUpdated += UpdateDeviceSelectors;
+
 
         }
 
         #region Helper Methods
 
-        public void RefreshDeviceSelectors(object? sender, EventArgs e)
-        { 
-            //bring it around town
-            Invoke(delegate()
-            {
-                bool temp = MicInjector.Enabled;
-                MicInjector.Enabled = false;
-
-                Devices.Initialize();
-
-                PrimaryOutputComboBox.DataSource = null;
-                PrimaryOutputComboBox.DisplayMember = "Value";
-                PrimaryOutputComboBox.ValueMember = "Key";
-                PrimaryOutputComboBox.DataSource = Devices.PrimaryDeviceBindingSource;
-                PrimaryOutputComboBox.SelectedIndex = 0;
-
-                SecondaryOutputComboBox.DataSource = null;
-                SecondaryOutputComboBox.DisplayMember = "Value";
-                SecondaryOutputComboBox.ValueMember = "Key";
-                SecondaryOutputComboBox.DataSource = Devices.SecondaryDeviceBindingSource;
-               SecondaryOutputComboBox.SelectedIndex = 0;
-
-                MicrophoneSelectComboBox.DataSource = null;
-                MicrophoneSelectComboBox.DisplayMember = "Value";
-                MicrophoneSelectComboBox.ValueMember = "Key";
-                MicrophoneSelectComboBox.DataSource = Devices.MicrophoneBindingSource;
-                MicrophoneSelectComboBox.SelectedIndex = 0;
-
-                MicInjector.Enabled = temp;
-
-            });
-            
-
-        }
-        public void RefreshGrid()
+        private void UpdateDeviceSelectors(object? sender = null, EventArgs? e = null)
         {
 
-            SoundItem.AllSounds = sortDirection == ListSortDirection.Ascending ? SoundItem.AllSounds.OrderBy(i => i.Hotkey).ToList() : SoundItem.AllSounds.OrderByDescending(i => i.Hotkey).ToList();
-            SoundListBindingSource.DataSource = SoundItem.AllSounds;
-            SoundListBindingSource.ResetBindings(false);
+            Invoke(delegate ()
+            {
 
+                int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
+                Devices.Refresh();
+
+                try
+                {
+                    SecondaryOutputComboBox.SelectedIndex = secondaryIndex;
+                    PrimaryOutputComboBox.SelectedIndex = primaryIndex;
+                    MicrophoneSelectComboBox.SelectedIndex = microphoneIndex;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+            });
+            /*
+            bool micInjectorEnabled = MicInjector.Enabled;
+            MicInjector.Enabled = false;
+            if (sender != null) MicInjector.Enabled = micInjectorEnabled;
+            */
         }
 
 
@@ -168,8 +191,8 @@ namespace Apollo_Soundboard
         {
             if (fileName != string.Empty)
             {
-                SoundItem.AllSounds = Serializer.DeserializeFile(fileName);
-                RefreshGrid();
+                SoundItem.AllSounds.AddRange(Serializer.DeserializeFile(fileName));
+
             }
         }
         private void ExitApplication()
@@ -198,13 +221,13 @@ namespace Apollo_Soundboard
                 if (result == DialogResult.OK) // Test result.
                 {
                     fileName = saveFileSelector.FileName;
-                    Serializer.SerializeToFile(SoundItem.AllSounds, fileName);
+                    Serializer.SerializeToFile(SoundItem.AllSounds.ToList(), fileName);
                     saved = true;
                 }
             }
             else
             {
-                Serializer.SerializeToFile(SoundItem.AllSounds, fileName);
+                Serializer.SerializeToFile(SoundItem.AllSounds.ToList(), fileName);
                 saved = true;
             }
         }
@@ -254,7 +277,7 @@ namespace Apollo_Soundboard
             }
             fileName = string.Empty;
             SoundItem.AllSounds.Clear();
-            RefreshGrid();
+
         }
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -312,7 +335,7 @@ namespace Apollo_Soundboard
             if (result == DialogResult.OK)
             {
                 new SoundItem(popup.Hotkeys, popup.FileName, popup.Gain, popup.HotkeyOrderMatters);
-                RefreshGrid();
+
                 saved = false;
             }
         }
@@ -334,7 +357,7 @@ namespace Apollo_Soundboard
                     sound.FilePath = popup.FileName;
                     sound.Gain = popup.Gain;
                     sound.HotkeyOrderMatters = popup.HotkeyOrderMatters;
-                    RefreshGrid();
+
                     saved = false;
                 }
 
@@ -420,7 +443,7 @@ namespace Apollo_Soundboard
             {
                 sound.SetHotkeys(popup.Hotkeys);
                 sound.FilePath = popup.FileName;
-                RefreshGrid();
+
                 saved = false;
             }
         }
@@ -435,8 +458,8 @@ namespace Apollo_Soundboard
             {
                 saved = false;
                 fileName = string.Empty;
-                SoundItem.AllSounds = EXPImporter.Import(saveFileSelector.FileName);
-                RefreshGrid();
+                SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
+
             }
         }
 
@@ -450,8 +473,8 @@ namespace Apollo_Soundboard
             {
                 saved = false;
                 fileName = string.Empty;
-                SoundItem.AllSounds = SoundpadImporter.Import(saveFileSelector.FileName);
-                RefreshGrid();
+                SoundItem.AllSounds.AddRange(SoundpadImporter.Import(saveFileSelector.FileName));
+
             }
         }
 
@@ -471,7 +494,7 @@ namespace Apollo_Soundboard
                     if (result == DialogResult.OK)
                     {
                         new SoundItem(popup.Hotkeys, popup.FileName);
-                        RefreshGrid();
+
                         saved = false;
                     }
                     return;
@@ -514,7 +537,7 @@ namespace Apollo_Soundboard
         private void SoundGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             sortDirection = sortDirection == ListSortDirection.Descending ? ListSortDirection.Ascending : ListSortDirection.Descending;
-            RefreshGrid();
+
         }
 
     }
