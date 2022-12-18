@@ -54,7 +54,7 @@ namespace Apollo_Soundboard
 
 
 
-            micStream.BufferMilliseconds = 100;
+            micStream.BufferMilliseconds = 50;
             micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Devices.Microphone).Channels);
 
             micStream.DeviceNumber = Soundboard.Devices.Microphone;
@@ -67,7 +67,7 @@ namespace Apollo_Soundboard
 
 
             virtualCable = new();
-            virtualCable.DesiredLatency = 100;
+            virtualCable.DesiredLatency = 70;
             virtualCable.DeviceNumber = Soundboard.Devices.SecondaryOutput;
             virtualCable.Init(volumeSampleProvider);
 
@@ -77,33 +77,26 @@ namespace Apollo_Soundboard
         }
         public void Stop()
         {
-
-            try
-            {
-                if (micStream != null && virtualCable != null)
+            lock (micStream) lock (virtualCable)
                 {
+                    if (micStream != null && virtualCable != null)
+                    {
+                        virtualCable.Stop();
+                        micStream.StopRecording();
 
+                        virtualCable.Dispose();
+                        micStream.Dispose();
 
-                    micStream.Dispose();
-                    micStream = null;
+                        micStream = null;
+                        virtualCable = null;
 
-                    virtualCable.Dispose();
-                    virtualCable = null;
-
+                    }
                 }
-            }
-            catch
-            {
-                micStream = null;
-
-                virtualCable = null;
-            }
         }
         public void Refresh()
         {
-            bool temp = Enabled;
-            Enabled = false;
-            Enabled = temp;
+            Stop();
+            if (Enabled) Start();
         }
 
     }

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text;
 
 namespace Apollo_Soundboard
 {
@@ -12,12 +11,6 @@ namespace Apollo_Soundboard
         [STAThread]
         static void Main(string[] args)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (Keys key in Enum.GetValues(typeof(Keys)))
-            {
-                stringBuilder.Append($"{(int)key} -- {key.ToString()}\n");
-            }
-            File.WriteAllText("Z:\\Github\\Apollo Soundboard\\Apollo Soundboard\\TextFile2.txt", stringBuilder.ToString());
 
             FileAssociations.EnsureAssociationsSet();
 
@@ -45,8 +38,14 @@ namespace Apollo_Soundboard
             }
 
         }
-
-
+        //https://stackoverflow.com/questions/2575592/moving-a-member-of-a-list-to-the-front-of-the-list
+        public static void MoveItemAtIndexToFront<T>(this List<T> list, int index)
+        {
+            T item = list[index];
+            for (int i = index; i > 0; i--)
+                list[i] = list[i - 1];
+            list[0] = item;
+        }
 
     }
 

@@ -76,6 +76,7 @@ namespace Apollo_Soundboard
         }
 
 
+
         private void PlayThroughDevice(string filePath, int Device, float gain)
         {
             Debug.WriteLine(Device);
@@ -84,6 +85,9 @@ namespace Apollo_Soundboard
             PlayingSounds.Add(output);
 
             AudioFileReader? reader = null;
+
+
+
 
             try
             {
@@ -148,7 +152,6 @@ namespace Apollo_Soundboard
         }
 
 
-
-
     }
+
 }

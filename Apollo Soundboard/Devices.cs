@@ -1,11 +1,14 @@
 ﻿using Apollo_Soundboard.Properties;
+using Microsoft.VisualBasic.ApplicationServices;
 using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace Apollo_Soundboard
 {
-    public class DeviceManager
+    public class DeviceManager : IMMNotificationClient
     {
         int _primary = Settings.Default.PrimaryOutput;
         public int PrimaryOutput
@@ -60,11 +63,16 @@ namespace Apollo_Soundboard
 
         private MMDeviceEnumerator enumerator = new();
 
+        List<MMDevice> outputDevices = new();
+        List<MMDevice> inputDevices = new();
+
         public event EventHandler<EventArgs>? DevicesUpdated;
 
         public DeviceManager()
         {
-            enumerator.RegisterEndpointNotificationCallback(new NotificationClientImplementation());
+            outputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).ToList();
+            inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
+            enumerator.RegisterEndpointNotificationCallback(this);
         }
         public void Refresh()
         {
@@ -78,23 +86,37 @@ namespace Apollo_Soundboard
             Microphones.Clear();
 
             //fix mapping
-            var outputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).ToList();
-            var defaultOutputDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
-            int defaultOutputIndex = outputDevices.FindIndex(delegate (MMDevice dev)
-            {
-                return dev.ID == defaultOutputDevice.ID;
-            });
-            outputDevices.RemoveAt(defaultOutputIndex);
-            outputDevices.Insert(0, defaultOutputDevice);
+            //this is ridiculous
 
-            var inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
-            var defaultInputDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
-            int defaultInputIndex = inputDevices.FindIndex(delegate (MMDevice dev)
+            //output
+            var defaultOutputDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+            var newOutputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).ToList();
+
+            outputDevices.RemoveAll(item => 0 > newOutputDevices.FindIndex(dev => dev.ID == item.ID));
+            foreach (var dev in newOutputDevices)
             {
-                return dev.ID == defaultInputDevice.ID;
-            });
-            inputDevices.RemoveAt(defaultInputIndex);
-            inputDevices.Insert(0, defaultInputDevice);
+                int contains = outputDevices.FindIndex(item => dev.ID == item.ID);
+                if (-1 < contains) continue;
+                outputDevices.Add(dev);
+            }
+            
+            int defaultOutputIndex = outputDevices.FindIndex(dev => dev.ID == defaultOutputDevice.ID);
+            outputDevices.MoveItemAtIndexToFront(defaultOutputIndex);
+
+
+            //input
+            var defaultInputDevice = enumerator.GetDefaultAudioEndpoint(DataFlow.Capture, Role.Console);
+            var newInputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
+            inputDevices.RemoveAll(item => 0 > newInputDevices.FindIndex(dev => dev.ID == item.ID));
+            foreach (var dev in newInputDevices)
+            {
+                if (-1 < inputDevices.FindIndex(old => old.ID == dev.ID)) continue;
+                inputDevices.Add(dev);
+            }
+            
+            int defaultInputIndex = inputDevices.FindIndex(dev => dev.ID == defaultInputDevice.ID);
+            inputDevices.MoveItemAtIndexToFront(defaultInputIndex);
+
 
 
             for (int i = -1; i < WaveOut.DeviceCount; i++)
@@ -105,18 +127,13 @@ namespace Apollo_Soundboard
                 tempPrimary.Add(new(i, name));
                 tempSecondary.Add(new(i, name));
 
-                Debug.WriteLine($"Added {name}");
             }
 
             for (int i = -1; i < WaveIn.DeviceCount; i++)
             {
                 string name = "Primary Audio Driver";
-                var caps = WaveIn.GetCapabilities(i);
-
                 if (i >= 0) name = inputDevices[i].FriendlyName;
                 tempMicrophones.Add(new(i, name));
-
-                Debug.WriteLine($"Added {name}");
 
             }
 
@@ -158,47 +175,67 @@ namespace Apollo_Soundboard
         }
         #endregion
 
-
-    }
-
-    //https://stackoverflow.com/questions/6163119/handling-changed-audio-device-event-in-c-sharp
-    class NotificationClientImplementation : NAudio.CoreAudioApi.Interfaces.IMMNotificationClient
-    {
-        string deviceId = string.Empty;
+        #region notification callback
+        //https://stackoverflow.com/questions/6163119/handling-changed-audio-device-event-in-c-sharp
+        string inputDeviceId = string.Empty;
+        string outputDeviceId = string.Empty;
+        string lastDeviceAddedId = string.Empty;
+        string lastDeviceRemovedId = string.Empty;
+        string lastDeviceChangedId = string.Empty;
+        DeviceState lastDeviceState;
         public void OnDefaultDeviceChanged(DataFlow dataFlow, Role deviceRole, string defaultDeviceId)
         {
-            if (deviceId == defaultDeviceId)
-                return;
-            deviceId = defaultDeviceId;
+            if (deviceRole != Role.Console) return;
 
-          //  Thread.Sleep(1000);
-            Soundboard.Devices.OnDevicesUpdated();
+            if (dataFlow == DataFlow.Capture)
+            {
+                if (inputDeviceId == defaultDeviceId) return;
+                inputDeviceId = defaultDeviceId;
+            }
+            else
+            {
+                if (outputDeviceId == defaultDeviceId) return;
+                outputDeviceId = defaultDeviceId;
+            }
+
+            Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
         }
 
         public void OnDeviceAdded(string deviceId)
         {
+            if (lastDeviceAddedId != deviceId)
+            {
+                deviceId= lastDeviceAddedId;
+                Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+            }
         }
 
         public void OnDeviceRemoved(string deviceId)
         {
-
+            if (lastDeviceRemovedId != deviceId)
+            {
+                lastDeviceRemovedId = deviceId;
+                Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+            }
         }
 
         public void OnDeviceStateChanged(string deviceId, DeviceState newState)
         {
-
-        }
-
-        public NotificationClientImplementation()
-        {
-
+            if(lastDeviceChangedId!= deviceId && lastDeviceState != newState)
+            {
+                lastDeviceChangedId= deviceId;
+                lastDeviceState = newState;
+                Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+            }
+            
         }
 
         public void OnPropertyValueChanged(string deviceId, PropertyKey propertyKey)
         {
-
+           
         }
-
+        #endregion
     }
+
 
 }

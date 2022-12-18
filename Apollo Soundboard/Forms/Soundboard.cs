@@ -61,7 +61,7 @@ namespace Apollo_Soundboard
 
         #region Managers
 
-        private static Soundboard _soundboard;
+        public static Soundboard Instance;
 
         private DeviceManager _Devices = new();
 
@@ -69,11 +69,11 @@ namespace Apollo_Soundboard
         {
             get
             {
-                return _soundboard._Devices;
+                return Instance._Devices;
             }
             set
             {
-                _soundboard._Devices = value;
+                Instance._Devices = value;
             }
         }
 
@@ -83,11 +83,11 @@ namespace Apollo_Soundboard
         {
             get
             {
-                return _soundboard._MicInjector;
+                return Instance._MicInjector;
             }
             set
             {
-                _soundboard._MicInjector = value;
+                Instance._MicInjector = value;
             }
         }
 
@@ -100,9 +100,9 @@ namespace Apollo_Soundboard
         public Soundboard(string? file)
         {
 
-            if (_soundboard != null) return;
+            if (Instance != null) return;
 
-            _soundboard = this;
+            Instance = this;
             InitializeComponent();
 
 
@@ -183,9 +183,9 @@ namespace Apollo_Soundboard
             Thread.Sleep(1000);
             MicInjector.Refresh();
 
-            
-            
-            
+
+
+
         }
 
 
