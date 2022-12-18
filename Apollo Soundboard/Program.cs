@@ -6,7 +6,7 @@ namespace Apollo_Soundboard
     internal static class Program
     {
 
-        private static string Version = "1.4.0";
+        private static string Version = "1.5.0";
 
         private static Mutex _mutex = null;
         /// <summary>
