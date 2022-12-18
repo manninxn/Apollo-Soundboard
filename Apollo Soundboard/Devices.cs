@@ -164,9 +164,14 @@ namespace Apollo_Soundboard
     //https://stackoverflow.com/questions/6163119/handling-changed-audio-device-event-in-c-sharp
     class NotificationClientImplementation : NAudio.CoreAudioApi.Interfaces.IMMNotificationClient
     {
-
+        string deviceId = string.Empty;
         public void OnDefaultDeviceChanged(DataFlow dataFlow, Role deviceRole, string defaultDeviceId)
         {
+            if (deviceId == defaultDeviceId)
+                return;
+            deviceId = defaultDeviceId;
+
+          //  Thread.Sleep(1000);
             Soundboard.Devices.OnDevicesUpdated();
         }
 

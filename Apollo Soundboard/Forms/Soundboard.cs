@@ -159,31 +159,33 @@ namespace Apollo_Soundboard
 
         #region Helper Methods
 
+
         private void UpdateDeviceSelectors(object? sender = null, EventArgs? e = null)
         {
 
-            Invoke(delegate ()
+            BeginInvoke(delegate ()
             {
 
                 int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
                 Devices.Refresh();
-
                 try
                 {
                     SecondaryOutputComboBox.SelectedIndex = secondaryIndex;
                     PrimaryOutputComboBox.SelectedIndex = primaryIndex;
                     MicrophoneSelectComboBox.SelectedIndex = microphoneIndex;
+
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex.Message);
                 }
             });
-            /*
-            bool micInjectorEnabled = MicInjector.Enabled;
-            MicInjector.Enabled = false;
-            if (sender != null) MicInjector.Enabled = micInjectorEnabled;
-            */
+            Thread.Sleep(1000);
+            MicInjector.Refresh();
+
+            
+            
+            
         }
 
 

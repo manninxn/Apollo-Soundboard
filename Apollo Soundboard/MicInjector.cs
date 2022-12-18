@@ -50,11 +50,11 @@ namespace Apollo_Soundboard
 
             if (Soundboard.Devices.SecondaryOutput == -2) return;
 
-            micStream = new WaveInEvent();
+            micStream = new();
 
 
 
-            micStream.BufferMilliseconds = 50;
+            micStream.BufferMilliseconds = 100;
             micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Devices.Microphone).Channels);
 
             micStream.DeviceNumber = Soundboard.Devices.Microphone;
@@ -65,8 +65,9 @@ namespace Apollo_Soundboard
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
 
-            virtualCable = new WaveOutEvent();
-            virtualCable.DesiredLatency = 150;
+
+            virtualCable = new();
+            virtualCable.DesiredLatency = 100;
             virtualCable.DeviceNumber = Soundboard.Devices.SecondaryOutput;
             virtualCable.Init(volumeSampleProvider);
 
@@ -76,6 +77,7 @@ namespace Apollo_Soundboard
         }
         public void Stop()
         {
+
             try
             {
                 if (micStream != null && virtualCable != null)
