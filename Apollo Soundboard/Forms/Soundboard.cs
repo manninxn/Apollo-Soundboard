@@ -1,6 +1,7 @@
 using Apollo_Soundboard.Forms;
 using Apollo_Soundboard.Importers;
 using Apollo_Soundboard.Properties;
+using AutoUpdaterDotNET;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -99,6 +100,8 @@ namespace Apollo_Soundboard
 
         public Soundboard(string? file)
         {
+
+            AutoUpdater.Start("https://raw.githubusercontent.com/manninxn/Apollo-Soundboard/master/Apollo%20Soundboard/version.xml");
 
             if (Instance != null) return;
 

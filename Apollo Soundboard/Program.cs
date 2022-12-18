@@ -1,9 +1,13 @@
+using AutoUpdaterDotNET;
 using System.ComponentModel;
 
 namespace Apollo_Soundboard
 {
     internal static class Program
     {
+
+        private static string Version = "1.4.0";
+
         private static Mutex _mutex = null;
         /// <summary>
         ///  The main entry point for the application.
@@ -11,7 +15,8 @@ namespace Apollo_Soundboard
         [STAThread]
         static void Main(string[] args)
         {
-
+            AutoUpdater.InstalledVersion = new Version(Version);
+            
             FileAssociations.EnsureAssociationsSet();
 
             const string appName = "Apollo Soundboard";

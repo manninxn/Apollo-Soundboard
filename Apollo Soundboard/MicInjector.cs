@@ -54,7 +54,7 @@ namespace Apollo_Soundboard
 
 
 
-            micStream.BufferMilliseconds = 50;
+            micStream.BufferMilliseconds = 65;
             micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Devices.Microphone).Channels);
 
             micStream.DeviceNumber = Soundboard.Devices.Microphone;
@@ -77,21 +77,18 @@ namespace Apollo_Soundboard
         }
         public void Stop()
         {
-            lock (micStream) lock (virtualCable)
-                {
-                    if (micStream != null && virtualCable != null)
-                    {
-                        virtualCable.Stop();
-                        micStream.StopRecording();
+            if (micStream != null && virtualCable != null)
+            {
+                virtualCable.Stop();
+                micStream.StopRecording();
 
-                        virtualCable.Dispose();
-                        micStream.Dispose();
+                virtualCable.Dispose();
+                micStream.Dispose();
 
-                        micStream = null;
-                        virtualCable = null;
+                micStream = null;
+                virtualCable = null;
 
-                    }
-                }
+            }
         }
         public void Refresh()
         {
