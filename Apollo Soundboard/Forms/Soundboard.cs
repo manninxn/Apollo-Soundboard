@@ -132,11 +132,11 @@ namespace Apollo_Soundboard
             MicrophoneSelectComboBox.DataSource = Devices.Microphones;
 
 
-            
-            
 
-            int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
+
             Devices.Refresh();
+            int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
+            
 
             try
             {

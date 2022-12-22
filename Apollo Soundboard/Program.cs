@@ -9,7 +9,7 @@ namespace Apollo_Soundboard
     {
 
 
-        private static string Version = "1.5.0";
+        private static string Version = "1.6.0";
 
         private static Mutex _mutex = null;
         /// <summary>
