@@ -1,10 +1,13 @@
 using AutoUpdaterDotNET;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Apollo_Soundboard
 {
     internal static class Program
     {
+
 
         private static string Version = "1.5.0";
 
@@ -15,6 +18,7 @@ namespace Apollo_Soundboard
         [STAThread]
         static void Main(string[] args)
         {
+
             AutoUpdater.InstalledVersion = new Version(Version);
             
             FileAssociations.EnsureAssociationsSet();

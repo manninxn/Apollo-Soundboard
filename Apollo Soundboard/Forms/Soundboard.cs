@@ -101,6 +101,8 @@ namespace Apollo_Soundboard
         public Soundboard(string? file)
         {
 
+
+
             AutoUpdater.Start("https://raw.githubusercontent.com/manninxn/Apollo-Soundboard/master/Apollo%20Soundboard/version.xml");
 
             if (Instance != null) return;
@@ -115,23 +117,23 @@ namespace Apollo_Soundboard
 
 
 
-            PrimaryOutputComboBox.DisplayMember = "Value";
-            PrimaryOutputComboBox.ValueMember = "Key";
+            PrimaryOutputComboBox.DisplayMember = "Name";
+            PrimaryOutputComboBox.ValueMember = "DeviceNumber";
             PrimaryOutputComboBox.DataSource = Devices.PrimaryDevices;
 
 
-            SecondaryOutputComboBox.DisplayMember = "Value";
-            SecondaryOutputComboBox.ValueMember = "Key";
+            SecondaryOutputComboBox.DisplayMember = "Name";
+            SecondaryOutputComboBox.ValueMember = "DeviceNumber";
             SecondaryOutputComboBox.DataSource = Devices.SecondaryDevices;
 
 
-            MicrophoneSelectComboBox.DisplayMember = "Value";
-            MicrophoneSelectComboBox.ValueMember = "Key";
+            MicrophoneSelectComboBox.DisplayMember = "Name";
+            MicrophoneSelectComboBox.ValueMember = "DeviceNumber";
             MicrophoneSelectComboBox.DataSource = Devices.Microphones;
 
 
-            MicInjector.Initialize();
-            MicInjectorToggle.Checked = MicInjector.Enabled;
+            
+            
 
             int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
             Devices.Refresh();
@@ -157,6 +159,8 @@ namespace Apollo_Soundboard
 
             Devices.DevicesUpdated += UpdateDeviceSelectors;
 
+            
+            MicInjectorToggle.Checked = MicInjector.Initialize();
 
         }
 
@@ -213,6 +217,7 @@ namespace Apollo_Soundboard
             }
             Debug.WriteLine(Settings.Default.FileName);
             Settings.Default.Save();
+            MicInjector.Stop();
             Application.Exit();
         }
         private void Save(bool newFile)

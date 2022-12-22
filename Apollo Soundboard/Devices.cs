@@ -8,9 +8,33 @@ using System.Xml.Linq;
 
 namespace Apollo_Soundboard
 {
+    public class Device
+    {
+        public int DeviceNumber;
+        public MMDevice? MMDevice;
+        public string Name { get
+            {
+                return DeviceNumber switch
+                {
+                    -2 => "None",
+                    -1 => "Primary Sound Driver",
+                    _ => MMDevice?.FriendlyName ?? "Unknown"
+                };
+            }
+        }
+
+        public Device(int deviceNumber, MMDevice? device)
+        {
+            DeviceNumber = deviceNumber;
+            MMDevice = device;
+        }
+    }
     public class DeviceManager : IMMNotificationClient
     {
-        int _primary = Settings.Default.PrimaryOutput;
+        int _primary;
+        public Device PrimaryDevice { get; private set; }
+        public Device SecondaryDevice { get; private set; }
+        public Device MicrophoneDevice { get; private set; }
         public int PrimaryOutput
         {
             get
@@ -19,14 +43,15 @@ namespace Apollo_Soundboard
             }
             set
             {
+                PrimaryDevice = PrimaryDevices.First(x => x.DeviceNumber == value);
                 _primary = value;
                 Settings.Default.PrimaryOutput = value;
                 Settings.Default.Save();
 
             }
         }
-
-        int _secondary = Settings.Default.SecondaryOutput;
+        
+        int _secondary;
         public int SecondaryOutput
         {
             get
@@ -35,6 +60,7 @@ namespace Apollo_Soundboard
             }
             set
             {
+                SecondaryDevice = SecondaryDevices.First(x => x.DeviceNumber == value);
                 _secondary = value;
                 Settings.Default.SecondaryOutput = value;
                 Settings.Default.Save();
@@ -42,7 +68,7 @@ namespace Apollo_Soundboard
         }
 
 
-        int _microphone = Settings.Default.Microphone;
+        int _microphone;
         public int Microphone
         {
             get
@@ -52,14 +78,15 @@ namespace Apollo_Soundboard
             set
             {
                 _microphone = value;
+                MicrophoneDevice = Microphones.First(x => x.DeviceNumber == value);
                 Settings.Default.Microphone = value;
                 Settings.Default.Save();
             }
         }
 
-        public OptimizedBindingList<KeyValuePair<int, string>> PrimaryDevices = new();
-        public OptimizedBindingList<KeyValuePair<int, string>> SecondaryDevices = new();
-        public OptimizedBindingList<KeyValuePair<int, string>> Microphones = new();
+        public OptimizedBindingList<Device> PrimaryDevices = new();
+        public OptimizedBindingList<Device> SecondaryDevices = new();
+        public OptimizedBindingList<Device> Microphones = new();
 
         private MMDeviceEnumerator enumerator = new();
 
@@ -76,13 +103,13 @@ namespace Apollo_Soundboard
         }
         public void Refresh()
         {
-            var tempPrimary = new OptimizedBindingList<KeyValuePair<int, string>>();
-            var tempSecondary = new OptimizedBindingList<KeyValuePair<int, string>>();
-            var tempMicrophones = new OptimizedBindingList<KeyValuePair<int, string>>();
+            var tempPrimary = new OptimizedBindingList<Device>();
+            var tempSecondary = new OptimizedBindingList<Device>();
+            var tempMicrophones = new OptimizedBindingList<Device>();
 
             PrimaryDevices.Clear();
             SecondaryDevices.Clear();
-            tempSecondary.Add(new(-2, "None"));
+            tempSecondary.Add(new(-2, null));
             Microphones.Clear();
 
             //fix mapping
@@ -121,25 +148,34 @@ namespace Apollo_Soundboard
 
             for (int i = -1; i < WaveOut.DeviceCount; i++)
             {
-                string name = "Primary Audio Driver";
-
-                if (i >= 0) name = outputDevices[i].FriendlyName;
-                tempPrimary.Add(new(i, name));
-                tempSecondary.Add(new(i, name));
+                Device device = i switch
+                {
+                    -1 => new(i, defaultOutputDevice),
+                    _ => new(i, outputDevices[i]),
+                };
+                tempPrimary.Add(device);
+                tempSecondary.Add(device);
 
             }
 
             for (int i = -1; i < WaveIn.DeviceCount; i++)
             {
-                string name = "Primary Audio Driver";
-                if (i >= 0) name = inputDevices[i].FriendlyName;
-                tempMicrophones.Add(new(i, name));
+                Device device = i switch
+                {
+                    -1 => new(i, defaultInputDevice),
+                    _ => new(i, inputDevices[i]),
+                };
+                tempMicrophones.Add(device);
 
             }
 
             PrimaryDevices.AddRange(tempPrimary);
             SecondaryDevices.AddRange(tempSecondary);
             Microphones.AddRange(tempMicrophones);
+
+            PrimaryOutput = Settings.Default.PrimaryOutput;
+            SecondaryOutput= Settings.Default.SecondaryOutput;
+            Microphone = Settings.Default.Microphone;
 
         }
 
@@ -154,7 +190,7 @@ namespace Apollo_Soundboard
         {
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
-            Microphone = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
+            Microphone = ((Device)(box.SelectedItem)).DeviceNumber;
             Soundboard.MicInjector.Refresh();
         }
 
@@ -162,7 +198,7 @@ namespace Apollo_Soundboard
         {
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
-            PrimaryOutput = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
+            PrimaryOutput = ((Device)(box.SelectedItem)).DeviceNumber;
             Soundboard.MicInjector.Refresh();
         }
 
@@ -170,7 +206,7 @@ namespace Apollo_Soundboard
         {
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
-            SecondaryOutput = ((KeyValuePair<int, string>)(box.SelectedItem)).Key;
+            SecondaryOutput = ((Device)(box.SelectedItem)).DeviceNumber;
             Soundboard.MicInjector.Refresh();
         }
         #endregion
