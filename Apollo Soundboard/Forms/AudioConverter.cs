@@ -35,11 +35,11 @@ namespace Apollo_Soundboard.Forms
                 foreach (var stream in streams)
                 {
 
-                    stream.SetCodec(output.ToLower().EndsWith(".mp3") ? AudioCodec.mp3 : AudioCodec.wavpack);
+                    _ = stream.SetCodec(output.ToLower().EndsWith(".mp3") ? AudioCodec.mp3 : AudioCodec.wavpack);
                 }
                 string codec = output.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) ? "pcm_s16le" : "libmp3lame";
                 Debug.Write(codec);
-                await FFmpeg.Conversions.New()
+                _ = await FFmpeg.Conversions.New()
                 .AddParameter($"-i \"{input}\"")
                 .AddParameter($"-y -c:a {codec}")
                 .SetOutput(output)
@@ -54,7 +54,7 @@ namespace Apollo_Soundboard.Forms
                 if (error.ShowDialog() == DialogResult.Yes)
                 {
                     Downloading wait = new Downloading();
-                    wait.ShowDialog();
+                    _ = wait.ShowDialog();
                     await Convert(input, output);
 
                 }
@@ -73,7 +73,7 @@ namespace Apollo_Soundboard.Forms
             if (result == DialogResult.OK)
             {
 
-                Task.Run(() => Convert(InputFileBox.Text, ExportFile.FileName));
+                _ = Task.Run(() => Convert(InputFileBox.Text, ExportFile.FileName));
 
             }
         }

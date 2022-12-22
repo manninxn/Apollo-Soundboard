@@ -30,7 +30,7 @@ namespace Apollo_Soundboard.Importers
         {
 
             var sounds = new List<SoundItem>();
-            XmlReader xmlReader = XmlReader.Create(path);
+            _ = XmlReader.Create(path);
             var serializer = new XmlSerializer(typeof(Soundlist));
             using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {

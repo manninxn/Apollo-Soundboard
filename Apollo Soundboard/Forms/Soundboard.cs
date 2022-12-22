@@ -55,8 +55,6 @@ namespace Apollo_Soundboard
             }
         }
 
-        BindingSource SoundListBindingSource;
-
 
         #endregion
 
@@ -96,7 +94,18 @@ namespace Apollo_Soundboard
 
         #endregion
 
+        public static string[] SupportedExtensions = new string[]
+        {
+            ".wav", ".ogg", ".mp3"
+        };
 
+        public static bool IsFileSupported(string path)
+        {
+            var ext = System.IO.Path.GetExtension(path);
+            var supported = false;
+            Array.ForEach(SupportedExtensions, extension => supported |= ext.Equals(extension, StringComparison.OrdinalIgnoreCase));
+            return supported;
+        }
 
         public Soundboard(string? file)
         {
@@ -110,6 +119,7 @@ namespace Apollo_Soundboard
             Instance = this;
             InitializeComponent();
 
+            var a = new string("a").TakeLast(3);
 
 
             fileName = file ?? Settings.Default.FileName;
@@ -136,7 +146,7 @@ namespace Apollo_Soundboard
 
             Devices.Refresh();
             int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
-            
+
 
             try
             {
@@ -159,7 +169,7 @@ namespace Apollo_Soundboard
 
             Devices.DevicesUpdated += UpdateDeviceSelectors;
 
-            
+
             MicInjectorToggle.Checked = MicInjector.Initialize();
 
         }
@@ -170,7 +180,7 @@ namespace Apollo_Soundboard
         private void UpdateDeviceSelectors(object? sender = null, EventArgs? e = null)
         {
 
-            BeginInvoke(delegate ()
+            _ = BeginInvoke(delegate ()
             {
 
                 int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
@@ -218,7 +228,7 @@ namespace Apollo_Soundboard
             Debug.WriteLine(Settings.Default.FileName);
             Settings.Default.Save();
             MicInjector.Stop();
-            Application.Exit();
+            System.Windows.Forms.Application.Exit();
         }
         private void Save(bool newFile)
         {
@@ -297,13 +307,13 @@ namespace Apollo_Soundboard
         private void volumeMixerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             VolumeMixer mixer = new VolumeMixer(this);
-            mixer.ShowDialog();
+            _ = mixer.ShowDialog();
         }
 
         private void audioConverterToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AudioConverter converter = new AudioConverter();
-            converter.ShowDialog();
+            _ = converter.ShowDialog();
         }
 
         #endregion
@@ -344,7 +354,7 @@ namespace Apollo_Soundboard
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
             {
-                new SoundItem(popup.Hotkeys, popup.FileName, popup.Gain, popup.HotkeyOrderMatters);
+                _ = new SoundItem(popup.Hotkeys, popup.FileName, popup.Gain, popup.HotkeyOrderMatters);
 
                 saved = false;
             }
@@ -494,16 +504,14 @@ namespace Apollo_Soundboard
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (var file in files)
             {
-                var ext = System.IO.Path.GetExtension(file);
-                if (ext.Equals(".mp3", StringComparison.CurrentCultureIgnoreCase) ||
-                    ext.Equals(".wav", StringComparison.CurrentCultureIgnoreCase))
+                if (IsFileSupported(file))
                 {
                     AddSoundPopup popup = new AddSoundPopup(file, new List<Keys>());
                     var result = popup.ShowDialog();
                     Debug.WriteLine(result);
                     if (result == DialogResult.OK)
                     {
-                        new SoundItem(popup.Hotkeys, popup.FileName);
+                        _ = new SoundItem(popup.Hotkeys, popup.FileName);
 
                         saved = false;
                     }
@@ -518,9 +526,8 @@ namespace Apollo_Soundboard
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (var file in files)
             {
-                var ext = System.IO.Path.GetExtension(file);
-                if (ext.Equals(".mp3", StringComparison.CurrentCultureIgnoreCase) ||
-                    ext.Equals(".wav", StringComparison.CurrentCultureIgnoreCase))
+
+                if (IsFileSupported(file))
                 {
                     e.Effect = DragDropEffects.Copy;
                     return;

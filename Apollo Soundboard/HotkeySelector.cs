@@ -85,7 +85,7 @@ namespace Apollo_Soundboard
         {
             Keys keyCode = KeyMap.ParseModifierKey(e.KeyCode);
 
-            if (SelectedHotkeys.Contains(keyCode)) SelectedHotkeys.Remove(keyCode); else numKeys++;
+            if (SelectedHotkeys.Contains(keyCode)) _ = SelectedHotkeys.Remove(keyCode); else numKeys++;
             SelectedHotkeys.Add(keyCode);
 
             Text = String.Join("+", SelectedHotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());

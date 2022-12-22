@@ -48,7 +48,7 @@ namespace Apollo_Soundboard
 
             if (madeChanges)
             {
-                SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_FLUSH, IntPtr.Zero, IntPtr.Zero);
+                _ = SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_FLUSH, IntPtr.Zero, IntPtr.Zero);
             }
         }
 

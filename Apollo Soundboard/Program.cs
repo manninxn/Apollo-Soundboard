@@ -1,7 +1,5 @@
 using AutoUpdaterDotNET;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Apollo_Soundboard
 {
@@ -20,7 +18,7 @@ namespace Apollo_Soundboard
         {
 
             AutoUpdater.InstalledVersion = new Version(Version);
-            
+
             FileAssociations.EnsureAssociationsSet();
 
             const string appName = "Apollo Soundboard";

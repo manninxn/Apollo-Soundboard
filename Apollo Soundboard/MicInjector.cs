@@ -2,7 +2,6 @@
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
-using System.Diagnostics;
 
 namespace Apollo_Soundboard
 {
@@ -28,7 +27,7 @@ namespace Apollo_Soundboard
                         _Enabled = true;
                         Start();
                     }
-                    
+
                 }
                 else
                 {
@@ -47,7 +46,7 @@ namespace Apollo_Soundboard
 
         private void Start()
         {
-            
+
             if (Soundboard.Devices.SecondaryOutput == -2 | _running) return;
             _running = true;
             micStream = new(Soundboard.Devices.MicrophoneDevice.MMDevice, true, 50);
@@ -56,7 +55,7 @@ namespace Apollo_Soundboard
 
             WaveInProvider waveIn = new(micStream);
 
-            
+
             var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
             volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
 
@@ -70,7 +69,7 @@ namespace Apollo_Soundboard
         public void Stop()
         {
             _running = false;
-            
+
             virtualCable?.Stop();
             micStream?.StopRecording();
 

@@ -1,4 +1,5 @@
 ﻿using Apollo_Soundboard.Properties;
+using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
@@ -72,7 +73,7 @@ namespace Apollo_Soundboard
 
         public void Destroy()
         {
-            AllSounds.Remove(this);
+            _ = AllSounds.Remove(this);
         }
 
 
@@ -83,8 +84,12 @@ namespace Apollo_Soundboard
             WaveOut output = new() { DeviceNumber = Device };
 
             PlayingSounds.Add(output);
-
-            AudioFileReader? reader = null;
+            var ext = System.IO.Path.GetExtension(filePath);
+            WaveStream reader = ext switch
+            {
+                ".ogg" => new VorbisWaveReader(FilePath),
+                _ => new AudioFileReader(FilePath)
+            };
 
 
 
@@ -92,15 +97,14 @@ namespace Apollo_Soundboard
             try
             {
 
-                reader = new AudioFileReader(FilePath);
-
+                Debug.WriteLine(FilePath.TakeLast(3));
                 var volumeSampleProvider = new VolumeSampleProvider(reader.ToSampleProvider());
                 volumeSampleProvider.Volume = gain;
 
                 output.PlaybackStopped += (object? o, StoppedEventArgs a) =>
                 {
 
-                    PlayingSounds.Remove(output);
+                    _ = PlayingSounds.Remove(output);
                     reader.Dispose();
                     output.Dispose();
                 };

@@ -44,7 +44,7 @@ namespace Apollo_Soundboard
         }
         private static void KeyUpListener(object sender, KeyEventArgs e)
         {
-            PressedKeys.Remove(KeyMap.ParseModifierKey(e.KeyCode));
+            _ = PressedKeys.Remove(KeyMap.ParseModifierKey(e.KeyCode));
 
         }
 

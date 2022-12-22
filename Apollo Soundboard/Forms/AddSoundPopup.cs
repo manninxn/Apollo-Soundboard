@@ -38,7 +38,9 @@ namespace Apollo_Soundboard
 
             OpenFileDialog AudioFileSelector = new OpenFileDialog();
             //openfiledialog filter is only audio files
-            AudioFileSelector.Filter = "Audio files (*.WAV;*.MP3)|*.WAV;*.MP3";
+            string list = String.Join(";", Soundboard.SupportedExtensions);
+            string listWithStars = String.Join(";", Soundboard.SupportedExtensions.Select(extension => "*" + extension));
+            AudioFileSelector.Filter = $"Audio files ({list})|{listWithStars}";
             DialogResult result = AudioFileSelector.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
