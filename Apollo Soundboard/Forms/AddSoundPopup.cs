@@ -1,10 +1,12 @@
 ﻿using System.Data;
+using System.Windows.Forms.Design;
 
 namespace Apollo_Soundboard
 {
     public partial class AddSoundPopup : Form
     {
-        public string FileName = "";
+        public string FilePath = "";
+        public string SoundName = "";
         public List<Keys> Hotkeys = new List<Keys>();
         public float Gain = 0;
         public bool HotkeyOrderMatters = false;
@@ -18,16 +20,34 @@ namespace Apollo_Soundboard
             return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         }
 
-        public AddSoundPopup(string fileName, List<Keys> _Hotkeys, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        public AddSoundPopup(SoundItem sound)
         {
             InitializeComponent();
-            FilePathBox.Text = fileName;
-            FileName = fileName;
+            FilePathBox.Text = sound.FilePath;
+            FileNameBox.Text = sound.SoundName;
+            FilePath = sound.FilePath;
+            SoundName = sound.SoundName;
+            Hotkeys = sound.GetHotkeys();
+            Gain = sound.Gain;
+            HotkeyOrderMatters = sound.HotkeyOrderMatters;
+            GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
+            HotkeySelectorButton.Text = String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
+            HotkeySelectorButton.SelectedHotkeys = Hotkeys;
+            HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
+        }
+
+        public AddSoundPopup(string filePath, string soundName, List<Keys> _Hotkeys, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        {
+            InitializeComponent();
+            FilePathBox.Text = filePath;
+            FileNameBox.Text = soundName;
+            FilePath = filePath;
+            SoundName= soundName;
             Hotkeys = _Hotkeys;
             Gain = _Gain;
             HotkeyOrderMatters = _HotkeyOrderMatters;
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
-            HotkeySelectorButton.Text = String.Join("+", Hotkeys.Select(i => i.ToString()).ToList());
+            HotkeySelectorButton.Text = String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
         }
@@ -44,17 +64,20 @@ namespace Apollo_Soundboard
             DialogResult result = AudioFileSelector.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
             {
-                FileName = AudioFileSelector.FileName;
-                FilePathBox.Text = FileName;
+                FilePath = AudioFileSelector.FileName;
+                FilePathBox.Text = FilePath;
+                FileNameBox.Text = Path.GetFileName(FilePath);
             }
         }
 
         private void ConfirmAdd_Click(object sender, EventArgs e)
         {
-            bool fileExists = File.Exists(FileName);
+            bool fileExists = File.Exists(FilePath);
             if (fileExists)
             {
                 Hotkeys = HotkeySelectorButton.SelectedHotkeys;
+                FilePath = FilePathBox.Text;
+                SoundName = FileNameBox.Text;
                 DialogResult = DialogResult.OK;
 
             }

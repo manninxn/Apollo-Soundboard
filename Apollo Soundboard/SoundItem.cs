@@ -39,12 +39,12 @@ namespace Apollo_Soundboard
         private static List<WaveOut> PlayingSounds = new List<WaveOut>();
 
         public string FilePath;
-        public string FileName
+
+        private string _soundName;
+        public string SoundName
         {
-            get
-            {
-                return Path.GetFileName(FilePath);
-            }
+            get => string.IsNullOrEmpty(_soundName) ? Path.GetFileName(FilePath) : _soundName;
+            set => _soundName = value;
         }
         public string Hotkey
         {
@@ -62,10 +62,11 @@ namespace Apollo_Soundboard
 
         public SoundItem() { }
 
-        public SoundItem(List<Keys> _KeyCodes, string _FilePath, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        public SoundItem(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false)
         {
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
+            SoundName = _soundName;
             Gain = _Gain;
             HotkeyOrderMatters = _HotkeyOrderMatters;
             AllSounds.Add(this);

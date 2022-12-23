@@ -52,6 +52,7 @@ namespace Apollo_Soundboard
                     if (!this.Text.EndsWith("*")) this.Text = this.Text + "*";
 
                 }
+                _saved = value;
             }
         }
 
@@ -210,6 +211,7 @@ namespace Apollo_Soundboard
         {
             if (fileName != string.Empty)
             {
+                SoundItem.AllSounds.Clear();
                 SoundItem.AllSounds.AddRange(Serializer.DeserializeFile(fileName));
 
             }
@@ -354,7 +356,7 @@ namespace Apollo_Soundboard
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
             {
-                _ = new SoundItem(popup.Hotkeys, popup.FileName, popup.Gain, popup.HotkeyOrderMatters);
+                _ = new SoundItem(popup.Hotkeys, popup.FilePath, popup.SoundName, popup.Gain, popup.HotkeyOrderMatters);
 
                 saved = false;
             }
@@ -368,13 +370,14 @@ namespace Apollo_Soundboard
                 var row = SoundGrid.SelectedRows[0];
                 SoundItem sound = SoundItem.AllSounds[row.Index];
 
-                AddSoundPopup popup = new AddSoundPopup(sound.FilePath, sound.GetHotkeys(), sound.Gain, sound.HotkeyOrderMatters);
+                AddSoundPopup popup = new AddSoundPopup(sound);
                 var result = popup.ShowDialog();
                 Debug.WriteLine(result);
                 if (result == DialogResult.OK)
                 {
+                    sound.SoundName = popup.SoundName;
                     sound.SetHotkeys(popup.Hotkeys);
-                    sound.FilePath = popup.FileName;
+                    sound.FilePath = popup.FilePath;
                     sound.Gain = popup.Gain;
                     sound.HotkeyOrderMatters = popup.HotkeyOrderMatters;
 
@@ -456,13 +459,13 @@ namespace Apollo_Soundboard
             if (e.RowIndex < 0) return;
             SoundItem sound = SoundItem.AllSounds[e.RowIndex];
 
-            AddSoundPopup popup = new AddSoundPopup(sound.FilePath, sound.GetHotkeys());
+            AddSoundPopup popup = new AddSoundPopup(sound);
             var result = popup.ShowDialog();
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
             {
                 sound.SetHotkeys(popup.Hotkeys);
-                sound.FilePath = popup.FileName;
+                sound.FilePath = popup.FilePath;
 
                 saved = false;
             }
@@ -506,12 +509,12 @@ namespace Apollo_Soundboard
             {
                 if (IsFileSupported(file))
                 {
-                    AddSoundPopup popup = new AddSoundPopup(file, new List<Keys>());
+                    AddSoundPopup popup = new AddSoundPopup(file, Path.GetFileName(file), new List<Keys>());
                     var result = popup.ShowDialog();
                     Debug.WriteLine(result);
                     if (result == DialogResult.OK)
                     {
-                        _ = new SoundItem(popup.Hotkeys, popup.FileName);
+                        _ = new SoundItem(popup.Hotkeys, popup.SoundName, popup.FilePath, popup.Gain, popup.HotkeyOrderMatters);
 
                         saved = false;
                     }

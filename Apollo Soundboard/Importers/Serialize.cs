@@ -8,6 +8,7 @@ namespace Apollo_Soundboard.Importers
         public float Gain { get; set; }
         public int[] Hotkeys { get; set; }
         public bool HotkeyOrderMatters { get; set; }
+        public string SoundName { get; set; }
     }
     public static class Serializer
     {
@@ -20,6 +21,7 @@ namespace Apollo_Soundboard.Importers
                 SoundData data = new SoundData();
                 data.Gain = sound.Gain;
                 data.FilePath = sound.FilePath;
+                data.SoundName = sound.SoundName;
                 data.Hotkeys = sound.GetHotkeys().Select(i => (int)i).ToArray();
                 data.HotkeyOrderMatters = sound.HotkeyOrderMatters;
                 entries.Add(data);
@@ -51,6 +53,7 @@ namespace Apollo_Soundboard.Importers
 
                 sound.SetHotkeys(Array.ConvertAll(item.Hotkeys, (i) => { return (Keys)i; }).ToList());
                 sound.FilePath = item.FilePath;
+                sound.SoundName = item.SoundName;
                 sound.Gain = item.Gain;
                 sound.HotkeyOrderMatters = item.HotkeyOrderMatters;
                 sounds.Add(sound);
