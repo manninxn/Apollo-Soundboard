@@ -36,16 +36,12 @@ namespace Apollo
                 }
             }
 
-            if (SoundItem.ClearSounds.Count == 0) return;
-
-            if (PressedKeys.TakeLast(SoundItem.ClearSounds.Count).SequenceEqual(SoundItem.ClearSounds))
+            if (SoundItem.ClearSounds.Count > 0 && PressedKeys.TakeLast(SoundItem.ClearSounds.Count).SequenceEqual(SoundItem.ClearSounds))
             {
                 SoundItem.StopAllSounds();
             }
 
-            if (MicInjector.ToggleInjector.Count == 0) return;
-
-            if(PressedKeys.TakeLast(MicInjector.ToggleInjector.Count).SequenceEqual(MicInjector.ToggleInjector))
+            if(MicInjector.ToggleInjector.Count > 0 && PressedKeys.TakeLast(MicInjector.ToggleInjector.Count).SequenceEqual(MicInjector.ToggleInjector))
             {
                 Soundboard.Instance.ToggleMicInjector();
             }
