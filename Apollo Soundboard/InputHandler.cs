@@ -1,6 +1,6 @@
 ﻿using Gma.System.MouseKeyHook;
 
-namespace Apollo_Soundboard
+namespace Apollo
 {
     public static class InputHandler
     {

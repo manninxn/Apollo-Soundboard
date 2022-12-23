@@ -1,13 +1,12 @@
 ﻿using System.Data;
-using System.Windows.Forms.Design;
 
-namespace Apollo_Soundboard
+namespace Apollo.Forms
 {
     public partial class AddSoundPopup : Form
     {
         public string FilePath = "";
         public string SoundName = "";
-        public List<Keys> Hotkeys = new List<Keys>();
+        public List<Keys> Hotkeys = new();
         public float Gain = 0;
         public bool HotkeyOrderMatters = false;
         public AddSoundPopup()
@@ -15,7 +14,7 @@ namespace Apollo_Soundboard
             InitializeComponent();
         }
 
-        float Remap(float s, float a1, float a2, float b1, float b2)
+        public static float Remap(float s, float a1, float a2, float b1, float b2)
         {
             return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         }
@@ -31,7 +30,6 @@ namespace Apollo_Soundboard
             Gain = sound.Gain;
             HotkeyOrderMatters = sound.HotkeyOrderMatters;
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
-            HotkeySelectorButton.Text = String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
         }
@@ -42,12 +40,11 @@ namespace Apollo_Soundboard
             FilePathBox.Text = filePath;
             FileNameBox.Text = soundName;
             FilePath = filePath;
-            SoundName= soundName;
+            SoundName = soundName;
             Hotkeys = _Hotkeys;
             Gain = _Gain;
             HotkeyOrderMatters = _HotkeyOrderMatters;
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
-            HotkeySelectorButton.Text = String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
         }
@@ -56,7 +53,7 @@ namespace Apollo_Soundboard
         private void Browse_Click(object sender, EventArgs e)
         {
 
-            OpenFileDialog AudioFileSelector = new OpenFileDialog();
+            OpenFileDialog AudioFileSelector = new();
             //openfiledialog filter is only audio files
             string list = String.Join(";", Soundboard.SupportedExtensions);
             string listWithStars = String.Join(";", Soundboard.SupportedExtensions.Select(extension => "*" + extension));

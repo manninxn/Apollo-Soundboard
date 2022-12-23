@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Apollo_Soundboard.Importers
+namespace Apollo.Importers
 {
     [XmlRoot(ElementName = "Sound")]
     public class Sound
@@ -32,9 +32,10 @@ namespace Apollo_Soundboard.Importers
             var sounds = new List<SoundItem>();
             _ = XmlReader.Create(path);
             var serializer = new XmlSerializer(typeof(Soundlist));
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (FileStream fs = new(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                var obj = (Soundlist)serializer.Deserialize(fs);
+                var obj = (Soundlist?)serializer.Deserialize(fs);
+                if (obj is null) return sounds;
                 Debug.WriteLine(obj.Sound[6].Key);
                 foreach (Sound sound in obj.Sound)
                 {
@@ -42,14 +43,12 @@ namespace Apollo_Soundboard.Importers
                     var keys = new List<Keys>();
                     soundItem.FilePath = sound.Url;
 
-                    int keyCode;
-                    if (int.TryParse(sound.Key, out keyCode))
+                    if (int.TryParse(sound.Key, out int keyCode))
                     {
                         keys.Add((Keys)keyCode);
                     }
 
-                    int modifiers;
-                    if (int.TryParse(sound.KeyModifiers, out modifiers))
+                    if (int.TryParse(sound.KeyModifiers, out int modifiers))
                     {
                         switch (modifiers)
                         {

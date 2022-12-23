@@ -1,9 +1,9 @@
-﻿using Apollo_Soundboard.Properties;
+﻿using Apollo.Forms;
+using Apollo.Properties;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
-
-namespace Apollo_Soundboard
+namespace Apollo
 {
     public class Device
     {
@@ -31,9 +31,9 @@ namespace Apollo_Soundboard
     public class DeviceManager : IMMNotificationClient
     {
         int _primary;
-        public Device PrimaryDevice { get; private set; }
-        public Device SecondaryDevice { get; private set; }
-        public Device MicrophoneDevice { get; private set; }
+        public Device? PrimaryDevice { get; private set; }
+        public Device? SecondaryDevice { get; private set; }
+        public Device? MicrophoneDevice { get; private set; }
         public int PrimaryOutput
         {
             get
@@ -96,9 +96,11 @@ namespace Apollo_Soundboard
 
         public DeviceManager()
         {
+
             outputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).ToList();
             inputDevices = enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
             _ = enumerator.RegisterEndpointNotificationCallback(this);
+
         }
         public void Refresh()
         {

@@ -2,7 +2,7 @@
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Exceptions;
 
-namespace Apollo_Soundboard.Forms
+namespace Apollo.Forms
 {
     public partial class AudioConverter : Form
     {
@@ -13,7 +13,7 @@ namespace Apollo_Soundboard.Forms
 
         private void BrowseConvertFile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog AudioFileSelector = new OpenFileDialog();
+            OpenFileDialog AudioFileSelector = new();
             //openfiledialog filter is only audio files
             AudioFileSelector.Filter = "Any file (*.*)|*.*";
             DialogResult result = AudioFileSelector.ShowDialog(); // Show the dialog.
@@ -50,10 +50,10 @@ namespace Apollo_Soundboard.Forms
             catch (FFmpegNotFoundException ex)
             {
                 Debug.WriteLine(ex.Message);
-                FFMPEGNotFound error = new FFMPEGNotFound();
+                FFMPEGNotFound error = new();
                 if (error.ShowDialog() == DialogResult.Yes)
                 {
-                    Downloading wait = new Downloading();
+                    Downloading wait = new();
                     _ = wait.ShowDialog();
                     await Convert(input, output);
 

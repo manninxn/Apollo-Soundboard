@@ -1,4 +1,4 @@
-﻿namespace Apollo_Soundboard
+﻿namespace Apollo.Forms
 {
     partial class UnsavedChanges
     {

@@ -3,7 +3,7 @@ using NAudio.Wave;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Apollo_Soundboard
+namespace Apollo.Forms
 {
     public class FlatCombo : ComboBox
     {
@@ -84,12 +84,12 @@ namespace Apollo_Soundboard
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soundboard));
-            this.PrimaryOutputComboBox = new Apollo_Soundboard.FlatCombo();
+            this.PrimaryOutputComboBox = new Apollo.Forms.FlatCombo();
             this.SoundGrid = new System.Windows.Forms.DataGridView();
             this.AddSoundButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.SecondaryOutputComboBox = new Apollo_Soundboard.FlatCombo();
+            this.SecondaryOutputComboBox = new Apollo.Forms.FlatCombo();
             this.MicInjectorToggle = new System.Windows.Forms.CheckBox();
             this.RemoveSound = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -106,10 +106,10 @@ namespace Apollo_Soundboard
             this.volumeMixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StopAll = new System.Windows.Forms.Button();
-            this.StopAllHotkeySelector = new Apollo_Soundboard.HotkeySelector();
+            this.StopAllHotkeySelector = new Apollo.HotkeySelector();
             this.EditButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.MicrophoneSelectComboBox = new Apollo_Soundboard.FlatCombo();
+            this.MicrophoneSelectComboBox = new Apollo.Forms.FlatCombo();
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.NotifyBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();

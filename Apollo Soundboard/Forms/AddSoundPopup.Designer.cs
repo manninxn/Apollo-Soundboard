@@ -1,4 +1,4 @@
-﻿namespace Apollo_Soundboard
+﻿namespace Apollo.Forms
 {
     partial class AddSoundPopup
     {
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddSoundPopup));
-            this.HotkeySelectorButton = new Apollo_Soundboard.HotkeySelector();
+            this.HotkeySelectorButton = new Apollo.HotkeySelector();
             this.ConfirmAdd = new System.Windows.Forms.Button();
             this.Browse = new System.Windows.Forms.Button();
             this.FilePathBox = new System.Windows.Forms.TextBox();
@@ -37,7 +37,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.GainBar = new Apollo_Soundboard.NoFocusTrackBar();
+            this.GainBar = new Apollo.Forms.NoFocusTrackBar();
             this.label2 = new System.Windows.Forms.Label();
             this.HotkeyOrderMattersCheckbox = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();

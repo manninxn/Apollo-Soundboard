@@ -1,4 +1,4 @@
-﻿namespace Apollo_Soundboard
+﻿namespace Apollo.Forms
 {
     internal class NoFocusTrackBar : System.Windows.Forms.TrackBar
     {
@@ -48,18 +48,18 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.trackBar1 = new Apollo_Soundboard.NoFocusTrackBar();
+            this.trackBar1 = new Apollo.Forms.NoFocusTrackBar();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.trackBar2 = new Apollo_Soundboard.NoFocusTrackBar();
+            this.trackBar2 = new Apollo.Forms.NoFocusTrackBar();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.trackBar3 = new Apollo_Soundboard.NoFocusTrackBar();
+            this.trackBar3 = new Apollo.Forms.NoFocusTrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();

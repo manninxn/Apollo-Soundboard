@@ -1,15 +1,15 @@
-﻿using Apollo_Soundboard.Properties;
+﻿using Apollo.Forms;
+using Apollo.Properties;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
-
-namespace Apollo_Soundboard
+namespace Apollo
 {
 
     public class MicInjector
     {
         WasapiCapture? micStream; WasapiOut? virtualCable;
-        Thread? micInjectorThread;
+
         private bool _Enabled;
 
         private bool _running = false;
@@ -49,17 +49,20 @@ namespace Apollo_Soundboard
 
             if (Soundboard.Devices.SecondaryOutput == -2 | _running) return;
             _running = true;
-            micStream = new(Soundboard.Devices.MicrophoneDevice.MMDevice, true, 50);
-
-            micStream.WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Devices.Microphone).Channels);
+            micStream = new(Soundboard.Devices.MicrophoneDevice?.MMDevice, true, 50)
+            {
+                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Devices.Microphone).Channels)
+            };
 
             WaveInProvider waveIn = new(micStream);
 
 
-            var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider());
-            volumeSampleProvider.Volume = 1 + Settings.Default.MicrophoneGain;
+            var volumeSampleProvider = new VolumeSampleProvider(waveIn.ToSampleProvider())
+            {
+                Volume = 1 + Settings.Default.MicrophoneGain
+            };
 
-            virtualCable = new(Soundboard.Devices.SecondaryDevice.MMDevice, AudioClientShareMode.Shared, true, 50);
+            virtualCable = new(Soundboard.Devices.SecondaryDevice?.MMDevice, AudioClientShareMode.Shared, true, 50);
             virtualCable.Init(volumeSampleProvider);
 
             micStream.StartRecording();

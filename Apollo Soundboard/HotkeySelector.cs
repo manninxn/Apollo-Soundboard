@@ -1,28 +1,32 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 
-namespace Apollo_Soundboard
+namespace Apollo
 {
     public partial class HotkeySelector : Button
     {
-        public List<Keys> SelectedHotkeys = new List<Keys>();
+
+        public HotkeySelector()
+        {
+            InitializeComponent();
+        }
+
+        private List<Keys> _hotkeys = new();
+        public List<Keys> SelectedHotkeys
+        {
+            get => _hotkeys;
+            set
+            {
+                _hotkeys = value;
+                Text = String.Join("+", value.Select(i => KeyMap.KeyToChar(i)).ToList());
+            }
+        }
 
         private bool active;
         public bool MultiKey { get; set; }
 
-        private EventHandler onHotkeyAssigned;
 
-        public event EventHandler HotkeyAssigned
-        {
-            add
-            {
-                onHotkeyAssigned += value;
-            }
-            remove
-            {
-                onHotkeyAssigned -= value;
-            }
-        }
+        public event EventHandler? HotkeyAssigned;
 
         public bool isActive
         {
@@ -40,7 +44,7 @@ namespace Apollo_Soundboard
                 }
                 else
                 {
-                    onHotkeyAssigned?.Invoke(this, EventArgs.Empty);
+                    HotkeyAssigned?.Invoke(this, EventArgs.Empty);
                     InputHandler._GlobalHook.KeyDown -= Listen;
                     if (MultiKey) InputHandler._GlobalHook.KeyUp -= WaitForKeyUp;
                     base.BackColor = InactiveColor;
@@ -81,7 +85,7 @@ namespace Apollo_Soundboard
             base.OnLeave(e);
         }
         int numKeys = 0;
-        void Listen(object sender, KeyEventArgs e)
+        void Listen(object? sender, KeyEventArgs e)
         {
             Keys keyCode = KeyMap.ParseModifierKey(e.KeyCode);
 
@@ -92,7 +96,7 @@ namespace Apollo_Soundboard
             if (!MultiKey) isActive = false;
         }
 
-        void WaitForKeyUp(object sender, KeyEventArgs e)
+        void WaitForKeyUp(object? sender, KeyEventArgs e)
         {
             numKeys--;
             Debug.WriteLine(numKeys);

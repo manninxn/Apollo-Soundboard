@@ -1,7 +1,7 @@
 ﻿using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
-namespace Apollo_Soundboard.Forms
+namespace Apollo.Forms
 {
     public partial class Downloading : Form
     {

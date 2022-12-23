@@ -1,11 +1,10 @@
-using Apollo_Soundboard.Forms;
-using Apollo_Soundboard.Importers;
-using Apollo_Soundboard.Properties;
+using Apollo.Importers;
+using Apollo.Properties;
 using AutoUpdaterDotNET;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace Apollo_Soundboard
+namespace Apollo.Forms
 {
     public partial class Soundboard : Form
     {
@@ -49,7 +48,7 @@ namespace Apollo_Soundboard
                 if (value) this.Text = this.Text.TrimEnd('*');
                 else
                 {
-                    if (!this.Text.EndsWith("*")) this.Text = this.Text + "*";
+                    if (!this.Text.EndsWith("*")) this.Text += "*";
 
                 }
                 _saved = value;
@@ -61,7 +60,7 @@ namespace Apollo_Soundboard
 
         #region Managers
 
-        public static Soundboard Instance;
+        public static Soundboard Instance { get; set; }
 
         private DeviceManager _Devices = new();
 
@@ -111,11 +110,9 @@ namespace Apollo_Soundboard
         public Soundboard(string? file)
         {
 
-
-
             AutoUpdater.Start("https://raw.githubusercontent.com/manninxn/Apollo-Soundboard/master/Apollo%20Soundboard/version.xml");
 
-            if (Instance != null) return;
+            if (Instance is not null) return;
 
             Instance = this;
             InitializeComponent();
@@ -220,7 +217,7 @@ namespace Apollo_Soundboard
         {
             if (!saved)
             {
-                UnsavedChanges prompt = new UnsavedChanges();
+                UnsavedChanges prompt = new();
                 var result = prompt.ShowDialog();
                 if (result == DialogResult.Yes)
                 {
@@ -236,7 +233,7 @@ namespace Apollo_Soundboard
         {
             if (newFile || fileName == string.Empty)
             {
-                SaveFileDialog saveFileSelector = new SaveFileDialog();
+                SaveFileDialog saveFileSelector = new();
                 //openfiledialog filter is only audio files
                 saveFileSelector.Filter = "Apollo Soundboard files (*.asb)|*.asb";
                 DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
@@ -262,7 +259,7 @@ namespace Apollo_Soundboard
         }
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog saveFileSelector = new OpenFileDialog();
+            OpenFileDialog saveFileSelector = new();
             //openfiledialog filter is only audio files
             saveFileSelector.Filter = "Apollo Soundboard files (*.asb)|*.asb";
             DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
@@ -270,7 +267,7 @@ namespace Apollo_Soundboard
             {
                 if (!saved)
                 {
-                    UnsavedChanges prompt = new UnsavedChanges();
+                    UnsavedChanges prompt = new();
                     if (prompt.ShowDialog() == DialogResult.Yes)
                     {
                         Save(false);
@@ -290,7 +287,7 @@ namespace Apollo_Soundboard
         {
             if (!saved)
             {
-                UnsavedChanges prompt = new UnsavedChanges();
+                UnsavedChanges prompt = new();
                 var result = prompt.ShowDialog();
                 if (result == DialogResult.Yes)
                 {
@@ -308,13 +305,13 @@ namespace Apollo_Soundboard
 
         private void volumeMixerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            VolumeMixer mixer = new VolumeMixer(this);
+            VolumeMixer mixer = new(this);
             _ = mixer.ShowDialog();
         }
 
         private void audioConverterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AudioConverter converter = new AudioConverter();
+            AudioConverter converter = new();
             _ = converter.ShowDialog();
         }
 
@@ -351,7 +348,7 @@ namespace Apollo_Soundboard
 
         private void AddSoundButton_Click(object sender, EventArgs e)
         {
-            AddSoundPopup popup = new AddSoundPopup();
+            AddSoundPopup popup = new();
             var result = popup.ShowDialog();
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
@@ -370,7 +367,7 @@ namespace Apollo_Soundboard
                 var row = SoundGrid.SelectedRows[0];
                 SoundItem sound = SoundItem.AllSounds[row.Index];
 
-                AddSoundPopup popup = new AddSoundPopup(sound);
+                AddSoundPopup popup = new(sound);
                 var result = popup.ShowDialog();
                 Debug.WriteLine(result);
                 if (result == DialogResult.OK)
@@ -397,6 +394,7 @@ namespace Apollo_Soundboard
 
         private void PrimaryOutputComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
+            if (e.Font is null) return;
             int index = e.Index >= 0 ? e.Index : 0;
             var brush = Brushes.Black;
             e.DrawBackground();
@@ -406,6 +404,7 @@ namespace Apollo_Soundboard
 
         private void SecondaryOutputComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
+            if (e.Font is null) return;
             int index = e.Index >= 0 ? e.Index : 0;
             var brush = Brushes.Black;
             e.DrawBackground();
@@ -415,6 +414,7 @@ namespace Apollo_Soundboard
 
         private void MicrophoneSelectComboBox_DrawItem(object sender, DrawItemEventArgs e)
         {
+            if (e.Font is null) return;
             int index = e.Index >= 0 ? e.Index : 0;
             var brush = Brushes.Black;
             e.DrawBackground();
@@ -459,7 +459,7 @@ namespace Apollo_Soundboard
             if (e.RowIndex < 0) return;
             SoundItem sound = SoundItem.AllSounds[e.RowIndex];
 
-            AddSoundPopup popup = new AddSoundPopup(sound);
+            AddSoundPopup popup = new(sound);
             var result = popup.ShowDialog();
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
@@ -473,7 +473,7 @@ namespace Apollo_Soundboard
 
         private void eXPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog saveFileSelector = new OpenFileDialog();
+            OpenFileDialog saveFileSelector = new();
             //openfiledialog filter is only audio files
             saveFileSelector.Filter = "JSON files (*.json)|*.json";
             DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
@@ -488,7 +488,7 @@ namespace Apollo_Soundboard
 
         private void soundpadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog saveFileSelector = new OpenFileDialog();
+            OpenFileDialog saveFileSelector = new();
             //openfiledialog filter is only audio files
             saveFileSelector.Filter = "Soundpad files (*.spl)|*.spl";
             DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
@@ -509,7 +509,7 @@ namespace Apollo_Soundboard
             {
                 if (IsFileSupported(file))
                 {
-                    AddSoundPopup popup = new AddSoundPopup(file, Path.GetFileName(file), new List<Keys>());
+                    AddSoundPopup popup = new(file, Path.GetFileName(file), new List<Keys>());
                     var result = popup.ShowDialog();
                     Debug.WriteLine(result);
                     if (result == DialogResult.OK)

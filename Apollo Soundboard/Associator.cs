@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
 
-namespace Apollo_Soundboard
+namespace Apollo
 {
     //Source: https://stackoverflow.com/a/44816953
     public class FileAssociation
@@ -28,7 +28,7 @@ namespace Apollo_Soundboard
                 new FileAssociation
                 {
                     Extension = ".asb",
-                    ProgId = "Apollo_Soundboard_File",
+                    ProgId = "Apollo_File",
                     FileTypeDescription = "Apollo Soundboard File",
                     ExecutableFilePath = filePath
                 });

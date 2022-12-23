@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Apollo_Soundboard.Importers
+namespace Apollo.Importers
 {
     public struct SoundData
     {
@@ -18,7 +18,7 @@ namespace Apollo_Soundboard.Importers
 
             foreach (SoundItem sound in sounds)
             {
-                SoundData data = new SoundData();
+                SoundData data = new();
                 data.Gain = sound.Gain;
                 data.FilePath = sound.FilePath;
                 data.SoundName = sound.SoundName;
@@ -48,7 +48,7 @@ namespace Apollo_Soundboard.Importers
 
             foreach (SoundData item in entries)
             {
-                SoundItem sound = new SoundItem();
+                SoundItem sound = new();
                 var keys = new List<Keys>();
 
                 sound.SetHotkeys(Array.ConvertAll(item.Hotkeys, (i) => { return (Keys)i; }).ToList());

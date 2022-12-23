@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Apollo_Soundboard.Importers
+namespace Apollo.Importers
 {
     public class ItemEntry
     {
@@ -24,7 +24,7 @@ namespace Apollo_Soundboard.Importers
 
             foreach (ItemEntry item in itemList.soundboardEntries)
             {
-                SoundItem sound = new SoundItem();
+                SoundItem sound = new();
                 var keys = new List<Keys>();
                 foreach (int i in item.activationKeysNumbers)
                 {

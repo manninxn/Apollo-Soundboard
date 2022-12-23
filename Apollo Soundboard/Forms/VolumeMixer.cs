@@ -1,6 +1,6 @@
-﻿using Apollo_Soundboard.Properties;
+﻿using Apollo.Properties;
 
-namespace Apollo_Soundboard
+namespace Apollo.Forms
 {
     public partial class VolumeMixer : Form
     {

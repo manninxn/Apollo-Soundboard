@@ -1,10 +1,10 @@
-﻿using Apollo_Soundboard.Properties;
+﻿using Apollo.Forms;
+using Apollo.Properties;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Diagnostics;
-
-namespace Apollo_Soundboard
+namespace Apollo
 {
     public class SoundItem
     {
@@ -34,11 +34,11 @@ namespace Apollo_Soundboard
         }
 
 
-        public static OptimizedBindingList<SoundItem> AllSounds = new OptimizedBindingList<SoundItem>();
+        public static OptimizedBindingList<SoundItem> AllSounds = new();
 
-        private static List<WaveOut> PlayingSounds = new List<WaveOut>();
+        private static List<WaveOut> PlayingSounds = new();
 
-        public string FilePath;
+        public string FilePath = string.Empty;
 
         private string _soundName;
         public string SoundName
@@ -57,7 +57,7 @@ namespace Apollo_Soundboard
 
         public bool HotkeyOrderMatters = false;
 
-        private List<Keys> Hotkeys { get; set; }
+        private List<Keys> Hotkeys { get; set; } = new List<Keys>();
 
 
         public SoundItem() { }

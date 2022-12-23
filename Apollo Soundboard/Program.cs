@@ -1,7 +1,7 @@
 using AutoUpdaterDotNET;
 using System.ComponentModel;
 
-namespace Apollo_Soundboard
+namespace Apollo
 {
     internal static class Program
     {
@@ -9,7 +9,7 @@ namespace Apollo_Soundboard
 
         private static string Version = "1.6.0";
 
-        private static Mutex _mutex = null;
+        private static Mutex? _mutex = null;
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -17,14 +17,16 @@ namespace Apollo_Soundboard
         static void Main(string[] args)
         {
 
+            //auto updater
             AutoUpdater.InstalledVersion = new Version(Version);
 
+            //associate apollo soundboard with the .asb file extension
             FileAssociations.EnsureAssociationsSet();
 
+            //mutex to make sure only one instance runs at a time
             const string appName = "Apollo Soundboard";
-            bool createdNew;
 
-            _mutex = new Mutex(true, appName, out createdNew);
+            _mutex = new Mutex(true, appName, out bool createdNew);
 
             if (!createdNew)
             {
@@ -37,14 +39,16 @@ namespace Apollo_Soundboard
             ApplicationConfiguration.Initialize();
             if (args.Length == 0)
             {
-                Application.Run(new Soundboard(null));
+                Application.Run(new Forms.Soundboard(null));
             }
             else
             {
-                Application.Run(new Soundboard(args[0]));
+                Application.Run(new Forms.Soundboard(args[0]));
             }
 
         }
+
+        //putting this here to get it out of the way of the rest of the code
         //https://stackoverflow.com/questions/2575592/moving-a-member-of-a-list-to-the-front-of-the-list
         public static void MoveItemAtIndexToFront<T>(this List<T> list, int index)
         {
@@ -67,15 +71,12 @@ namespace Apollo_Soundboard
 
         public OptimizedBindingList(List<I> baseList) : base(baseList)
         {
-            if (baseList == null)
-                throw new ArgumentNullException();
-            _baseList = baseList;
+            _baseList = baseList ?? throw new ArgumentNullException();
         }
 
         public void AddRange(IEnumerable<I> vals)
         {
-            ICollection<I> collection = vals as ICollection<I>;
-            if (collection != null)
+            if (vals is ICollection<I> collection)
             {
                 int requiredCapacity = Count + collection.Count;
                 if (requiredCapacity > _baseList.Capacity)
@@ -87,7 +88,7 @@ namespace Apollo_Soundboard
             {
                 RaiseListChangedEvents = false;
                 foreach (I v in vals)
-                    Add(v); // We cant call _baseList.Add, otherwise Events wont get hooked.
+                    Add(v);
             }
             finally
             {

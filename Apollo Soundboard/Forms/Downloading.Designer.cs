@@ -1,4 +1,4 @@
-﻿namespace Apollo_Soundboard.Forms
+﻿namespace Apollo.Forms
 {
     partial class Downloading
     {
