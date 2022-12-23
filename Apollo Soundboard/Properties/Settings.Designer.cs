@@ -130,5 +130,17 @@ namespace Apollo.Properties {
                 this["MicrophoneGain"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MicInjectorHotkey {
+            get {
+                return ((string)(this["MicInjectorHotkey"]));
+            }
+            set {
+                this["MicInjectorHotkey"] = value;
+            }
+        }
     }
 }

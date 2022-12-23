@@ -8,6 +8,31 @@ namespace Apollo
 
     public class MicInjector
     {
+
+        private static string _ToggleInjector = Settings.Default.MicInjectorHotkey;
+
+        public static List<Keys> ToggleInjector
+        {
+            get
+            {
+
+                var list = new List<Keys>();
+                if (_ToggleInjector == string.Empty) return list;
+                int[] keycodes = Array.ConvertAll(_ToggleInjector.Split(","), int.Parse);
+                foreach (int i in keycodes)
+                {
+                    list.Add((Keys)i);
+                }
+                return list;
+            }
+            set
+            {
+                _ToggleInjector = String.Join(",", value.ConvertAll(i => (int)i));
+                Settings.Default.MicInjectorHotkey = _ToggleInjector;
+                Settings.Default.Save();
+            }
+        }
+
         WasapiCapture? micStream; WasapiOut? virtualCable;
 
         private bool _Enabled;

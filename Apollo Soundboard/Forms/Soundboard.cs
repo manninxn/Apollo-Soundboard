@@ -128,16 +128,17 @@ namespace Apollo.Forms
             PrimaryOutputComboBox.DisplayMember = "Name";
             PrimaryOutputComboBox.ValueMember = "DeviceNumber";
             PrimaryOutputComboBox.DataSource = Devices.PrimaryDevices;
-
+            PrimaryOutputComboBox.SelectionChangeCommitted += Devices.PrimaryOutputSelect;
 
             SecondaryOutputComboBox.DisplayMember = "Name";
             SecondaryOutputComboBox.ValueMember = "DeviceNumber";
             SecondaryOutputComboBox.DataSource = Devices.SecondaryDevices;
-
+            SecondaryOutputComboBox.SelectionChangeCommitted += Devices.SecondaryOutputSelect;
 
             MicrophoneSelectComboBox.DisplayMember = "Name";
             MicrophoneSelectComboBox.ValueMember = "DeviceNumber";
             MicrophoneSelectComboBox.DataSource = Devices.Microphones;
+            MicrophoneSelectComboBox.SelectionChangeCommitted += Devices.MicrophoneSelect;
 
 
 
@@ -163,8 +164,8 @@ namespace Apollo.Forms
 
             InputHandler.Subscribe();
 
-            StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => i.ToString()).ToList());
-
+            StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => KeyMap.KeyToChar(i)).ToList());
+            MicInjectorToggleHotkey.Text = String.Join("+", MicInjector.ToggleInjector.Select(i => KeyMap.KeyToChar(i)).ToList());
             Devices.DevicesUpdated += UpdateDeviceSelectors;
 
 
@@ -342,7 +343,8 @@ namespace Apollo.Forms
         }
         private void MicInjectorToggle_CheckChanged(object sender, EventArgs e)
         {
-            MicInjector.Enabled = MicInjectorToggle.Checked;
+            if (MicInjector.Enabled == MicInjectorToggle.Checked) return;
+            BeginInvoke(() => MicInjector.Enabled = MicInjectorToggle.Checked);
 
         }
 
@@ -560,6 +562,16 @@ namespace Apollo.Forms
 
         }
 
+        private void MicInjectorToggleHotkey_HotkeyAssigned(object sender, EventArgs e)
+        {
+            MicInjector.ToggleInjector = MicInjectorToggleHotkey.SelectedHotkeys;
+        }
+
+        public void ToggleMicInjector()
+        {
+            MicInjectorToggle.Checked = !MicInjectorToggle.Checked;
+            
+        }
     }
 
     //lol

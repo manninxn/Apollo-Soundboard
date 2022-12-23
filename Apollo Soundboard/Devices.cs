@@ -187,24 +187,27 @@ namespace Apollo
 
 
         #region Selection
-        public void MicrophoneSelect(object sender, EventArgs e)
+        public void MicrophoneSelect(object? sender, EventArgs e)
         {
+            if (sender is null) return;
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             Microphone = ((Device)(box.SelectedItem)).DeviceNumber;
             Soundboard.MicInjector.Refresh();
         }
 
-        public void PrimaryOutputSelect(object sender, EventArgs e)
+        public void PrimaryOutputSelect(object? sender, EventArgs e)
         {
+            if (sender is null) return;
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             PrimaryOutput = ((Device)(box.SelectedItem)).DeviceNumber;
             Soundboard.MicInjector.Refresh();
         }
 
-        public void SecondaryOutputSelect(object sender, EventArgs e)
+        public void SecondaryOutputSelect(object? sender, EventArgs e)
         {
+            if (sender is null) return;
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             SecondaryOutput = ((Device)(box.SelectedItem)).DeviceNumber;

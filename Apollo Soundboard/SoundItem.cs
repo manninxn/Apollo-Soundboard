@@ -9,7 +9,7 @@ namespace Apollo
     public class SoundItem
     {
 
-        public static string _ClearSounds = Settings.Default.StopAllSoundsHotkey;
+        private static string _ClearSounds = Settings.Default.StopAllSoundsHotkey;
 
         public static List<Keys> ClearSounds
         {

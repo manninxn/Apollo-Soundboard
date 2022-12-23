@@ -1,4 +1,5 @@
-﻿using Gma.System.MouseKeyHook;
+﻿using Apollo.Forms;
+using Gma.System.MouseKeyHook;
 
 namespace Apollo
 {
@@ -40,6 +41,13 @@ namespace Apollo
             if (PressedKeys.TakeLast(SoundItem.ClearSounds.Count).SequenceEqual(SoundItem.ClearSounds))
             {
                 SoundItem.StopAllSounds();
+            }
+
+            if (MicInjector.ToggleInjector.Count == 0) return;
+
+            if(PressedKeys.TakeLast(MicInjector.ToggleInjector.Count).SequenceEqual(MicInjector.ToggleInjector))
+            {
+                Soundboard.Instance.ToggleMicInjector();
             }
         }
         private static void KeyUpListener(object sender, KeyEventArgs e)

@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Apollo_Soundboard.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Apollo.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="PrimaryOutput" Type="System.Int32" Scope="User">
@@ -28,6 +28,9 @@
     </Setting>
     <Setting Name="MicrophoneGain" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="MicInjectorHotkey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

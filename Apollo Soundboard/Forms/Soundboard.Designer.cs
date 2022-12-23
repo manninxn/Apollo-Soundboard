@@ -1,10 +1,22 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Apollo.Forms
 {
+
+    public static class CheckBoxExtension
+    {
+        public static void SetChecked(this CheckBox chBox, bool check)
+        {
+         var type = typeof(CheckBox);
+            var field = type.GetField("checkState", BindingFlags.NonPublic | BindingFlags.Instance);
+            field.SetValue(chBox, check ? CheckState.Checked : CheckState.Unchecked);
+            chBox.Invalidate();
+        }
+    }
     public class FlatCombo : ComboBox
     {
         
@@ -113,6 +125,7 @@ namespace Apollo.Forms
             this.NotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.NotifyBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.MicInjectorToggleHotkey = new Apollo.HotkeySelector();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.NotifyBar.SuspendLayout();
@@ -131,7 +144,7 @@ namespace Apollo.Forms
             this.PrimaryOutputComboBox.Size = new System.Drawing.Size(601, 28);
             this.PrimaryOutputComboBox.TabIndex = 1;
             this.PrimaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.PrimaryOutputComboBox_DrawItem);
-            this.PrimaryOutputComboBox.SelectionChangeCommitted += new System.EventHandler(Devices.PrimaryOutputSelect);
+            
             // 
             // SoundGrid
             // 
@@ -225,16 +238,16 @@ namespace Apollo.Forms
             this.SecondaryOutputComboBox.Size = new System.Drawing.Size(601, 28);
             this.SecondaryOutputComboBox.TabIndex = 6;
             this.SecondaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecondaryOutputComboBox_DrawItem);
-            this.SecondaryOutputComboBox.SelectionChangeCommitted += new System.EventHandler(Devices.SecondaryOutputSelect);
             // 
             // MicInjectorToggle
             // 
             this.MicInjectorToggle.AutoSize = true;
+            this.MicInjectorToggle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MicInjectorToggle.ForeColor = System.Drawing.SystemColors.Control;
-            this.MicInjectorToggle.Location = new System.Drawing.Point(499, 628);
+            this.MicInjectorToggle.Location = new System.Drawing.Point(474, 628);
             this.MicInjectorToggle.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MicInjectorToggle.Name = "MicInjectorToggle";
-            this.MicInjectorToggle.Size = new System.Drawing.Size(109, 24);
+            this.MicInjectorToggle.Size = new System.Drawing.Size(134, 29);
             this.MicInjectorToggle.TabIndex = 8;
             this.MicInjectorToggle.Text = "Mic Injector";
             this.MicInjectorToggle.UseVisualStyleBackColor = true;
@@ -421,6 +434,7 @@ namespace Apollo.Forms
             this.StopAllHotkeySelector.Location = new System.Drawing.Point(331, 661);
             this.StopAllHotkeySelector.MultiKey = true;
             this.StopAllHotkeySelector.Name = "StopAllHotkeySelector";
+            this.StopAllHotkeySelector.SelectedHotkeys = ((System.Collections.Generic.List<System.Windows.Forms.Keys>)(resources.GetObject("StopAllHotkeySelector.SelectedHotkeys")));
             this.StopAllHotkeySelector.Size = new System.Drawing.Size(135, 29);
             this.StopAllHotkeySelector.TabIndex = 12;
             this.StopAllHotkeySelector.Text = "none";
@@ -465,7 +479,6 @@ namespace Apollo.Forms
             this.MicrophoneSelectComboBox.Size = new System.Drawing.Size(601, 28);
             this.MicrophoneSelectComboBox.TabIndex = 15;
             this.MicrophoneSelectComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.MicrophoneSelectComboBox_DrawItem);
-            this.MicrophoneSelectComboBox.SelectionChangeCommitted += new System.EventHandler(Devices.MicrophoneSelect);
             // 
             // NotifyIcon
             // 
@@ -489,6 +502,25 @@ namespace Apollo.Forms
             this.quitToolStripMenuItem1.Text = "Quit";
             this.quitToolStripMenuItem1.Click += new System.EventHandler(this.quitToolStripMenuItem1_Click);
             // 
+            // MicInjectorToggleHotkey
+            // 
+            this.MicInjectorToggleHotkey.ActiveColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.MicInjectorToggleHotkey.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.MicInjectorToggleHotkey.FlatAppearance.BorderSize = 0;
+            this.MicInjectorToggleHotkey.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.MicInjectorToggleHotkey.ForeColor = System.Drawing.SystemColors.Control;
+            this.MicInjectorToggleHotkey.InactiveColor = System.Drawing.SystemColors.ActiveCaption;
+            this.MicInjectorToggleHotkey.isActive = false;
+            this.MicInjectorToggleHotkey.Location = new System.Drawing.Point(473, 661);
+            this.MicInjectorToggleHotkey.MultiKey = true;
+            this.MicInjectorToggleHotkey.Name = "MicInjectorToggleHotkey";
+            this.MicInjectorToggleHotkey.SelectedHotkeys = ((System.Collections.Generic.List<System.Windows.Forms.Keys>)(resources.GetObject("MicInjectorToggleHotkey.SelectedHotkeys")));
+            this.MicInjectorToggleHotkey.Size = new System.Drawing.Size(135, 29);
+            this.MicInjectorToggleHotkey.TabIndex = 16;
+            this.MicInjectorToggleHotkey.Text = "none";
+            this.MicInjectorToggleHotkey.UseVisualStyleBackColor = false;
+            this.MicInjectorToggleHotkey.HotkeyAssigned += new System.EventHandler(this.MicInjectorToggleHotkey_HotkeyAssigned);
+            // 
             // Soundboard
             // 
             this.AllowDrop = true;
@@ -496,6 +528,7 @@ namespace Apollo.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.ClientSize = new System.Drawing.Size(619, 872);
+            this.Controls.Add(this.MicInjectorToggleHotkey);
             this.Controls.Add(this.MicrophoneSelectComboBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.EditButton);
@@ -560,6 +593,7 @@ namespace Apollo.Forms
         private NotifyIcon NotifyIcon;
         private ContextMenuStrip NotifyBar;
         private ToolStripMenuItem quitToolStripMenuItem1;
+        private HotkeySelector MicInjectorToggleHotkey;
     }
 
 }
