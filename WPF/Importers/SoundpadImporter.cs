@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Apollo.Importers
+namespace Apollo.IO
 {
     [XmlRoot(ElementName = "Sound")]
     public class Sound
@@ -40,12 +40,12 @@ namespace Apollo.Importers
                 foreach (Sound sound in obj.Sound)
                 {
                     var soundItem = new SoundItem();
-                    var keys = new List<Keys>();
+                    var keys = new List<Key>();
                     soundItem.FilePath = sound.Url;
 
                     if (int.TryParse(sound.Key, out int keyCode))
                     {
-                        keys.Add((Keys)keyCode);
+                        keys.Add((Key)keyCode);
                     }
 
                     if (int.TryParse(sound.KeyModifiers, out int modifiers))
@@ -53,22 +53,22 @@ namespace Apollo.Importers
                         switch (modifiers)
                         {
                             case 1:
-                                keys.Add(Keys.Alt); break;
+                                keys.Add(Key.Alt); break;
                             case 2:
-                                keys.Add(Keys.ControlKey); break;
+                                keys.Add(Key.ControlKey); break;
                             case 3:
-                                keys.Add(Keys.Alt);
-                                keys.Add(Keys.ControlKey);
+                                keys.Add(Key.Alt);
+                                keys.Add(Key.ControlKey);
                                 break;
                             case 4:
-                                keys.Add(Keys.Shift); break;
+                                keys.Add(Key.Shift); break;
                             case 5:
-                                keys.Add(Keys.Alt);
-                                keys.Add(Keys.ShiftKey);
+                                keys.Add(Key.Alt);
+                                keys.Add(Key.ShiftKey);
                                 break;
                             case 6:
-                                keys.Add(Keys.ShiftKey);
-                                keys.Add(Keys.ControlKey);
+                                keys.Add(Key.ShiftKey);
+                                keys.Add(Key.ControlKey);
                                 break;
                             default:
                                 break;

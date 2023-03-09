@@ -1,5 +1,10 @@
 using AutoUpdaterDotNET;
+using System;
 using System.ComponentModel;
+using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 
 namespace Apollo
 {

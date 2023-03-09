@@ -11,17 +11,17 @@ namespace Apollo
 
         private static string _ClearSounds = Settings.Default.StopAllSoundsHotkey;
 
-        public static List<Keys> ClearSounds
+        public static List<Key> ClearSounds
         {
             get
             {
 
-                var list = new List<Keys>();
+                var list = new List<Key>();
                 if (_ClearSounds == string.Empty) return list;
                 int[] keycodes = Array.ConvertAll(_ClearSounds.Split(","), int.Parse);
                 foreach (int i in keycodes)
                 {
-                    list.Add((Keys)i);
+                    list.Add((Key)i);
                 }
                 return list;
             }
@@ -57,12 +57,12 @@ namespace Apollo
 
         public bool HotkeyOrderMatters = false;
 
-        private List<Keys> Hotkeys { get; set; } = new List<Keys>();
+        private List<Key> Hotkeys { get; set; } = new List<Key>();
 
 
         public SoundItem() { }
 
-        public SoundItem(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        public SoundItem(List<Key> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false)
         {
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
@@ -131,24 +131,19 @@ namespace Apollo
 
         public void Play()
         {
-            try
-            {
-                Debug.WriteLine($"Gain: {Gain}");
-                if (Soundboard.Devices.SecondaryOutput != -2)
-                    PlayThroughDevice(FilePath, Soundboard.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            Debug.WriteLine($"Gain: {Gain}");
+            if (Soundboard.Devices.SecondaryOutput != -2)
+                PlayThroughDevice(FilePath, Soundboard.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
-                PlayThroughDevice(FilePath, Soundboard.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
-            } catch
-            {
-                Debug.WriteLine("rip");
-            }
+            PlayThroughDevice(FilePath, Soundboard.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+
         }
 
-        public List<Keys> GetHotkeys()
+        public List<Key> GetHotkeys()
         {
             return Hotkeys;
         }
-        public void SetHotkeys(List<Keys> hotkeys)
+        public void SetHotkeys(List<Key> hotkeys)
         {
             Hotkeys = hotkeys;
         }

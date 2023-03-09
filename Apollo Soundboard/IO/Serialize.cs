@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Apollo.Importers
+namespace Apollo.IO
 {
     public struct SoundData
     {

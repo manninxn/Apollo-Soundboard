@@ -69,6 +69,30 @@ namespace Apollo
                 _ => key
             };
         }
+
+        //please make issues on github if theres more to add im too tired to do this all, theres so many
+        public static Keys JavaKeyCodeTranslate(int keyCode)
+        {
+            return (Keys)(keyCode switch
+            {
+                10 => 13,
+                44 => 188,
+                45 => 189,
+                46 => 190,
+                57 => 191,
+                59 => 186,
+                61 => 187,
+                91 => 219,
+                92 => 226,
+                93 => 221,
+                127 => 46,
+                129 => 191,
+                155 => 45,
+                _ => keyCode
+
+            });
+        }
+
         public static string KeyToChar(Keys key)
         {
             return key switch
@@ -116,6 +140,7 @@ namespace Apollo
                 Keys.Oemcomma => "Comma",
                 Keys.OemPeriod => "Period",
                 Keys.OemOpenBrackets => "Open Bracket",
+                Keys.OemBackslash => "Back Slash",
                 Keys.OemQuotes => "Quote",
                 Keys.Oem1 => "Semicolon",
                 Keys.Oem3 => "Tilde",

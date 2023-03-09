@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Apollo.Importers
+namespace Apollo.IO
 {
     public class ItemEntry
     {
@@ -25,10 +25,10 @@ namespace Apollo.Importers
             foreach (ItemEntry item in itemList.soundboardEntries)
             {
                 SoundItem sound = new();
-                var keys = new List<Keys>();
+                var keys = new List<Key>();
                 foreach (int i in item.activationKeysNumbers)
                 {
-                    keys.Add(JavaKeyCodeTranslate(i));
+                    keys.Add(KeyMap.JavaKeyCodeTranslate(i));
                 }
                 sound.FilePath = item.file;
                 sound.SetHotkeys(keys);
@@ -37,27 +37,7 @@ namespace Apollo.Importers
             return sounds;
         }
 
-        //please make issues on github if theres more to add im too tired to do this all, theres so many
-        public static Keys JavaKeyCodeTranslate(int keyCode)
-        {
-            return (Keys)(keyCode switch
-            {
-                10 => 13,
-                44 => 188,
-                45 => 189,
-                46 => 190,
-                57 => 191,
-                59 => 186,
-                61 => 187,
-                91 => 219,
-                92 => 226,
-                93 => 221,
-                127 => 46,
-                129 => 191,
-                _ => keyCode
 
-            });
-        }
 
     }
 }

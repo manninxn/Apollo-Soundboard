@@ -117,22 +117,10 @@ namespace Apollo.Forms
             Instance = this;
             InitializeComponent();
 
-            if (file != null && Path.GetExtension(file) == ".asba")
-            {
-                var result = Archiver.LoadFromArchive(file);
+            var a = new string("a").TakeLast(3);
 
-                if (result != null)
-                {
-                    SoundItem.AllSounds.Clear();
-                    SoundItem.AllSounds.AddRange(result.Value.Sounds);
-                    saved = true;
-                    fileName = result.Value.SaveFile;
-                }
-            }
-            else
-            {
-                fileName = file ?? Settings.Default.FileName;
-            }
+
+            fileName = file ?? Settings.Default.FileName;
             SoundGrid.DataSource = SoundItem.AllSounds;
 
 
@@ -263,7 +251,6 @@ namespace Apollo.Forms
                 saved = true;
             }
         }
-
         #endregion
 
         #region Tool Strip
@@ -488,148 +475,32 @@ namespace Apollo.Forms
 
         private void eXPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!saved)
+            OpenFileDialog saveFileSelector = new();
+            //openfiledialog filter is only audio files
+            saveFileSelector.Filter = "JSON files (*.json)|*.json";
+            DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
+            if (result == DialogResult.OK) // Test result.
             {
-                UnsavedChanges prompt = new();
-                DialogResult response = prompt.ShowDialog();
-                if (response == DialogResult.OK)
-                {
-                    Save(false);
-                }
-                if (response == DialogResult.No | response == DialogResult.OK)
-                {
-                    OpenFileDialog saveFileSelector = new();
-                    //openfiledialog filter is only audio files
-                    saveFileSelector.Filter = "JSON files (*.json)|*.json";
-                    DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-                    if (result == DialogResult.OK) // Test result.
-                    {
+                saved = false;
+                fileName = string.Empty;
+                SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
 
-                        saved = false;
-                        fileName = string.Empty;
-                        SoundItem.AllSounds.Clear();
-                        SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
-
-                    }
-                }
-
-            } else
-            {
-                OpenFileDialog saveFileSelector = new();
-                //openfiledialog filter is only audio files
-                saveFileSelector.Filter = "JSON files (*.json)|*.json";
-                DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-                if (result == DialogResult.OK) // Test result.
-                {
-
-                    saved = false;
-                    fileName = string.Empty;
-                    SoundItem.AllSounds.Clear();
-                    SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
-
-                }
             }
-
         }
 
         private void soundpadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!saved)
+            OpenFileDialog saveFileSelector = new();
+            //openfiledialog filter is only audio files
+            saveFileSelector.Filter = "Soundpad files (*.spl)|*.spl";
+            DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
+            if (result == DialogResult.OK) // Test result.
             {
-                UnsavedChanges prompt = new();
-                DialogResult response = prompt.ShowDialog();
-                if (response == DialogResult.OK) {
-                    Save(false);
-                }
-                if (response == DialogResult.No | response == DialogResult.OK)
-                {
-                    OpenFileDialog saveFileSelector = new();
-                    //openfiledialog filter is only audio files
-                    saveFileSelector.Filter = "Soundpad files (*.spl)|*.spl";
-                    DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-                    if (result == DialogResult.OK) // Test result.
-                    {
+                saved = false;
+                fileName = string.Empty;
+                SoundItem.AllSounds.AddRange(SoundpadImporter.Import(saveFileSelector.FileName));
 
-                        saved = false;
-                        fileName = string.Empty;
-                        SoundItem.AllSounds.Clear();
-                        SoundItem.AllSounds.AddRange(SoundpadImporter.Import(saveFileSelector.FileName));
-
-                    }
-                }
-            
-            } else
-            {
-                OpenFileDialog saveFileSelector = new();
-                //openfiledialog filter is only audio files
-                saveFileSelector.Filter = "Soundpad files (*.spl)|*.spl";
-                DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-                if (result == DialogResult.OK) // Test result.
-                {
-
-                    saved = false;
-                    fileName = string.Empty;
-                    SoundItem.AllSounds.Clear();
-                    SoundItem.AllSounds.AddRange(SoundpadImporter.Import(saveFileSelector.FileName));
-
-                }
             }
-
-        }
-
-        private void fromArchiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!saved)
-            {
-                UnsavedChanges prompt = new();
-                DialogResult response = prompt.ShowDialog();
-                if (response == DialogResult.OK)
-                {
-                    Save(false);
-                }
-                if (response == DialogResult.No | response == DialogResult.OK)
-                {
-                    OpenFileDialog saveFileSelector = new();
-                    
-                    //openfiledialog filter is only audio files
-                    saveFileSelector.Filter = "Apollo Soundboard Archive files (*.asba)|*.asba";
-                    DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-                    if (result == DialogResult.OK) // Test result.
-                    {
-                        var archiveResult = Archiver.LoadFromArchive(saveFileSelector.FileName);
-
-                        if (archiveResult != null)
-                        {
-                            SoundItem.AllSounds.Clear();
-                            SoundItem.AllSounds.AddRange(archiveResult.Value.Sounds);
-                            saved = true;
-                            fileName = archiveResult.Value.SaveFile;
-                        }
-                    }
-                }
-
-            } else
-            {
-                OpenFileDialog saveFileSelector = new();
-                //openfiledialog filter is only audio files
-                saveFileSelector.Filter = "Apollo Soundboard Archive files (*.asba)|*.asba";
-                DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-                if (result == DialogResult.OK) // Test result.
-                {
-                    var archiveResult = Archiver.LoadFromArchive(saveFileSelector.FileName);
-
-                    if (archiveResult != null)
-                    {
-                        SoundItem.AllSounds.Clear();
-                        SoundItem.AllSounds.AddRange(archiveResult.Value.Sounds);
-                        saved = true;
-                        fileName = archiveResult.Value.SaveFile;
-                    }
-
-
-                }
-            }
-
         }
 
         private void File_DragDrop(object sender, DragEventArgs e)
@@ -640,7 +511,7 @@ namespace Apollo.Forms
             {
                 if (IsFileSupported(file))
                 {
-                    AddSoundPopup popup = new(file, Path.GetFileName(file), new List<Keys>());
+                    AddSoundPopup popup = new(file, Path.GetFileName(file), new List<Key>());
                     var result = popup.ShowDialog();
                     Debug.WriteLine(result);
                     if (result == DialogResult.OK)
@@ -701,37 +572,6 @@ namespace Apollo.Forms
             MicInjectorToggle.Checked = !MicInjectorToggle.Checked;
             
         }
-
-        private void ExportToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileSelector = new();
-            //openfiledialog filter is only audio files
-            saveFileSelector.Filter = "Apollo Soundboard Archive files (*.asba)|*.asba";
-            DialogResult result = saveFileSelector.ShowDialog(); // Show the dialog.
-            if (result == DialogResult.OK) // Test result.
-            {
-                fileName = saveFileSelector.FileName;
-                Archiver.Export(SoundItem.AllSounds.ToArray(), fileName);
-            }
-        }
     }
 
-    //lol
-    public class TestColorTable : ProfessionalColorTable
-    {
-
-        public override Color MenuBorder => Color.FromArgb(26, 26, 26);
-
-        public override Color ToolStripDropDownBackground => Color.FromArgb(45, 45, 45);
-
-        public override Color MenuItemSelectedGradientBegin => Color.FromArgb(60, 60, 60);
-        public override Color MenuItemSelectedGradientEnd => Color.FromArgb(60, 60, 60);
-        public override Color MenuItemSelected => Color.FromArgb(60, 60, 60);
-
-        public override Color MenuItemPressedGradientBegin => Color.FromArgb(45, 45, 45);
-        public override Color MenuItemPressedGradientEnd => Color.FromArgb(45, 45, 45);
-        public override Color ImageMarginGradientBegin => Color.FromArgb(45, 45, 45);
-        public override Color ImageMarginGradientEnd => Color.FromArgb(45, 45, 45);
-
-    }
 }

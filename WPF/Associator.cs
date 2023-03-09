@@ -24,21 +24,14 @@ namespace Apollo
         public static void EnsureAssociationsSet()
         {
             var filePath = Process.GetCurrentProcess().MainModule.FileName;
-            EnsureAssociationsSet(new FileAssociation[]{
+            EnsureAssociationsSet(
                 new FileAssociation
                 {
                     Extension = ".asb",
                     ProgId = "Apollo_File",
                     FileTypeDescription = "Apollo Soundboard File",
                     ExecutableFilePath = filePath
-                },
-                new FileAssociation
-                {
-                    Extension = ".asba",
-                    ProgId = "Apollo_Archive",
-                    FileTypeDescription = "Apollo Soundboard Archive File",
-                    ExecutableFilePath = filePath
-                }});
+                });
         }
 
         public static void EnsureAssociationsSet(params FileAssociation[] associations)
