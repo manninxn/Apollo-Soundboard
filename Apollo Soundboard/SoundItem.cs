@@ -45,14 +45,15 @@ namespace Apollo
         {
             get => _path;
             set  {
-                Debug.WriteLine(value);
+                Debug.WriteLine("Path: " + value);
                 _path = value;
 
                     var ext = System.IO.Path.GetExtension(value);
+                Debug.WriteLine("Extension: " + ext);
                    WaveStream reader = ext switch
                    {
-                      ".ogg" => new VorbisWaveReader(FilePath),
-                        _ => new AudioFileReader(FilePath)
+                      ".ogg" => new VorbisWaveReader(value),
+                        _ => new AudioFileReader(value)
                     };
                     _length = TimeSpan.FromSeconds(Math.Ceiling(reader.TotalTime.TotalSeconds));
                     reader.Dispose();
@@ -137,6 +138,7 @@ namespace Apollo
 
                 output.PlaybackStopped += (object? o, StoppedEventArgs a) =>
                 {
+                    
 
                     _ = PlayingSounds.Remove(output);
                     reader.Dispose();

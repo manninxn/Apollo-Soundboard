@@ -1,13 +1,17 @@
 using Apollo.IO;
 using Apollo.Properties;
 using AutoUpdaterDotNET;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Windows.Forms;
 
 namespace Apollo.Forms
 {
+    
     public partial class Soundboard : Form
     {
         #region Properties
@@ -57,6 +61,7 @@ namespace Apollo.Forms
             }
         }
 
+        OptimizedBindingList<QuickSwitchItem> QuickSwitches = new();
 
         #endregion
 
@@ -109,6 +114,22 @@ namespace Apollo.Forms
             return supported;
         }
 
+        void InitQuickSwitches()
+        {
+            Settings.Default.QuickSwitchList = Settings.Default.QuickSwitchList ?? new();
+            List<string> QuickSwitchFilePaths = Settings.Default.QuickSwitchList.Cast<string>().Distinct().ToList();
+            foreach (string filepath in QuickSwitchFilePaths)
+            {
+                QuickSwitchItem? Item = QuickSwitchItem.FromPath(filepath);
+                if(Item != null)
+                {
+                    QuickSwitches.Add(Item);
+                }
+            }
+
+
+        }
+
         public Soundboard(string? file)
         {
 
@@ -159,8 +180,28 @@ namespace Apollo.Forms
             MicrophoneSelectComboBox.DataSource = Devices.Microphones;
             MicrophoneSelectComboBox.SelectionChangeCommitted += Devices.MicrophoneSelect;
 
+            
+            InitQuickSwitches();
 
+            QuickSwitchGrid.DataSource = QuickSwitches;
 
+            QuickSwitchGrid.Columns[0].FillWeight = 60;
+            QuickSwitchGrid.Columns[1].FillWeight = 25;
+
+            QuickSwitchGrid.Columns[0].HeaderText = "Soundboard";
+            QuickSwitchGrid.Columns[1].HeaderText = "#";
+
+            QuickSwitchGrid.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            DataGridViewButtonColumn RemoveColumn = new DataGridViewButtonColumn();
+            RemoveColumn.FlatStyle = FlatStyle.Flat;
+            RemoveColumn.DefaultCellStyle.NullValue = "X";
+            RemoveColumn.DefaultCellStyle.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+            RemoveColumn.Name = "";
+            RemoveColumn.CellTemplate.Style.ForeColor = Color.FromArgb(200,12,12);
+            RemoveColumn.FillWeight = 15;
+            int columnIndex = 2;
+            QuickSwitchGrid.Columns.Insert(columnIndex, RemoveColumn);
 
             Devices.Refresh();
             int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
@@ -231,6 +272,16 @@ namespace Apollo.Forms
 
         }
 
+        public void SaveQuickSwitch(string fileName)
+        {
+            var newItem = QuickSwitchItem.FromPath(fileName);
+            if (newItem != null && QuickSwitches.Where(x => x._FilePath == fileName).Count() == 0)
+            {
+                Settings.Default.QuickSwitchList?.Add(fileName);
+                Settings.Default.Save();
+                QuickSwitches.Add(newItem);
+            }
+        }
 
         private void LoadFile()
         {
@@ -238,6 +289,7 @@ namespace Apollo.Forms
             {
                 SoundItem.AllSounds.Clear();
                 SoundItem.AllSounds.AddRange(Serializer.DeserializeFile(fileName));
+                SaveQuickSwitch(fileName);
 
             }
         }
@@ -253,6 +305,9 @@ namespace Apollo.Forms
                 }
             }
             Debug.WriteLine(Settings.Default.FileName);
+
+            
+
             Settings.Default.Save();
             MicInjector.Stop();
             System.Windows.Forms.Application.Exit();
@@ -270,6 +325,7 @@ namespace Apollo.Forms
                     fileName = saveFileSelector.FileName;
                     Serializer.SerializeToFile(SoundItem.AllSounds.ToList(), fileName);
                     saved = true;
+                    SaveQuickSwitch(saveFileSelector.FileName);
                 }
             }
             else
@@ -303,6 +359,7 @@ namespace Apollo.Forms
                     }
                 }
                 fileName = saveFileSelector.FileName;
+                SaveQuickSwitch(saveFileSelector.FileName);
                 LoadFile();
             }
         }
@@ -355,8 +412,10 @@ namespace Apollo.Forms
 
                 var row = SoundGrid.SelectedRows[0];
                 SoundItem sound = SoundItem.AllSounds[row.Index];
-
+                QuickSwitches.Where(x => x._FilePath == fileName).First().NumSounds--;
                 sound.Destroy();
+
+                
 
             }
         }
@@ -384,7 +443,7 @@ namespace Apollo.Forms
             if (result == DialogResult.OK)
             {
                 _ = new SoundItem(popup.Hotkeys, popup.FilePath, popup.SoundName, popup.Gain, popup.HotkeyOrderMatters);
-
+                QuickSwitches.Where(x => x._FilePath == fileName).First().NumSounds++;
                 saved = false;
             }
         }
@@ -526,6 +585,7 @@ namespace Apollo.Forms
                         fileName = string.Empty;
                         SoundItem.AllSounds.Clear();
                         SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
+                        
 
                     }
                 }
@@ -621,6 +681,8 @@ namespace Apollo.Forms
                             SoundItem.AllSounds.AddRange(archiveResult.Value.Sounds);
                             saved = true;
                             fileName = archiveResult.Value.SaveFile;
+                            Debug.WriteLine(fileName);
+                            SaveQuickSwitch(fileName);
                         }
                     }
                 }
@@ -753,6 +815,34 @@ namespace Apollo.Forms
             TopMost = AlwaysOnTop.Checked;
             Settings.Default.Save();
         }
+
+        private void QuickSwitchGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Debug.WriteLine(e.RowIndex);
+            Debug.WriteLine(e.ColumnIndex);
+            if (e.RowIndex < 0) return;
+            if (e.ColumnIndex > 0)
+            {
+                var board = QuickSwitches[e.RowIndex];
+                fileName = board._FilePath;
+                LoadFile();
+            }
+
+        }
+
+        private void QuickSwitchGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Debug.WriteLine(e.RowIndex);
+            Debug.WriteLine(e.ColumnIndex);
+            if (e.RowIndex < 0) return;
+            if (e.ColumnIndex == 0)
+            {
+                Settings.Default.QuickSwitchList.Remove(QuickSwitches[e.RowIndex]._FilePath);
+                QuickSwitches.RemoveAt(e.RowIndex);
+                
+            }
+
+        }
     }
 
     //lol
@@ -800,6 +890,53 @@ namespace Apollo.Forms
         new Point(r.Left, r.Bottom - r.Height /2),
         new Point(r.Left + r.Width /3,  r.Bottom),
         new Point(r.Right, r.Top)});
+        }
+    }
+
+    class QuickSwitchItem
+    {
+        private string _Name;
+        public string Name
+        {
+            get => _Name;
+            set => _Name = value;
+        }
+
+        private int _NumSounds;
+
+        public int NumSounds
+        {
+            get => _NumSounds;
+            set => _NumSounds = value;
+        }
+
+        [Browsable(false)]
+        public string _FilePath;
+
+        public QuickSwitchItem(string name, int numSounds, string filePath)
+        {
+            _Name = name;
+            _NumSounds = numSounds;
+            _FilePath = filePath;
+        }
+
+        public static QuickSwitchItem? FromPath(string filepath)
+        {
+            try
+            {
+                Debug.WriteLine(filepath);
+                var items = JsonSerializer.Deserialize<List<SoundData>>(File.ReadAllText(filepath));
+                var numSounds = items.Count;
+                var name = Path.GetFileNameWithoutExtension(filepath);
+                return new(name, numSounds, filepath);
+            }
+            catch
+            {
+                return null;
+            }
+
+
+
         }
     }
 }

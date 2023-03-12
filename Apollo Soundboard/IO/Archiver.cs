@@ -42,10 +42,10 @@ namespace Apollo.IO
                     SoundItem Sound = Sounds[i];
                     ZipArchiveEntry SoundFileEntry = archive.CreateEntry(i.ToString());
 
-                    using (StreamWriter SoundWriter = new StreamWriter(SoundFileEntry.Open()))
-                    using (StreamReader SoundReader = new StreamReader(Sound.FilePath))
+                    using (BinaryWriter SoundWriter = new BinaryWriter(SoundFileEntry.Open()))
+                    using (FileStream SoundReader = new FileStream(Sound.FilePath, FileMode.Open))
                     {
-                        SoundWriter.Write(SoundReader.ReadToEnd());
+                        SoundReader.CopyTo(SoundWriter.BaseStream);
                     }
 
                     SoundMetas.Add(new()
@@ -110,18 +110,22 @@ namespace Apollo.IO
                     {
                         SoundItem Sound = new();
                         ZipArchiveEntry SoundArchiveEntry = archive.Entries.Where(entry => entry.Name == MetadataEntry.SoundIndex.ToString()).First();
-
-                        Sound.FilePath = Path.Combine(Directory, MetadataEntry.SoundIndex.ToString() + "_" + MetadataEntry.FileName);
+                        
+                        
                         Sound.SoundName = MetadataEntry.SoundName;
                         Sound.SetHotkeys(MetadataEntry.Hotkeys.Select(i => (Keys)i).ToList());
                         Sound.Gain = MetadataEntry.Gain;
                         Sound.HotkeyOrderMatters = MetadataEntry.HotkeyOrderMatters;
-
-                        using (StreamReader SoundReader = new StreamReader(SoundArchiveEntry.Open()))
-                        using (StreamWriter SoundWriter = new StreamWriter(Sound.FilePath))
+                        string filePath = Path.Combine(Directory, MetadataEntry.SoundIndex.ToString() + "_" + MetadataEntry.FileName); ;
+                        using (BinaryReader SoundReader = new BinaryReader(SoundArchiveEntry.Open()))
+                        using (FileStream SoundWriter = new FileStream(filePath, FileMode.OpenOrCreate))
                         {
-                            SoundWriter.Write(SoundReader.ReadToEnd());
+                            SoundReader.BaseStream.CopyTo(SoundWriter);
+                            SoundReader.Close();
+                            SoundWriter.Close();
                         }
+                        Debug.WriteLine("Path: " + filePath);
+                        Sound.FilePath = filePath;
                         Sounds.Add(Sound);
                     }
                 }

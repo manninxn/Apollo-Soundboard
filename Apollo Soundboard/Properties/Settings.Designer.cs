@@ -166,5 +166,16 @@ namespace Apollo.Properties {
                 this["AlwaysOnTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection QuickSwitchList {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["QuickSwitchList"]));
+            }
+            set {
+                this["QuickSwitchList"] = value;
+            }
+        }
     }
 }

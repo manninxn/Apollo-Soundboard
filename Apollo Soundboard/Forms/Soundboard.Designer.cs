@@ -96,6 +96,8 @@ namespace Apollo.Forms
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soundboard));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PrimaryOutputComboBox = new Apollo.Forms.FlatCombo();
             this.SoundGrid = new System.Windows.Forms.DataGridView();
             this.AddSoundButton = new System.Windows.Forms.Button();
@@ -130,9 +132,11 @@ namespace Apollo.Forms
             this.NotifyBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.MicInjectorToggleHotkey = new Apollo.HotkeySelector();
+            this.QuickSwitchGrid = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.NotifyBar.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.QuickSwitchGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // PrimaryOutputComboBox
@@ -143,7 +147,7 @@ namespace Apollo.Forms
             this.PrimaryOutputComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.PrimaryOutputComboBox.ForeColor = System.Drawing.SystemColors.Control;
             this.PrimaryOutputComboBox.FormattingEnabled = true;
-            this.PrimaryOutputComboBox.Location = new System.Drawing.Point(6, 544);
+            this.PrimaryOutputComboBox.Location = new System.Drawing.Point(201, 547);
             this.PrimaryOutputComboBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.PrimaryOutputComboBox.Name = "PrimaryOutputComboBox";
             this.PrimaryOutputComboBox.Size = new System.Drawing.Size(526, 23);
@@ -171,7 +175,7 @@ namespace Apollo.Forms
             this.SoundGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.SoundGrid.EnableHeadersVisualStyles = false;
             this.SoundGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.SoundGrid.Location = new System.Drawing.Point(10, 23);
+            this.SoundGrid.Location = new System.Drawing.Point(201, 26);
             this.SoundGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SoundGrid.MultiSelect = false;
             this.SoundGrid.Name = "SoundGrid";
@@ -201,7 +205,7 @@ namespace Apollo.Forms
             this.AddSoundButton.FlatAppearance.BorderSize = 0;
             this.AddSoundButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.AddSoundButton.ForeColor = System.Drawing.SystemColors.Control;
-            this.AddSoundButton.Location = new System.Drawing.Point(6, 471);
+            this.AddSoundButton.Location = new System.Drawing.Point(201, 474);
             this.AddSoundButton.Name = "AddSoundButton";
             this.AddSoundButton.Size = new System.Drawing.Size(89, 46);
             this.AddSoundButton.TabIndex = 3;
@@ -213,7 +217,7 @@ namespace Apollo.Forms
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.SystemColors.Control;
-            this.label1.Location = new System.Drawing.Point(6, 520);
+            this.label1.Location = new System.Drawing.Point(201, 523);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 15);
             this.label1.TabIndex = 4;
@@ -223,7 +227,7 @@ namespace Apollo.Forms
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.SystemColors.Control;
-            this.label2.Location = new System.Drawing.Point(4, 568);
+            this.label2.Location = new System.Drawing.Point(199, 571);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 15);
             this.label2.TabIndex = 5;
@@ -237,10 +241,10 @@ namespace Apollo.Forms
             this.SecondaryOutputComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SecondaryOutputComboBox.ForeColor = System.Drawing.SystemColors.Control;
             this.SecondaryOutputComboBox.FormattingEnabled = true;
-            this.SecondaryOutputComboBox.Location = new System.Drawing.Point(5, 585);
+            this.SecondaryOutputComboBox.Location = new System.Drawing.Point(200, 588);
             this.SecondaryOutputComboBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SecondaryOutputComboBox.Name = "SecondaryOutputComboBox";
-            this.SecondaryOutputComboBox.Size = new System.Drawing.Size(526, 23);
+            this.SecondaryOutputComboBox.Size = new System.Drawing.Size(527, 23);
             this.SecondaryOutputComboBox.TabIndex = 6;
             this.SecondaryOutputComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SecondaryOutputComboBox_DrawItem);
             // 
@@ -249,7 +253,7 @@ namespace Apollo.Forms
             this.MicInjectorToggle.AutoSize = true;
             this.MicInjectorToggle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.MicInjectorToggle.ForeColor = System.Drawing.SystemColors.Control;
-            this.MicInjectorToggle.Location = new System.Drawing.Point(415, 471);
+            this.MicInjectorToggle.Location = new System.Drawing.Point(610, 474);
             this.MicInjectorToggle.Name = "MicInjectorToggle";
             this.MicInjectorToggle.Size = new System.Drawing.Size(106, 24);
             this.MicInjectorToggle.TabIndex = 8;
@@ -263,7 +267,7 @@ namespace Apollo.Forms
             this.RemoveSound.FlatAppearance.BorderSize = 0;
             this.RemoveSound.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.RemoveSound.ForeColor = System.Drawing.SystemColors.Control;
-            this.RemoveSound.Location = new System.Drawing.Point(101, 471);
+            this.RemoveSound.Location = new System.Drawing.Point(296, 474);
             this.RemoveSound.Name = "RemoveSound";
             this.RemoveSound.Size = new System.Drawing.Size(89, 46);
             this.RemoveSound.TabIndex = 9;
@@ -281,7 +285,7 @@ namespace Apollo.Forms
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(543, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(743, 24);
             this.menuStrip1.TabIndex = 10;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -420,7 +424,7 @@ namespace Apollo.Forms
             this.volumeMixerToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.volumeMixerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.volumeMixerToolStripMenuItem.Name = "volumeMixerToolStripMenuItem";
-            this.volumeMixerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.volumeMixerToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.volumeMixerToolStripMenuItem.Text = "Volume Mixer";
             this.volumeMixerToolStripMenuItem.Click += new System.EventHandler(this.volumeMixerToolStripMenuItem_Click);
             // 
@@ -429,7 +433,7 @@ namespace Apollo.Forms
             this.ConverterToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.ConverterToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.ConverterToolStripMenuItem.Name = "ConverterToolStripMenuItem";
-            this.ConverterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ConverterToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.ConverterToolStripMenuItem.Text = "Audio Converter";
             this.ConverterToolStripMenuItem.Click += new System.EventHandler(this.audioConverterToolStripMenuItem_Click);
             // 
@@ -441,7 +445,7 @@ namespace Apollo.Forms
             this.ExitToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ExitToTray.ForeColor = System.Drawing.SystemColors.Control;
             this.ExitToTray.Name = "ExitToTray";
-            this.ExitToTray.Size = new System.Drawing.Size(180, 22);
+            this.ExitToTray.Size = new System.Drawing.Size(161, 22);
             this.ExitToTray.Text = "Exit to Tray";
             this.ExitToTray.CheckedChanged += new System.EventHandler(this.ExitToTray_CheckedChanged);
             // 
@@ -453,7 +457,7 @@ namespace Apollo.Forms
             this.AlwaysOnTop.CheckState = System.Windows.Forms.CheckState.Checked;
             this.AlwaysOnTop.ForeColor = System.Drawing.SystemColors.Control;
             this.AlwaysOnTop.Name = "AlwaysOnTop";
-            this.AlwaysOnTop.Size = new System.Drawing.Size(180, 22);
+            this.AlwaysOnTop.Size = new System.Drawing.Size(161, 22);
             this.AlwaysOnTop.Text = "Always on Top";
             this.AlwaysOnTop.CheckedChanged += new System.EventHandler(this.AlwaysOnTop_CheckedChanged);
             // 
@@ -463,7 +467,7 @@ namespace Apollo.Forms
             this.StopAll.FlatAppearance.BorderSize = 0;
             this.StopAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.StopAll.ForeColor = System.Drawing.SystemColors.Control;
-            this.StopAll.Location = new System.Drawing.Point(290, 471);
+            this.StopAll.Location = new System.Drawing.Point(485, 474);
             this.StopAll.Name = "StopAll";
             this.StopAll.Size = new System.Drawing.Size(118, 23);
             this.StopAll.TabIndex = 11;
@@ -480,7 +484,7 @@ namespace Apollo.Forms
             this.StopAllHotkeySelector.ForeColor = System.Drawing.SystemColors.Control;
             this.StopAllHotkeySelector.InactiveColor = System.Drawing.SystemColors.ActiveCaption;
             this.StopAllHotkeySelector.isActive = false;
-            this.StopAllHotkeySelector.Location = new System.Drawing.Point(290, 496);
+            this.StopAllHotkeySelector.Location = new System.Drawing.Point(485, 499);
             this.StopAllHotkeySelector.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.StopAllHotkeySelector.MultiKey = true;
             this.StopAllHotkeySelector.Name = "StopAllHotkeySelector";
@@ -497,7 +501,7 @@ namespace Apollo.Forms
             this.EditButton.FlatAppearance.BorderSize = 0;
             this.EditButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.EditButton.ForeColor = System.Drawing.SystemColors.Control;
-            this.EditButton.Location = new System.Drawing.Point(195, 471);
+            this.EditButton.Location = new System.Drawing.Point(390, 474);
             this.EditButton.Name = "EditButton";
             this.EditButton.Size = new System.Drawing.Size(89, 46);
             this.EditButton.TabIndex = 13;
@@ -509,7 +513,7 @@ namespace Apollo.Forms
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.SystemColors.Control;
-            this.label3.Location = new System.Drawing.Point(4, 608);
+            this.label3.Location = new System.Drawing.Point(199, 611);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(72, 15);
             this.label3.TabIndex = 14;
@@ -523,7 +527,7 @@ namespace Apollo.Forms
             this.MicrophoneSelectComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.MicrophoneSelectComboBox.ForeColor = System.Drawing.SystemColors.Control;
             this.MicrophoneSelectComboBox.FormattingEnabled = true;
-            this.MicrophoneSelectComboBox.Location = new System.Drawing.Point(4, 626);
+            this.MicrophoneSelectComboBox.Location = new System.Drawing.Point(201, 629);
             this.MicrophoneSelectComboBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MicrophoneSelectComboBox.Name = "MicrophoneSelectComboBox";
             this.MicrophoneSelectComboBox.Size = new System.Drawing.Size(526, 23);
@@ -561,7 +565,7 @@ namespace Apollo.Forms
             this.MicInjectorToggleHotkey.ForeColor = System.Drawing.SystemColors.Control;
             this.MicInjectorToggleHotkey.InactiveColor = System.Drawing.SystemColors.ActiveCaption;
             this.MicInjectorToggleHotkey.isActive = false;
-            this.MicInjectorToggleHotkey.Location = new System.Drawing.Point(414, 496);
+            this.MicInjectorToggleHotkey.Location = new System.Drawing.Point(609, 499);
             this.MicInjectorToggleHotkey.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MicInjectorToggleHotkey.MultiKey = true;
             this.MicInjectorToggleHotkey.Name = "MicInjectorToggleHotkey";
@@ -572,13 +576,58 @@ namespace Apollo.Forms
             this.MicInjectorToggleHotkey.UseVisualStyleBackColor = false;
             this.MicInjectorToggleHotkey.HotkeyAssigned += new System.EventHandler(this.MicInjectorToggleHotkey_HotkeyAssigned);
             // 
+            // QuickSwitchGrid
+            // 
+            this.QuickSwitchGrid.AllowUserToAddRows = false;
+            this.QuickSwitchGrid.AllowUserToDeleteRows = false;
+            this.QuickSwitchGrid.AllowUserToResizeRows = false;
+            this.QuickSwitchGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.QuickSwitchGrid.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.QuickSwitchGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.QuickSwitchGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.QuickSwitchGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.QuickSwitchGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.QuickSwitchGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.QuickSwitchGrid.EnableHeadersVisualStyles = false;
+            this.QuickSwitchGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.QuickSwitchGrid.Location = new System.Drawing.Point(12, 26);
+            this.QuickSwitchGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.QuickSwitchGrid.MultiSelect = false;
+            this.QuickSwitchGrid.Name = "QuickSwitchGrid";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.QuickSwitchGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.QuickSwitchGrid.RowHeadersVisible = false;
+            this.QuickSwitchGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.QuickSwitchGrid.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.QuickSwitchGrid.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.SystemColors.Control;
+            this.QuickSwitchGrid.RowTemplate.Height = 29;
+            this.QuickSwitchGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.QuickSwitchGrid.Size = new System.Drawing.Size(183, 626);
+            this.QuickSwitchGrid.TabIndex = 17;
+            this.QuickSwitchGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.QuickSwitchGrid_CellClick);
+            this.QuickSwitchGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.QuickSwitchGrid_CellContentClick);
+            // 
             // Soundboard
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.ClientSize = new System.Drawing.Size(543, 660);
+            this.ClientSize = new System.Drawing.Size(743, 660);
+            this.Controls.Add(this.QuickSwitchGrid);
             this.Controls.Add(this.MicInjectorToggleHotkey);
             this.Controls.Add(this.MicrophoneSelectComboBox);
             this.Controls.Add(this.label3);
@@ -598,8 +647,8 @@ namespace Apollo.Forms
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(559, 699);
-            this.MinimumSize = new System.Drawing.Size(559, 699);
+            this.MaximumSize = new System.Drawing.Size(759, 699);
+            this.MinimumSize = new System.Drawing.Size(759, 699);
             this.Name = "Soundboard";
             this.Text = "Apollo Soundboard";
             this.Load += new System.EventHandler(this.Soundboard_Load);
@@ -609,6 +658,7 @@ namespace Apollo.Forms
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.NotifyBar.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.QuickSwitchGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -651,6 +701,7 @@ namespace Apollo.Forms
         private ToolStripMenuItem fileToolStripMenuItem1;
         private ToolStripMenuItem ExitToTray;
         private ToolStripMenuItem AlwaysOnTop;
+        private DataGridView QuickSwitchGrid;
     }
 
 }

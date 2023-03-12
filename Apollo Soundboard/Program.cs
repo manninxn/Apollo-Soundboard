@@ -7,7 +7,7 @@ namespace Apollo
     {
 
 
-        private static string Version = "1.9.2";
+        private static string Version = "1.10.0";
 
         private static Mutex? _mutex = null;
         /// <summary>
