@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Apollo.Properties;
+using System.Diagnostics;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Exceptions;
 
@@ -9,6 +10,8 @@ namespace Apollo.Forms
         public AudioConverter()
         {
             InitializeComponent();
+            Owner = Soundboard.Instance;
+            TopMost = Settings.Default.AlwaysOnTop;
         }
 
         private void BrowseConvertFile_Click(object sender, EventArgs e)
@@ -54,6 +57,8 @@ namespace Apollo.Forms
                 if (error.ShowDialog() == DialogResult.Yes)
                 {
                     Downloading wait = new();
+                    wait.Owner = error;
+                    wait.TopMost = Settings.Default.AlwaysOnTop;
                     _ = wait.ShowDialog();
                     await Convert(input, output);
 

@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Apollo.Properties;
+using System.Data;
 
 namespace Apollo.Forms
 {
@@ -12,6 +13,9 @@ namespace Apollo.Forms
         public AddSoundPopup()
         {
             InitializeComponent();
+
+            Owner = Soundboard.Instance;
+            TopMost = Settings.Default.AlwaysOnTop;
         }
 
         public static float Remap(float s, float a1, float a2, float b1, float b2)
@@ -22,6 +26,8 @@ namespace Apollo.Forms
         public AddSoundPopup(SoundItem sound)
         {
             InitializeComponent();
+            Owner = Soundboard.Instance;
+            TopMost = Settings.Default.AlwaysOnTop;
             FilePathBox.Text = sound.FilePath;
             FileNameBox.Text = sound.SoundName;
             FilePath = sound.FilePath;

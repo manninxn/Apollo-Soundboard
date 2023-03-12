@@ -1,4 +1,5 @@
-﻿using Xabe.FFmpeg;
+﻿using Apollo.Properties;
+using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 
 namespace Apollo.Forms
@@ -9,6 +10,7 @@ namespace Apollo.Forms
         public Downloading()
         {
             InitializeComponent();
+            TopMost = Settings.Default.AlwaysOnTop;
         }
 
         private async void Downloading_VisibleChanged(object sender, EventArgs e)
