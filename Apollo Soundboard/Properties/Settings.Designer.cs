@@ -142,5 +142,17 @@ namespace Apollo.Properties {
                 this["MicInjectorHotkey"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ExitToTray {
+            get {
+                return ((bool)(this["ExitToTray"]));
+            }
+            set {
+                this["ExitToTray"] = value;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ using Apollo.Properties;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using System.ComponentModel;
 using System.Diagnostics;
 namespace Apollo
 {
@@ -38,7 +39,27 @@ namespace Apollo
 
         private static List<WaveOut> PlayingSounds = new();
 
-        public string FilePath = string.Empty;
+        private string _path = string.Empty;
+        [Browsable(false)]
+        public string FilePath
+        {
+            get => _path;
+            set  {
+                Debug.WriteLine(value);
+                _path = value;
+
+                    var ext = System.IO.Path.GetExtension(value);
+                   WaveStream reader = ext switch
+                   {
+                      ".ogg" => new VorbisWaveReader(FilePath),
+                        _ => new AudioFileReader(FilePath)
+                    };
+                    _length = TimeSpan.FromSeconds(Math.Ceiling(reader.TotalTime.TotalSeconds));
+                    reader.Dispose();
+                
+
+            }
+        }
 
         private string _soundName;
         public string SoundName
@@ -53,6 +74,17 @@ namespace Apollo
                 return String.Join("+", Hotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             }
         }
+
+        private TimeSpan _length;
+        public string Length
+        {
+            get
+            {
+                return String.Format("{0:mm\\:ss}", _length);
+                //return _length.ToString();
+            }
+        }
+
         public float Gain = 0;
 
         public bool HotkeyOrderMatters = false;
@@ -70,6 +102,7 @@ namespace Apollo
             Gain = _Gain;
             HotkeyOrderMatters = _HotkeyOrderMatters;
             AllSounds.Add(this);
+
         }
 
         public void Destroy()

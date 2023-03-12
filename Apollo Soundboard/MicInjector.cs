@@ -44,12 +44,14 @@ namespace Apollo
             get { return _Enabled; }
             set
             {
-
+                Settings.Default.MicInjector = value;
+                Settings.Default.Save();
                 if (value)
                 {
                     if (!_Enabled)
                     {
                         _Enabled = true;
+                        
                         Start();
                     }
 
@@ -66,6 +68,7 @@ namespace Apollo
         public bool Initialize()
         {
             Enabled = Settings.Default.MicInjector;
+
             return Enabled;
         }
 

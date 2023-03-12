@@ -1,13 +1,13 @@
 using AutoUpdaterDotNET;
 using System.ComponentModel;
-
+using Apollo.Forms;
 namespace Apollo
 {
     internal static class Program
     {
 
 
-        private static string Version = "1.8.0";
+        private static string Version = "1.9.0";
 
         private static Mutex? _mutex = null;
         /// <summary>
@@ -39,11 +39,12 @@ namespace Apollo
             ApplicationConfiguration.Initialize();
             if (args.Length == 0)
             {
-                Application.Run(new Forms.Soundboard(null));
+                Application.Run(new Soundboard(null));
             }
             else
             {
-                Application.Run(new Forms.Soundboard(args[0]));
+                var FileToOpenWIth = args[0];
+                Application.Run(new Soundboard(FileToOpenWIth));
             }
 
         }

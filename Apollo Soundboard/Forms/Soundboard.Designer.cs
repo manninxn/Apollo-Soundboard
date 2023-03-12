@@ -93,8 +93,8 @@ namespace Apollo.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soundboard));
             this.PrimaryOutputComboBox = new Apollo.Forms.FlatCombo();
             this.SoundGrid = new System.Windows.Forms.DataGridView();
@@ -112,12 +112,14 @@ namespace Apollo.Forms
             this.eXPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.soundpadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fromArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.volumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OptionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.volumeMixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ConverterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExitToTray = new System.Windows.Forms.ToolStripMenuItem();
             this.StopAll = new System.Windows.Forms.Button();
             this.StopAllHotkeySelector = new Apollo.HotkeySelector();
             this.EditButton = new System.Windows.Forms.Button();
@@ -127,7 +129,6 @@ namespace Apollo.Forms
             this.NotifyBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.MicInjectorToggleHotkey = new Apollo.HotkeySelector();
-            this.fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.NotifyBar.SuspendLayout();
@@ -157,14 +158,14 @@ namespace Apollo.Forms
             this.SoundGrid.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
             this.SoundGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.SoundGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.SoundGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.SoundGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.SoundGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.SoundGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.SoundGrid.EnableHeadersVisualStyles = false;
@@ -173,14 +174,14 @@ namespace Apollo.Forms
             this.SoundGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.SoundGrid.MultiSelect = false;
             this.SoundGrid.Name = "SoundGrid";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.SoundGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.SoundGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.SoundGrid.RowHeadersVisible = false;
             this.SoundGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.SoundGrid.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
@@ -275,7 +276,7 @@ namespace Apollo.Forms
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.volumeToolStripMenuItem});
+            this.OptionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
@@ -336,7 +337,7 @@ namespace Apollo.Forms
             this.eXPToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.eXPToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.eXPToolStripMenuItem.Name = "eXPToolStripMenuItem";
-            this.eXPToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.eXPToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.eXPToolStripMenuItem.Text = "EXP";
             this.eXPToolStripMenuItem.Click += new System.EventHandler(this.eXPToolStripMenuItem_Click);
             // 
@@ -345,7 +346,7 @@ namespace Apollo.Forms
             this.soundpadToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.soundpadToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.soundpadToolStripMenuItem.Name = "soundpadToolStripMenuItem";
-            this.soundpadToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.soundpadToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.soundpadToolStripMenuItem.Text = "Soundpad";
             this.soundpadToolStripMenuItem.Click += new System.EventHandler(this.soundpadToolStripMenuItem_Click);
             // 
@@ -354,9 +355,18 @@ namespace Apollo.Forms
             this.fromArchiveToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.fromArchiveToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.fromArchiveToolStripMenuItem.Name = "fromArchiveToolStripMenuItem";
-            this.fromArchiveToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.fromArchiveToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.fromArchiveToolStripMenuItem.Text = "From Archive";
             this.fromArchiveToolStripMenuItem.Click += new System.EventHandler(this.fromArchiveToolStripMenuItem_Click);
+            // 
+            // fileToolStripMenuItem1
+            // 
+            this.fileToolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.fileToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.Control;
+            this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
+            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
+            this.fileToolStripMenuItem1.Text = "Export to Archive";
+            this.fileToolStripMenuItem1.Click += new System.EventHandler(this.ExportToolStripMenuItem1_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -390,35 +400,48 @@ namespace Apollo.Forms
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
-            // volumeToolStripMenuItem
+            // OptionsToolStripMenuItem
             // 
-            this.volumeToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
-            this.volumeToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.volumeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.OptionsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
+            this.OptionsToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.OptionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.volumeMixerToolStripMenuItem,
-            this.optionsToolStripMenuItem});
-            this.volumeToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
-            this.volumeToolStripMenuItem.Name = "volumeToolStripMenuItem";
-            this.volumeToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.volumeToolStripMenuItem.Text = "Options";
+            this.ConverterToolStripMenuItem,
+            this.ExitToTray});
+            this.OptionsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
+            this.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem";
+            this.OptionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.OptionsToolStripMenuItem.Text = "Options";
             // 
             // volumeMixerToolStripMenuItem
             // 
             this.volumeMixerToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.volumeMixerToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.volumeMixerToolStripMenuItem.Name = "volumeMixerToolStripMenuItem";
-            this.volumeMixerToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.volumeMixerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.volumeMixerToolStripMenuItem.Text = "Volume Mixer";
             this.volumeMixerToolStripMenuItem.Click += new System.EventHandler(this.volumeMixerToolStripMenuItem_Click);
             // 
-            // optionsToolStripMenuItem
+            // ConverterToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
-            this.optionsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.optionsToolStripMenuItem.Text = "Audio Converter";
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.audioConverterToolStripMenuItem_Click);
+            this.ConverterToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.ConverterToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
+            this.ConverterToolStripMenuItem.Name = "ConverterToolStripMenuItem";
+            this.ConverterToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ConverterToolStripMenuItem.Text = "Audio Converter";
+            this.ConverterToolStripMenuItem.Click += new System.EventHandler(this.audioConverterToolStripMenuItem_Click);
+            // 
+            // QuitOnWindowClose
+            // 
+            this.ExitToTray.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.ExitToTray.Checked = true;
+            this.ExitToTray.CheckOnClick = true;
+            this.ExitToTray.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ExitToTray.ForeColor = System.Drawing.SystemColors.Control;
+            this.ExitToTray.Name = "QuitOnWindowClose";
+            this.ExitToTray.Size = new System.Drawing.Size(180, 22);
+            this.ExitToTray.Text = "Exit to Tray";
+            this.ExitToTray.CheckedChanged += new System.EventHandler(this.ExitToTray_CheckedChanged);
             // 
             // StopAll
             // 
@@ -535,15 +558,6 @@ namespace Apollo.Forms
             this.MicInjectorToggleHotkey.UseVisualStyleBackColor = false;
             this.MicInjectorToggleHotkey.HotkeyAssigned += new System.EventHandler(this.MicInjectorToggleHotkey_HotkeyAssigned);
             // 
-            // fileToolStripMenuItem1
-            // 
-            this.fileToolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
-            this.fileToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.Control;
-            this.fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
-            this.fileToolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
-            this.fileToolStripMenuItem1.Text = "Export to Archive";
-            this.fileToolStripMenuItem1.Click += new System.EventHandler(this.ExportToolStripMenuItem1_Click);
-            // 
             // Soundboard
             // 
             this.AllowDrop = true;
@@ -574,7 +588,7 @@ namespace Apollo.Forms
             this.MinimumSize = new System.Drawing.Size(559, 699);
             this.Name = "Soundboard";
             this.Text = "Apollo Soundboard";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+
             this.Load += new System.EventHandler(this.Soundboard_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.File_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.File_DragEnter);
@@ -586,6 +600,8 @@ namespace Apollo.Forms
             this.PerformLayout();
 
         }
+
+
 
         #endregion
         private FlatCombo PrimaryOutputComboBox;
@@ -608,9 +624,9 @@ namespace Apollo.Forms
         private Button EditButton;
         private Label label3;
         private FlatCombo MicrophoneSelectComboBox;
-        private ToolStripMenuItem volumeToolStripMenuItem;
+        private ToolStripMenuItem OptionsToolStripMenuItem;
         private ToolStripMenuItem volumeMixerToolStripMenuItem;
-        private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem ConverterToolStripMenuItem;
         private ToolStripMenuItem Import;
         private ToolStripMenuItem eXPToolStripMenuItem;
         private ToolStripMenuItem soundpadToolStripMenuItem;
@@ -620,6 +636,7 @@ namespace Apollo.Forms
         private ToolStripMenuItem quitToolStripMenuItem1;
         private HotkeySelector MicInjectorToggleHotkey;
         private ToolStripMenuItem fileToolStripMenuItem1;
+        private ToolStripMenuItem ExitToTray;
     }
 
 }

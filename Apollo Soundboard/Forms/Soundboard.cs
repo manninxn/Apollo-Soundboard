@@ -3,6 +3,8 @@ using Apollo.Properties;
 using AutoUpdaterDotNET;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace Apollo.Forms
 {
@@ -135,6 +137,11 @@ namespace Apollo.Forms
             }
             SoundGrid.DataSource = SoundItem.AllSounds;
 
+            SoundGrid.Columns[0].HeaderText = "Sound";
+
+            SoundGrid.Columns[0].FillWeight = 60;
+            SoundGrid.Columns[1].FillWeight = 25;
+            SoundGrid.Columns[2].FillWeight = 15;
 
 
             PrimaryOutputComboBox.DisplayMember = "Name";
@@ -182,6 +189,10 @@ namespace Apollo.Forms
 
 
             MicInjectorToggle.Checked = MicInjector.Initialize();
+
+            ExitToTray.Checked = Settings.Default.ExitToTray;
+
+            OptionsToolStripMenuItem.DropDown.Closing += DropDown_Closing;
 
         }
 
@@ -441,13 +452,9 @@ namespace Apollo.Forms
         #endregion
         private void Soundboard_Load(object sender, EventArgs e)
         {
-            menuStrip1.Renderer = new ToolStripProfessionalRenderer(new TestColorTable());
+            menuStrip1.Renderer = new CustomRenderer(new TestColorTable());
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
-        }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -459,12 +466,15 @@ namespace Apollo.Forms
 
             if (e.CloseReason != CloseReason.ApplicationExitCall)
             {
-                e.Cancel = true;
-                Hide();
-                NotifyIcon.Visible = true;
-                NotifyIcon.BalloonTipText = "Your soundboard hotkeys will still work.";
-                NotifyIcon.BalloonTipTitle = "Apollo is running in the background";
-                NotifyIcon.ShowBalloonTip(500);
+                if (Settings.Default.ExitToTray)
+                {
+                    e.Cancel = true;
+                    Hide();
+                    NotifyIcon.Visible = true;
+                    NotifyIcon.BalloonTipText = "Your soundboard hotkeys will still work.";
+                    NotifyIcon.BalloonTipTitle = "Apollo is running in the background";
+                    NotifyIcon.ShowBalloonTip(500);
+                }
             }
         }
 
@@ -714,6 +724,21 @@ namespace Apollo.Forms
                 Archiver.Export(SoundItem.AllSounds.ToArray(), fileName);
             }
         }
+
+        private void DropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        {
+            Debug.WriteLine(e.CloseReason);
+            if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void ExitToTray_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.ExitToTray = ExitToTray.Checked;
+            Settings.Default.Save();
+        }
     }
 
     //lol
@@ -733,5 +758,34 @@ namespace Apollo.Forms
         public override Color ImageMarginGradientBegin => Color.FromArgb(45, 45, 45);
         public override Color ImageMarginGradientEnd => Color.FromArgb(45, 45, 45);
 
+    }
+
+    public class CustomRenderer : ToolStripProfessionalRenderer
+    {
+        public CustomRenderer(ProfessionalColorTable ColorTable)
+            : base(ColorTable)
+        {
+        }
+        protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+        {
+            //e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            var r = new Rectangle(e.ArrowRectangle.Location, e.ArrowRectangle.Size);
+            r.Inflate(-2, -6);
+            e.Graphics.DrawLines(Pens.White, new Point[]{
+        new Point(r.Left, r.Top),
+        new Point(r.Right, r.Top + r.Height /2),
+        new Point(r.Left, r.Top+ r.Height)});
+        }
+
+        protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
+        {
+           // e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            var r = new Rectangle(e.ImageRectangle.Location, e.ImageRectangle.Size);
+            r.Inflate(-4, -6);
+            e.Graphics.DrawLines(Pens.White, new Point[]{
+        new Point(r.Left, r.Bottom - r.Height /2),
+        new Point(r.Left + r.Width /3,  r.Bottom),
+        new Point(r.Right, r.Top)});
+        }
     }
 }
