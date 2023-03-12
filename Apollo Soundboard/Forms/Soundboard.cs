@@ -191,6 +191,10 @@ namespace Apollo.Forms
             MicInjectorToggle.Checked = MicInjector.Initialize();
 
             ExitToTray.Checked = Settings.Default.ExitToTray;
+            AlwaysOnTop.Checked = Settings.Default.AlwaysOnTop;
+
+            TopMost = Settings.Default.AlwaysOnTop;
+
 
             OptionsToolStripMenuItem.DropDown.Closing += DropDown_Closing;
 
@@ -474,6 +478,9 @@ namespace Apollo.Forms
                     NotifyIcon.BalloonTipText = "Your soundboard hotkeys will still work.";
                     NotifyIcon.BalloonTipTitle = "Apollo is running in the background";
                     NotifyIcon.ShowBalloonTip(500);
+                } else
+                {
+                    ExitApplication();
                 }
             }
         }
@@ -737,6 +744,13 @@ namespace Apollo.Forms
         private void ExitToTray_CheckedChanged(object sender, EventArgs e)
         {
             Settings.Default.ExitToTray = ExitToTray.Checked;
+            Settings.Default.Save();
+        }
+
+        private void AlwaysOnTop_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.AlwaysOnTop = AlwaysOnTop.Checked;
+            TopMost = AlwaysOnTop.Checked;
             Settings.Default.Save();
         }
     }

@@ -120,6 +120,7 @@ namespace Apollo.Forms
             this.volumeMixerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ConverterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToTray = new System.Windows.Forms.ToolStripMenuItem();
+            this.AlwaysOnTop = new System.Windows.Forms.ToolStripMenuItem();
             this.StopAll = new System.Windows.Forms.Button();
             this.StopAllHotkeySelector = new Apollo.HotkeySelector();
             this.EditButton = new System.Windows.Forms.Button();
@@ -407,7 +408,8 @@ namespace Apollo.Forms
             this.OptionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.volumeMixerToolStripMenuItem,
             this.ConverterToolStripMenuItem,
-            this.ExitToTray});
+            this.ExitToTray,
+            this.AlwaysOnTop});
             this.OptionsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.Control;
             this.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem";
             this.OptionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -431,17 +433,29 @@ namespace Apollo.Forms
             this.ConverterToolStripMenuItem.Text = "Audio Converter";
             this.ConverterToolStripMenuItem.Click += new System.EventHandler(this.audioConverterToolStripMenuItem_Click);
             // 
-            // QuitOnWindowClose
+            // ExitToTray
             // 
             this.ExitToTray.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             this.ExitToTray.Checked = true;
             this.ExitToTray.CheckOnClick = true;
             this.ExitToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ExitToTray.ForeColor = System.Drawing.SystemColors.Control;
-            this.ExitToTray.Name = "QuitOnWindowClose";
+            this.ExitToTray.Name = "ExitToTray";
             this.ExitToTray.Size = new System.Drawing.Size(180, 22);
             this.ExitToTray.Text = "Exit to Tray";
             this.ExitToTray.CheckedChanged += new System.EventHandler(this.ExitToTray_CheckedChanged);
+            // 
+            // AlwaysOnTop
+            // 
+            this.AlwaysOnTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
+            this.AlwaysOnTop.Checked = true;
+            this.AlwaysOnTop.CheckOnClick = true;
+            this.AlwaysOnTop.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AlwaysOnTop.ForeColor = System.Drawing.SystemColors.Control;
+            this.AlwaysOnTop.Name = "AlwaysOnTop";
+            this.AlwaysOnTop.Size = new System.Drawing.Size(180, 22);
+            this.AlwaysOnTop.Text = "Always on Top";
+            this.AlwaysOnTop.CheckedChanged += new System.EventHandler(this.AlwaysOnTop_CheckedChanged);
             // 
             // StopAll
             // 
@@ -588,7 +602,6 @@ namespace Apollo.Forms
             this.MinimumSize = new System.Drawing.Size(559, 699);
             this.Name = "Soundboard";
             this.Text = "Apollo Soundboard";
-
             this.Load += new System.EventHandler(this.Soundboard_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.File_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.File_DragEnter);
@@ -637,6 +650,7 @@ namespace Apollo.Forms
         private HotkeySelector MicInjectorToggleHotkey;
         private ToolStripMenuItem fileToolStripMenuItem1;
         private ToolStripMenuItem ExitToTray;
+        private ToolStripMenuItem AlwaysOnTop;
     }
 
 }
