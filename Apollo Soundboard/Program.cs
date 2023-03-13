@@ -1,13 +1,15 @@
 using AutoUpdaterDotNET;
 using System.ComponentModel;
 using Apollo.Forms;
+using System.Windows.Controls;
+
 namespace Apollo
 {
     internal static class Program
     {
 
 
-        private static string Version = "1.10.0";
+        private static string Version = "1.10.1";
 
         private static Mutex? _mutex = null;
         /// <summary>
@@ -58,6 +60,8 @@ namespace Apollo
                 list[i] = list[i - 1];
             list[0] = item;
         }
+
+
 
     }
 

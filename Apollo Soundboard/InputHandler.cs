@@ -45,6 +45,10 @@ namespace Apollo
             {
                 Soundboard.Instance.ToggleMicInjector();
             }
+            if(Soundboard.CycleHotkeys.Count > 0 && PressedKeys.TakeLast(Soundboard.CycleHotkeys.Count).SequenceEqual(Soundboard.CycleHotkeys))
+            {
+                Soundboard.Instance.CycleSoundboard();
+            }
         }
         private static void KeyUpListener(object sender, KeyEventArgs e)
         {

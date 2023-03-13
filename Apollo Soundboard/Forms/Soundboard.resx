@@ -3237,6 +3237,18 @@
         eXN0ZW0uV2luZG93cy5Gb3Jtcy5LZXlzBAAAAAs=
 </value>
   </data>
+  <data name="CycleSelector.SelectedHotkeys" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj02LjAuMi4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkEAQAAAIYBU3lz
+        dGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAxW1tTeXN0ZW0uV2luZG93cy5Gb3Jtcy5LZXlzLCBT
+        eXN0ZW0uV2luZG93cy5Gb3JtcywgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1
+        NjE5MzRlMDg5XV0DAAAABl9pdGVtcwVfc2l6ZQhfdmVyc2lvbgQAABtTeXN0ZW0uV2luZG93cy5Gb3Jt
+        cy5LZXlzW10CAAAACAgJAwAAAAAAAAAAAAAADAQAAABGU3lzdGVtLldpbmRvd3MuRm9ybXMsIEN1bHR1
+        cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OQcDAAAAAAEAAAAAAAAABBlT
+        eXN0ZW0uV2luZG93cy5Gb3Jtcy5LZXlzBAAAAAs=
+</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>151</value>
   </metadata>

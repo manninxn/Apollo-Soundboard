@@ -16,6 +16,8 @@ namespace Apollo.Forms
     {
         #region Properties
 
+        int SelectedSoundboard = 0;
+
         string _fileName = "";
         string fileName
         {
@@ -62,6 +64,32 @@ namespace Apollo.Forms
         }
 
         OptimizedBindingList<QuickSwitchItem> QuickSwitches = new();
+
+        private static string _Cycle = Settings.Default.CycleHotkey;
+
+        public static List<Keys> CycleHotkeys
+        {
+            get
+            {
+
+                var list = new List<Keys>();
+                if (_Cycle == string.Empty) return list;
+                int[] keycodes = Array.ConvertAll(_Cycle.Split(","), int.Parse);
+                foreach (int i in keycodes)
+                {
+                    list.Add((Keys)i);
+                }
+                return list;
+            }
+            set
+            {
+                _Cycle = String.Join(",", value.ConvertAll(i => (int)i));
+                Settings.Default.CycleHotkey = _Cycle;
+                Settings.Default.Save();
+            }
+        }
+
+
 
         #endregion
 
@@ -203,6 +231,7 @@ namespace Apollo.Forms
             int columnIndex = 2;
             QuickSwitchGrid.Columns.Insert(columnIndex, RemoveColumn);
 
+
             Devices.Refresh();
             int primaryIndex = Devices.PrimaryOutput + 1, secondaryIndex = Devices.SecondaryOutput + 2, microphoneIndex = Devices.Microphone + 1;
 
@@ -226,6 +255,7 @@ namespace Apollo.Forms
 
             StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => KeyMap.KeyToChar(i)).ToList());
             MicInjectorToggleHotkey.Text = String.Join("+", MicInjector.ToggleInjector.Select(i => KeyMap.KeyToChar(i)).ToList());
+            CycleSelector.Text = String.Join("+", CycleHotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             Devices.DevicesUpdated += UpdateDeviceSelectors;
 
 
@@ -516,6 +546,23 @@ namespace Apollo.Forms
         private void Soundboard_Load(object sender, EventArgs e)
         {
             menuStrip1.Renderer = new CustomRenderer(new TestColorTable());
+            try
+            {
+                SelectedSoundboard = QuickSwitches.IndexOf(QuickSwitches.Where(x => x._FilePath == fileName).First());
+            }
+            catch
+            {
+                SelectedSoundboard = -1;
+            }
+
+            Debug.WriteLine(SelectedSoundboard >= 0);
+            if (SelectedSoundboard >= 0)
+            {
+                QuickSwitchGrid.Rows[SelectedSoundboard].Selected = true;
+            }
+
+            SoundGrid.ClearSelection();
+
         }
 
 
@@ -838,12 +885,32 @@ namespace Apollo.Forms
             if (e.ColumnIndex == 0)
             {
                 Settings.Default.QuickSwitchList.Remove(QuickSwitches[e.RowIndex]._FilePath);
+                SelectedSoundboard = e.RowIndex;
                 QuickSwitches.RemoveAt(e.RowIndex);
                 
             }
 
         }
+
+        public void CycleSoundboard()
+        {
+            SelectedSoundboard = (SelectedSoundboard + 1) % QuickSwitchGrid.RowCount;
+            var board = QuickSwitches[SelectedSoundboard];
+            fileName = board._FilePath;
+            LoadFile();
+             QuickSwitchGrid.Rows[SelectedSoundboard].Selected = true;
+        }
+
+        private void CycleSelector_HotkeyAssigned(object sender, EventArgs e)
+        {
+            CycleHotkeys = CycleSelector.SelectedHotkeys;
+        }
+
+
+
     }
+
+
 
     //lol
     public class TestColorTable : ProfessionalColorTable

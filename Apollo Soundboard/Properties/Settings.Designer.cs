@@ -177,5 +177,17 @@ namespace Apollo.Properties {
                 this["QuickSwitchList"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CycleHotkey {
+            get {
+                return ((string)(this["CycleHotkey"]));
+            }
+            set {
+                this["CycleHotkey"] = value;
+            }
+        }
     }
 }

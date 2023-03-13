@@ -41,6 +41,7 @@ namespace Apollo
                     InputHandler._GlobalHook.KeyDown += Listen;
                     if (MultiKey) InputHandler._GlobalHook.KeyUp += WaitForKeyUp;
                     base.BackColor = ActiveColor;
+                    base.Text = "";
                 }
                 else
                 {

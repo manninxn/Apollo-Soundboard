@@ -133,6 +133,8 @@ namespace Apollo.Forms
             this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.MicInjectorToggleHotkey = new Apollo.HotkeySelector();
             this.QuickSwitchGrid = new System.Windows.Forms.DataGridView();
+            this.CycleLabel = new System.Windows.Forms.Label();
+            this.CycleSelector = new Apollo.HotkeySelector();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.NotifyBar.SuspendLayout();
@@ -615,10 +617,41 @@ namespace Apollo.Forms
             this.QuickSwitchGrid.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.SystemColors.Control;
             this.QuickSwitchGrid.RowTemplate.Height = 29;
             this.QuickSwitchGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.QuickSwitchGrid.Size = new System.Drawing.Size(183, 626);
+            this.QuickSwitchGrid.Size = new System.Drawing.Size(183, 599);
             this.QuickSwitchGrid.TabIndex = 17;
             this.QuickSwitchGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.QuickSwitchGrid_CellClick);
             this.QuickSwitchGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.QuickSwitchGrid_CellContentClick);
+            // 
+            // CycleLabel
+            // 
+            this.CycleLabel.AutoSize = true;
+            this.CycleLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.CycleLabel.ForeColor = System.Drawing.SystemColors.Control;
+            this.CycleLabel.Location = new System.Drawing.Point(12, 629);
+            this.CycleLabel.Name = "CycleLabel";
+            this.CycleLabel.Size = new System.Drawing.Size(47, 21);
+            this.CycleLabel.TabIndex = 18;
+            this.CycleLabel.Text = "Cycle";
+            // 
+            // CycleSelector
+            // 
+            this.CycleSelector.ActiveColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.CycleSelector.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.CycleSelector.FlatAppearance.BorderSize = 0;
+            this.CycleSelector.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.CycleSelector.ForeColor = System.Drawing.SystemColors.Control;
+            this.CycleSelector.InactiveColor = System.Drawing.SystemColors.ActiveCaption;
+            this.CycleSelector.isActive = false;
+            this.CycleSelector.Location = new System.Drawing.Point(65, 629);
+            this.CycleSelector.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.CycleSelector.MultiKey = true;
+            this.CycleSelector.Name = "CycleSelector";
+            this.CycleSelector.SelectedHotkeys = ((System.Collections.Generic.List<System.Windows.Forms.Keys>)(resources.GetObject("CycleSelector.SelectedHotkeys")));
+            this.CycleSelector.Size = new System.Drawing.Size(130, 23);
+            this.CycleSelector.TabIndex = 19;
+            this.CycleSelector.Text = "none";
+            this.CycleSelector.UseVisualStyleBackColor = false;
+            this.CycleSelector.HotkeyAssigned += new System.EventHandler(this.CycleSelector_HotkeyAssigned);
             // 
             // Soundboard
             // 
@@ -627,6 +660,8 @@ namespace Apollo.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.ClientSize = new System.Drawing.Size(743, 660);
+            this.Controls.Add(this.CycleSelector);
+            this.Controls.Add(this.CycleLabel);
             this.Controls.Add(this.QuickSwitchGrid);
             this.Controls.Add(this.MicInjectorToggleHotkey);
             this.Controls.Add(this.MicrophoneSelectComboBox);
@@ -702,6 +737,8 @@ namespace Apollo.Forms
         private ToolStripMenuItem ExitToTray;
         private ToolStripMenuItem AlwaysOnTop;
         private DataGridView QuickSwitchGrid;
+        private Label CycleLabel;
+        private HotkeySelector CycleSelector;
     }
 
 }
