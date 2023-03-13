@@ -161,8 +161,9 @@ namespace Apollo.Forms
         public Soundboard(string? file)
         {
 
+            AutoUpdater.Synchronous = true;
             AutoUpdater.Start("https://raw.githubusercontent.com/manninxn/Apollo-Soundboard/master/Apollo%20Soundboard/version.xml");
-            AutoUpdater.UpdateMode = Mode.ForcedDownload;
+            
 
             if (Instance is not null) return;
 
