@@ -22,6 +22,8 @@ namespace Apollo
             //auto updater
             AutoUpdater.InstalledVersion = new Version(Version);
 
+  
+
             //associate apollo soundboard with the .asb file extension
             FileAssociations.EnsureAssociationsSet();
 
