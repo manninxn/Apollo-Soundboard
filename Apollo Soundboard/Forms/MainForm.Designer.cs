@@ -64,7 +64,7 @@ namespace Apollo.Forms
         }
     }
 
-    partial class Soundboard
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -95,7 +95,7 @@ namespace Apollo.Forms
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soundboard));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PrimaryOutputComboBox = new Apollo.Forms.FlatCombo();
@@ -132,13 +132,14 @@ namespace Apollo.Forms
             this.NotifyBar = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.MicInjectorToggleHotkey = new Apollo.HotkeySelector();
-            this.QuickSwitchGrid = new System.Windows.Forms.DataGridView();
+            this.PageSwitchGrid = new System.Windows.Forms.DataGridView();
             this.CycleLabel = new System.Windows.Forms.Label();
             this.CycleSelector = new Apollo.HotkeySelector();
+            this.NewPage = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.SoundGrid)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.NotifyBar.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.QuickSwitchGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PageSwitchGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // PrimaryOutputComboBox
@@ -578,15 +579,15 @@ namespace Apollo.Forms
             this.MicInjectorToggleHotkey.UseVisualStyleBackColor = false;
             this.MicInjectorToggleHotkey.HotkeyAssigned += new System.EventHandler(this.MicInjectorToggleHotkey_HotkeyAssigned);
             // 
-            // QuickSwitchGrid
+            // PageSwitchGrid
             // 
-            this.QuickSwitchGrid.AllowUserToAddRows = false;
-            this.QuickSwitchGrid.AllowUserToDeleteRows = false;
-            this.QuickSwitchGrid.AllowUserToResizeRows = false;
-            this.QuickSwitchGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.QuickSwitchGrid.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.QuickSwitchGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.QuickSwitchGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.PageSwitchGrid.AllowUserToAddRows = false;
+            this.PageSwitchGrid.AllowUserToDeleteRows = false;
+            this.PageSwitchGrid.AllowUserToResizeRows = false;
+            this.PageSwitchGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.PageSwitchGrid.BackgroundColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.PageSwitchGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.PageSwitchGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -594,15 +595,15 @@ namespace Apollo.Forms
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.QuickSwitchGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.QuickSwitchGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.QuickSwitchGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.QuickSwitchGrid.EnableHeadersVisualStyles = false;
-            this.QuickSwitchGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.QuickSwitchGrid.Location = new System.Drawing.Point(12, 26);
-            this.QuickSwitchGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.QuickSwitchGrid.MultiSelect = false;
-            this.QuickSwitchGrid.Name = "QuickSwitchGrid";
+            this.PageSwitchGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.PageSwitchGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.PageSwitchGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.PageSwitchGrid.EnableHeadersVisualStyles = false;
+            this.PageSwitchGrid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.PageSwitchGrid.Location = new System.Drawing.Point(12, 26);
+            this.PageSwitchGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.PageSwitchGrid.MultiSelect = false;
+            this.PageSwitchGrid.Name = "PageSwitchGrid";
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(45)))));
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -610,17 +611,19 @@ namespace Apollo.Forms
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.QuickSwitchGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.QuickSwitchGrid.RowHeadersVisible = false;
-            this.QuickSwitchGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.QuickSwitchGrid.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.QuickSwitchGrid.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.SystemColors.Control;
-            this.QuickSwitchGrid.RowTemplate.Height = 29;
-            this.QuickSwitchGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.QuickSwitchGrid.Size = new System.Drawing.Size(183, 599);
-            this.QuickSwitchGrid.TabIndex = 17;
-            this.QuickSwitchGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.QuickSwitchGrid_CellClick);
-            this.QuickSwitchGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.QuickSwitchGrid_CellContentClick);
+            this.PageSwitchGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            this.PageSwitchGrid.RowHeadersVisible = false;
+            this.PageSwitchGrid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.PageSwitchGrid.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.PageSwitchGrid.RowTemplate.DefaultCellStyle.ForeColor = System.Drawing.SystemColors.Control;
+            this.PageSwitchGrid.RowTemplate.Height = 29;
+            this.PageSwitchGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.PageSwitchGrid.Size = new System.Drawing.Size(183, 560);
+            this.PageSwitchGrid.TabIndex = 17;
+            this.PageSwitchGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PageSwitchGrid_CellClick);
+            this.PageSwitchGrid.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PageSwitchGrid_CellContentClick);
+            this.PageSwitchGrid.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.PageSwitchGrid_CellContentDoubleClick);
+            this.PageSwitchGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.PageSwitchGrid_CellEndEdit);
             // 
             // CycleLabel
             // 
@@ -653,16 +656,31 @@ namespace Apollo.Forms
             this.CycleSelector.UseVisualStyleBackColor = false;
             this.CycleSelector.HotkeyAssigned += new System.EventHandler(this.CycleSelector_HotkeyAssigned);
             // 
-            // Soundboard
+            // NewPage
+            // 
+            this.NewPage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.NewPage.FlatAppearance.BorderSize = 0;
+            this.NewPage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.NewPage.ForeColor = System.Drawing.SystemColors.Control;
+            this.NewPage.Location = new System.Drawing.Point(12, 591);
+            this.NewPage.Name = "NewPage";
+            this.NewPage.Size = new System.Drawing.Size(183, 30);
+            this.NewPage.TabIndex = 20;
+            this.NewPage.Text = "New Page";
+            this.NewPage.UseVisualStyleBackColor = false;
+            this.NewPage.Click += new System.EventHandler(this.NewPage_Click);
+            // 
+            // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(26)))), ((int)(((byte)(26)))));
             this.ClientSize = new System.Drawing.Size(743, 660);
+            this.Controls.Add(this.NewPage);
             this.Controls.Add(this.CycleSelector);
             this.Controls.Add(this.CycleLabel);
-            this.Controls.Add(this.QuickSwitchGrid);
+            this.Controls.Add(this.PageSwitchGrid);
             this.Controls.Add(this.MicInjectorToggleHotkey);
             this.Controls.Add(this.MicrophoneSelectComboBox);
             this.Controls.Add(this.label3);
@@ -684,7 +702,7 @@ namespace Apollo.Forms
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(759, 699);
             this.MinimumSize = new System.Drawing.Size(759, 699);
-            this.Name = "Soundboard";
+            this.Name = "MainForm";
             this.Text = "Apollo Soundboard";
             this.Load += new System.EventHandler(this.Soundboard_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.File_DragDrop);
@@ -693,7 +711,7 @@ namespace Apollo.Forms
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.NotifyBar.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.QuickSwitchGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PageSwitchGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -736,9 +754,10 @@ namespace Apollo.Forms
         private ToolStripMenuItem fileToolStripMenuItem1;
         private ToolStripMenuItem ExitToTray;
         private ToolStripMenuItem AlwaysOnTop;
-        private DataGridView QuickSwitchGrid;
+        private DataGridView PageSwitchGrid;
         private Label CycleLabel;
         private HotkeySelector CycleSelector;
+        private Button NewPage;
     }
 
 }

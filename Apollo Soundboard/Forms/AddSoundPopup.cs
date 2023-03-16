@@ -14,7 +14,7 @@ namespace Apollo.Forms
         {
             InitializeComponent();
 
-            Owner = Soundboard.Instance;
+            Owner = MainForm.Instance;
             TopMost = Settings.Default.AlwaysOnTop;
         }
 
@@ -23,10 +23,10 @@ namespace Apollo.Forms
             return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         }
 
-        public AddSoundPopup(SoundItem sound)
+        public AddSoundPopup(Sound sound)
         {
             InitializeComponent();
-            Owner = Soundboard.Instance;
+            Owner = MainForm.Instance;
             TopMost = Settings.Default.AlwaysOnTop;
             FilePathBox.Text = sound.FilePath;
             FileNameBox.Text = sound.SoundName;
@@ -61,8 +61,8 @@ namespace Apollo.Forms
 
             OpenFileDialog AudioFileSelector = new();
             //openfiledialog filter is only audio files
-            string list = String.Join(";", Soundboard.SupportedExtensions);
-            string listWithStars = String.Join(";", Soundboard.SupportedExtensions.Select(extension => "*" + extension));
+            string list = String.Join(";", MainForm.SupportedExtensions);
+            string listWithStars = String.Join(";", MainForm.SupportedExtensions.Select(extension => "*" + extension));
             AudioFileSelector.Filter = $"Audio files ({list})|{listWithStars}";
             DialogResult result = AudioFileSelector.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.

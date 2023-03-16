@@ -1,17 +1,22 @@
 ﻿using Apollo.Forms;
+using Apollo.IO;
 using Apollo.Properties;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Input;
+using static Apollo.IO.Archiver;
+
 namespace Apollo
 {
-    public class SoundItem
+    public class Sound : IDisposable
     {
 
         private static string _ClearSounds = Settings.Default.StopAllSoundsHotkey;
 
+        public int TimesPlayed = 0;
         public static List<Keys> ClearSounds
         {
             get
@@ -33,9 +38,6 @@ namespace Apollo
                 Settings.Default.Save();
             }
         }
-
-
-        public static OptimizedBindingList<SoundItem> AllSounds = new();
 
         private static List<WaveOut> PlayingSounds = new();
 
@@ -92,34 +94,94 @@ namespace Apollo
 
         private List<Keys> Hotkeys { get; set; } = new List<Keys>();
 
+        private Soundboard Owner;
 
-        public SoundItem() { }
+        private bool Active
+        {
+            get
+            {
+                if (Owner == null) return false;
 
-        public SoundItem(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false)
+                if (!Owner.Active) return false;
+
+                if(Owner.ActivePage?.Sounds.Contains(this) ?? false) return true;
+
+                return false;
+
+            }
+        }
+        public Sound() { }
+
+        public Sound(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false, int timesPlayed = 0)
         {
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
             SoundName = _soundName;
             Gain = _Gain;
             HotkeyOrderMatters = _HotkeyOrderMatters;
-            AllSounds.Add(this);
+            TimesPlayed = timesPlayed;
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+        }
+        public Sound(SoundData data)
+        {
+            Hotkeys = data.Hotkeys.Select(i => (Keys)i).ToList();
+            FilePath = data.FilePath;
+            SoundName = data.SoundName;
+            Gain = data.Gain;
+            HotkeyOrderMatters = data.HotkeyOrderMatters;
+            TimesPlayed = data.TimesPlayed;
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
 
         }
 
-        public void Destroy()
+        public Sound(SoundMetadata data)
         {
-            _ = AllSounds.Remove(this);
+            Hotkeys = data.Hotkeys.Select(i => (Keys)i).ToList();
+            SoundName = data.SoundName;
+            Gain = data.Gain;
+            HotkeyOrderMatters = data.HotkeyOrderMatters;
+            TimesPlayed = data.TimesPlayed;
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+
+        }
+
+        ~Sound() {
+            Dispose();
+        }
+
+        public void SetOwner(Soundboard soundboard)
+        {
+            Owner = soundboard;
+        }
+
+        public void OnPressedKeysChanged(object? sender, PressedKeysEventArgs e)
+        {
+            var PressedKeys = e.PressedKeys;
+
+            if (GetHotkeys().Count == 0) return;
+
+            var lastN = PressedKeys.TakeLast(GetHotkeys().Count());
+
+            if (HotkeyOrderMatters ? lastN.SequenceEqual(GetHotkeys()) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), GetHotkeys().OrderBy(e => e)))
+            {
+                Play();
+            }
+        }
+
+
+        public void Dispose()
+        {
+            InputHandler.PressedKeysChanged -= OnPressedKeysChanged;
         }
 
 
 
         private void PlayThroughDevice(string filePath, int Device, float gain)
         {
-            Debug.WriteLine(Device);
             WaveOut output = new() { DeviceNumber = Device };
 
             PlayingSounds.Add(output);
-            var ext = System.IO.Path.GetExtension(filePath);
+            var ext = Path.GetExtension(filePath);
             WaveStream reader = ext switch
             {
                 ".ogg" => new VorbisWaveReader(FilePath),
@@ -132,7 +194,6 @@ namespace Apollo
             try
             {
 
-                Debug.WriteLine(FilePath.TakeLast(3));
                 var volumeSampleProvider = new VolumeSampleProvider(reader.ToSampleProvider());
                 volumeSampleProvider.Volume = gain;
 
@@ -164,18 +225,22 @@ namespace Apollo
 
         }
 
-        public void Play()
+        public void Play(bool overrideActive = false)
         {
+            if(!Active && !overrideActive) return;
             try
             {
-                Debug.WriteLine($"Gain: {Gain}");
-                if (Soundboard.Devices.SecondaryOutput != -2)
-                    PlayThroughDevice(FilePath, Soundboard.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
 
-                PlayThroughDevice(FilePath, Soundboard.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
-            } catch
+                if (MainForm.Devices.SecondaryOutput != -2)
+                    PlayThroughDevice(FilePath, MainForm.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+
+                PlayThroughDevice(FilePath, MainForm.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+
+                TimesPlayed++;
+
+            } catch(Exception ex)
             {
-                Debug.WriteLine("rip");
+                Debug.WriteLine(ex);
             }
         }
 

@@ -193,7 +193,7 @@ namespace Apollo
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             Microphone = ((Device)(box.SelectedItem)).DeviceNumber;
-            Soundboard.MicInjector.Refresh();
+            MainForm.MicInjector.Refresh();
         }
 
         public void PrimaryOutputSelect(object? sender, EventArgs e)
@@ -202,7 +202,7 @@ namespace Apollo
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             PrimaryOutput = ((Device)(box.SelectedItem)).DeviceNumber;
-            Soundboard.MicInjector.Refresh();
+            MainForm.MicInjector.Refresh();
         }
 
         public void SecondaryOutputSelect(object? sender, EventArgs e)
@@ -211,7 +211,7 @@ namespace Apollo
             ComboBox box = (ComboBox)sender;
             if (box.SelectedItem == null) return;
             SecondaryOutput = ((Device)(box.SelectedItem)).DeviceNumber;
-            Soundboard.MicInjector.Refresh();
+            MainForm.MicInjector.Refresh();
         }
         #endregion
 
@@ -238,7 +238,7 @@ namespace Apollo
                 outputDeviceId = defaultDeviceId;
             }
 
-            _ = Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+            _ = MainForm.Instance.BeginInvoke(MainForm.Devices.OnDevicesUpdated);
         }
 
         public void OnDeviceAdded(string deviceId)
@@ -246,7 +246,7 @@ namespace Apollo
             if (lastDeviceAddedId != deviceId)
             {
                 deviceId = lastDeviceAddedId;
-                _ = Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+                _ = MainForm.Instance.BeginInvoke(MainForm.Devices.OnDevicesUpdated);
             }
         }
 
@@ -255,7 +255,7 @@ namespace Apollo
             if (lastDeviceRemovedId != deviceId)
             {
                 lastDeviceRemovedId = deviceId;
-                _ = Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+                _ = MainForm.Instance.BeginInvoke(MainForm.Devices.OnDevicesUpdated);
             }
         }
 
@@ -265,7 +265,7 @@ namespace Apollo
             {
                 lastDeviceChangedId = deviceId;
                 lastDeviceState = newState;
-                _ = Soundboard.Instance.BeginInvoke(Soundboard.Devices.OnDevicesUpdated);
+                _ = MainForm.Instance.BeginInvoke(MainForm.Devices.OnDevicesUpdated);
             }
 
         }

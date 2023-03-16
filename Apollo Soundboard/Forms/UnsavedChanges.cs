@@ -7,7 +7,7 @@ namespace Apollo.Forms
         public UnsavedChanges()
         {
             InitializeComponent();
-            Owner = Soundboard.Instance;
+            Owner = MainForm.Instance;
             TopMost = Settings.Default.AlwaysOnTop;
         }
 

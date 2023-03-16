@@ -169,12 +169,12 @@ namespace Apollo.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection QuickSwitchList {
+        public global::System.Collections.Specialized.StringCollection PageSwitchList {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["QuickSwitchList"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["PageSwitchList"]));
             }
             set {
-                this["QuickSwitchList"] = value;
+                this["PageSwitchList"] = value;
             }
         }
         

@@ -13,11 +13,31 @@ using System.Windows.Forms;
 namespace Apollo.Forms
 {
     
-    public partial class Soundboard : Form
+    public partial class MainForm : Form
     {
         #region Properties
 
-        int SelectedSoundboard = 0;
+        private static readonly OptimizedBindingList<Sound> empty = new();
+
+        private Soundboard _activeSoundboard;
+        Soundboard ActiveSoundboard {
+            set
+            {
+                if (_activeSoundboard != null) _activeSoundboard.Dispose();
+                _activeSoundboard = value;
+                var ActivePage = _activeSoundboard.ActivePage;
+                if (ActivePage != null)
+                {
+                    SoundGrid.DataSource = ActivePage.Sounds;
+                } else
+                {
+                    SoundGrid.DataSource = empty;
+                }
+                PageSwitchGrid.DataSource = _activeSoundboard.Pages;
+                _activeSoundboard.PageChanged += (s,e) => SoundGrid.DataSource = _activeSoundboard.ActivePage?.Sounds ?? empty;
+            }
+            get => _activeSoundboard;
+        }
 
         string _fileName = "";
         string fileName
@@ -64,8 +84,6 @@ namespace Apollo.Forms
             }
         }
 
-        OptimizedBindingList<QuickSwitchItem> QuickSwitches = new();
-
         private static string _Cycle = Settings.Default.CycleHotkey;
 
         public static List<Keys> CycleHotkeys
@@ -96,7 +114,7 @@ namespace Apollo.Forms
 
         #region Managers
 
-        public static Soundboard Instance { get; set; }
+        public static MainForm Instance { get; set; }
 
         private DeviceManager _Devices = new();
 
@@ -143,23 +161,8 @@ namespace Apollo.Forms
             return supported;
         }
 
-        void InitQuickSwitches()
-        {
-            Settings.Default.QuickSwitchList = Settings.Default.QuickSwitchList ?? new();
-            List<string> QuickSwitchFilePaths = Settings.Default.QuickSwitchList.Cast<string>().Distinct().ToList();
-            foreach (string filepath in QuickSwitchFilePaths)
-            {
-                QuickSwitchItem? Item = QuickSwitchItem.FromPath(filepath);
-                if(Item != null)
-                {
-                    QuickSwitches.Add(Item);
-                }
-            }
 
-
-        }
-
-        public Soundboard(string? file)
+        public MainForm(string? file)
         {
 
             AutoUpdater.Synchronous = true;
@@ -177,8 +180,7 @@ namespace Apollo.Forms
 
                 if (result != null)
                 {
-                    SoundItem.AllSounds.Clear();
-                    SoundItem.AllSounds.AddRange(result.Value.Sounds);
+                    ActiveSoundboard = result.Value.soundboard;
                     saved = true;
                     fileName = result.Value.SaveFile;
                 }
@@ -187,7 +189,8 @@ namespace Apollo.Forms
             {
                 fileName = file ?? Settings.Default.FileName;
             }
-            SoundGrid.DataSource = SoundItem.AllSounds;
+            LoadFile();
+            //ActiveSoundboard = ActiveSoundboard ?? new();
 
             SoundGrid.Columns[0].HeaderText = "Sound";
 
@@ -211,18 +214,13 @@ namespace Apollo.Forms
             MicrophoneSelectComboBox.DataSource = Devices.Microphones;
             MicrophoneSelectComboBox.SelectionChangeCommitted += Devices.MicrophoneSelect;
 
-            
-            InitQuickSwitches();
+            PageSwitchGrid.Columns[0].FillWeight = 60;
+            PageSwitchGrid.Columns[1].FillWeight = 25;
 
-            QuickSwitchGrid.DataSource = QuickSwitches;
+            PageSwitchGrid.Columns[0].HeaderText = "Page";
+            PageSwitchGrid.Columns[1].HeaderText = "#";
 
-            QuickSwitchGrid.Columns[0].FillWeight = 60;
-            QuickSwitchGrid.Columns[1].FillWeight = 25;
-
-            QuickSwitchGrid.Columns[0].HeaderText = "Soundboard";
-            QuickSwitchGrid.Columns[1].HeaderText = "#";
-
-            QuickSwitchGrid.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            PageSwitchGrid.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             SetDoubleBuffer(SoundGrid, true);
 
             DataGridViewButtonColumn RemoveColumn = new DataGridViewButtonColumn();
@@ -233,7 +231,7 @@ namespace Apollo.Forms
             RemoveColumn.CellTemplate.Style.ForeColor = Color.FromArgb(200,12,12);
             RemoveColumn.FillWeight = 15;
             int columnIndex = 2;
-            QuickSwitchGrid.Columns.Insert(columnIndex, RemoveColumn);
+            PageSwitchGrid.Columns.Insert(columnIndex, RemoveColumn);
 
 
             Devices.Refresh();
@@ -250,14 +248,10 @@ namespace Apollo.Forms
             {
                 Debug.WriteLine(ex.Message);
             }
-            LoadFile();
-
-
-
 
             InputHandler.Subscribe();
 
-            StopAllHotkeySelector.Text = String.Join("+", SoundItem.ClearSounds.Select(i => KeyMap.KeyToChar(i)).ToList());
+            StopAllHotkeySelector.Text = String.Join("+", Sound.ClearSounds.Select(i => KeyMap.KeyToChar(i)).ToList());
             MicInjectorToggleHotkey.Text = String.Join("+", MicInjector.ToggleInjector.Select(i => KeyMap.KeyToChar(i)).ToList());
             CycleSelector.Text = String.Join("+", CycleHotkeys.Select(i => KeyMap.KeyToChar(i)).ToList());
             Devices.DevicesUpdated += UpdateDeviceSelectors;
@@ -306,24 +300,11 @@ namespace Apollo.Forms
 
         }
 
-        public void SaveQuickSwitch(string fileName)
-        {
-            var newItem = QuickSwitchItem.FromPath(fileName);
-            if (newItem != null && QuickSwitches.Where(x => x._FilePath == fileName).Count() == 0)
-            {
-                Settings.Default.QuickSwitchList?.Add(fileName);
-                Settings.Default.Save();
-                QuickSwitches.Add(newItem);
-            }
-        }
-
         private void LoadFile()
         {
             if (fileName != string.Empty)
             {
-                SoundItem.AllSounds.Clear();
-                SoundItem.AllSounds.AddRange(Serializer.DeserializeFile(fileName));
-                SaveQuickSwitch(fileName);
+                ActiveSoundboard = Serializer.DeserializeFile(fileName);
 
             }
         }
@@ -357,14 +338,13 @@ namespace Apollo.Forms
                 if (result == DialogResult.OK) // Test result.
                 {
                     fileName = saveFileSelector.FileName;
-                    Serializer.SerializeToFile(SoundItem.AllSounds.ToList(), fileName);
+                    Serializer.SerializeToFile(ActiveSoundboard, fileName);
                     saved = true;
-                    SaveQuickSwitch(saveFileSelector.FileName);
                 }
             }
             else
             {
-                Serializer.SerializeToFile(SoundItem.AllSounds.ToList(), fileName);
+                Serializer.SerializeToFile(ActiveSoundboard, fileName);
                 saved = true;
             }
         }
@@ -393,7 +373,6 @@ namespace Apollo.Forms
                     }
                 }
                 fileName = saveFileSelector.FileName;
-                SaveQuickSwitch(saveFileSelector.FileName);
                 LoadFile();
             }
         }
@@ -415,7 +394,7 @@ namespace Apollo.Forms
                 }
             }
             fileName = string.Empty;
-            SoundItem.AllSounds.Clear();
+            ActiveSoundboard = new Soundboard();
 
         }
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -445,9 +424,11 @@ namespace Apollo.Forms
             {
 
                 var row = SoundGrid.SelectedRows[0];
-                SoundItem sound = SoundItem.AllSounds[row.Index];
-                QuickSwitches.Where(x => x._FilePath == fileName).First().NumSounds--;
-                sound.Destroy();
+                var ActivePage = ActiveSoundboard.ActivePage;
+                if (ActivePage == null) return;
+                Sound sound = ActivePage.Sounds[row.Index];
+                ActivePage.Sounds.RemoveAt(row.Index);
+                sound.Dispose();
 
                 
 
@@ -455,12 +436,12 @@ namespace Apollo.Forms
         }
         private void StopAll_Click(object sender, EventArgs e)
         {
-            SoundItem.StopAllSounds();
+            Sound.StopAllSounds();
         }
 
         private void StopAllHotkeySelector_HotkeyAssigned(object sender, EventArgs e)
         {
-            SoundItem.ClearSounds = StopAllHotkeySelector.SelectedHotkeys;
+            Sound.ClearSounds = StopAllHotkeySelector.SelectedHotkeys;
         }
         private void MicInjectorToggle_CheckChanged(object sender, EventArgs e)
         {
@@ -476,8 +457,10 @@ namespace Apollo.Forms
             Debug.WriteLine(result);
             if (result == DialogResult.OK)
             {
-                _ = new SoundItem(popup.Hotkeys, popup.FilePath, popup.SoundName, popup.Gain, popup.HotkeyOrderMatters);
-                QuickSwitches.Where(x => x._FilePath == fileName).First().NumSounds++;
+                var Sound = new Sound(popup.Hotkeys, popup.FilePath, popup.SoundName, popup.Gain, popup.HotkeyOrderMatters);
+                if (ActiveSoundboard.ActivePage == null) ActiveSoundboard.NewPage();
+                ActiveSoundboard.ActivePage?.AddSound(Sound);
+                Sound.SetOwner(ActiveSoundboard);
                 saved = false;
             }
         }
@@ -488,13 +471,19 @@ namespace Apollo.Forms
             {
 
                 var row = SoundGrid.SelectedRows[0];
-                SoundItem sound = SoundItem.AllSounds[row.Index];
+                var ActivePage = ActiveSoundboard.ActivePage;
+                if (ActivePage == null) return;
+                Sound sound = ActivePage.Sounds[row.Index];
 
                 AddSoundPopup popup = new(sound);
                 var result = popup.ShowDialog();
                 Debug.WriteLine(result);
                 if (result == DialogResult.OK)
                 {
+                    if(!popup.FilePath.Equals(sound.FilePath))
+                    {
+                        sound.TimesPlayed = 0;
+                    }
                     sound.SoundName = popup.SoundName;
                     sound.SetHotkeys(popup.Hotkeys);
                     sound.FilePath = popup.FilePath;
@@ -549,22 +538,12 @@ namespace Apollo.Forms
         #endregion
         private void Soundboard_Load(object sender, EventArgs e)
         {
-            menuStrip1.Renderer = new CustomRenderer(new TestColorTable());
-            try
-            {
-                SelectedSoundboard = QuickSwitches.IndexOf(QuickSwitches.Where(x => x._FilePath == fileName).First());
-            }
-            catch
-            {
-                SelectedSoundboard = -1;
-            }
+           menuStrip1.Renderer = new CustomRenderer(new TestColorTable());
 
-            Debug.WriteLine(SelectedSoundboard >= 0);
-            if (SelectedSoundboard >= 0)
+            if (PageSwitchGrid.RowCount > 0)
             {
-                QuickSwitchGrid.Rows[SelectedSoundboard].Selected = true;
+                PageSwitchGrid.Rows[0].Selected = true;
             }
-
             SoundGrid.ClearSelection();
 
         }
@@ -599,7 +578,9 @@ namespace Apollo.Forms
         {
             Debug.WriteLine(e.RowIndex);
             if (e.RowIndex < 0) return;
-            SoundItem sound = SoundItem.AllSounds[e.RowIndex];
+            var ActivePage = ActiveSoundboard.ActivePage;
+            if (ActivePage == null) return;
+            Sound sound = ActivePage.Sounds[e.RowIndex];
 
             AddSoundPopup popup = new(sound);
             var result = popup.ShowDialog();
@@ -634,8 +615,7 @@ namespace Apollo.Forms
 
                         saved = false;
                         fileName = string.Empty;
-                        SoundItem.AllSounds.Clear();
-                        SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
+                        ActiveSoundboard = Soundboard.FromExp(saveFileSelector.FileName);
                         
 
                     }
@@ -652,8 +632,7 @@ namespace Apollo.Forms
 
                     saved = false;
                     fileName = string.Empty;
-                    SoundItem.AllSounds.Clear();
-                    SoundItem.AllSounds.AddRange(EXPImporter.Import(saveFileSelector.FileName));
+                    ActiveSoundboard = Soundboard.FromExp(saveFileSelector.FileName);
 
                 }
             }
@@ -680,8 +659,7 @@ namespace Apollo.Forms
 
                         saved = false;
                         fileName = string.Empty;
-                        SoundItem.AllSounds.Clear();
-                        SoundItem.AllSounds.AddRange(SoundpadImporter.Import(saveFileSelector.FileName));
+                        ActiveSoundboard = Soundboard.FromSoundpad(saveFileSelector.FileName);
 
                     }
                 }
@@ -697,8 +675,7 @@ namespace Apollo.Forms
 
                     saved = false;
                     fileName = string.Empty;
-                    SoundItem.AllSounds.Clear();
-                    SoundItem.AllSounds.AddRange(SoundpadImporter.Import(saveFileSelector.FileName));
+                    ActiveSoundboard = Soundboard.FromSoundpad(saveFileSelector.FileName);
 
                 }
             }
@@ -728,12 +705,10 @@ namespace Apollo.Forms
 
                         if (archiveResult != null)
                         {
-                            SoundItem.AllSounds.Clear();
-                            SoundItem.AllSounds.AddRange(archiveResult.Value.Sounds);
+                            ActiveSoundboard = archiveResult.Value.soundboard;
                             saved = true;
                             fileName = archiveResult.Value.SaveFile;
                             Debug.WriteLine(fileName);
-                            SaveQuickSwitch(fileName);
                         }
                     }
                 }
@@ -750,8 +725,7 @@ namespace Apollo.Forms
 
                     if (archiveResult != null)
                     {
-                        SoundItem.AllSounds.Clear();
-                        SoundItem.AllSounds.AddRange(archiveResult.Value.Sounds);
+                        ActiveSoundboard = archiveResult.Value.soundboard;
                         saved = true;
                         fileName = archiveResult.Value.SaveFile;
                     }
@@ -775,8 +749,10 @@ namespace Apollo.Forms
                     Debug.WriteLine(result);
                     if (result == DialogResult.OK)
                     {
-                        _ = new SoundItem(popup.Hotkeys, popup.SoundName, popup.FilePath, popup.Gain, popup.HotkeyOrderMatters);
-
+                        var Sound = new Sound(popup.Hotkeys, popup.SoundName, popup.FilePath, popup.Gain, popup.HotkeyOrderMatters);
+                        if (ActiveSoundboard.ActivePage == null) ActiveSoundboard.NewPage();
+                        ActiveSoundboard.ActivePage?.AddSound(Sound);
+                        Sound.SetOwner(ActiveSoundboard);
                         saved = false;
                     }
                     return;
@@ -841,11 +817,11 @@ namespace Apollo.Forms
             if (result == DialogResult.OK) // Test result.
             {
                 fileName = saveFileSelector.FileName;
-                Archiver.Export(SoundItem.AllSounds.ToArray(), fileName);
+                Archiver.Export(ActiveSoundboard, fileName);
             }
         }
 
-        private void DropDown_Closing(object sender, ToolStripDropDownClosingEventArgs e)
+        private void DropDown_Closing(object? sender, ToolStripDropDownClosingEventArgs e)
         {
             Debug.WriteLine(e.CloseReason);
             if (e.CloseReason == ToolStripDropDownCloseReason.ItemClicked)
@@ -867,42 +843,38 @@ namespace Apollo.Forms
             Settings.Default.Save();
         }
 
-        private void QuickSwitchGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void PageSwitchGrid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            Debug.WriteLine(e.RowIndex);
-            Debug.WriteLine(e.ColumnIndex);
+
+
+
             if (e.RowIndex < 0) return;
             if (e.ColumnIndex > 0)
             {
-                var board = QuickSwitches[e.RowIndex];
-                fileName = board._FilePath;
-                LoadFile();
-            }
-
-        }
-
-        private void QuickSwitchGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            Debug.WriteLine(e.RowIndex);
-            Debug.WriteLine(e.ColumnIndex);
-            if (e.RowIndex < 0) return;
-            if (e.ColumnIndex == 0)
-            {
-                Settings.Default.QuickSwitchList.Remove(QuickSwitches[e.RowIndex]._FilePath);
-                SelectedSoundboard = e.RowIndex;
-                QuickSwitches.RemoveAt(e.RowIndex);
+                ActiveSoundboard.ActivePageNumber = e.RowIndex;
                 
             }
 
         }
 
+        private void PageSwitchGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            
+            if (e.RowIndex < 0) return;
+            if (e.ColumnIndex == 0)
+            {
+                if (e.RowIndex == ActiveSoundboard.ActivePageNumber) CycleSoundboard();
+                ActiveSoundboard.Pages.RemoveAt(e.RowIndex);
+                
+                
+            }
+            
+        }
+
         public void CycleSoundboard()
         {
-            SelectedSoundboard = (SelectedSoundboard + 1) % QuickSwitchGrid.RowCount;
-            var board = QuickSwitches[SelectedSoundboard];
-            fileName = board._FilePath;
-            LoadFile();
-             QuickSwitchGrid.Rows[SelectedSoundboard].Selected = true;
+            ActiveSoundboard.NextPage();
+            PageSwitchGrid.Rows[ActiveSoundboard.ActivePageNumber].Selected = true;
         }
 
         private void CycleSelector_HotkeyAssigned(object sender, EventArgs e)
@@ -917,6 +889,29 @@ namespace Apollo.Forms
                 null, dgv, new object[] { DoubleBuffered });
         }
 
+        private void PageSwitchGrid_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            if (e.RowIndex < 0) return;
+            if (e.ColumnIndex == 1)
+            {
+                PageSwitchGrid.BeginEdit(false);
+
+
+            }
+        }
+
+        private void PageSwitchGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            saved = false;
+        }
+
+        private void NewPage_Click(object sender, EventArgs e)
+        {
+            ActiveSoundboard.NewPage();
+            PageSwitchGrid.Rows[ActiveSoundboard.ActivePageNumber].Selected = true;
+
+        }
     }
 
 
@@ -970,50 +965,4 @@ namespace Apollo.Forms
 
     }
 
-    class QuickSwitchItem
-    {
-        private string _Name;
-        public string Name
-        {
-            get => _Name;
-            set => _Name = value;
-        }
-
-        private int _NumSounds;
-
-        public int NumSounds
-        {
-            get => _NumSounds;
-            set => _NumSounds = value;
-        }
-
-        [Browsable(false)]
-        public string _FilePath;
-
-        public QuickSwitchItem(string name, int numSounds, string filePath)
-        {
-            _Name = name;
-            _NumSounds = numSounds;
-            _FilePath = filePath;
-        }
-
-        public static QuickSwitchItem? FromPath(string filepath)
-        {
-            try
-            {
-                Debug.WriteLine(filepath);
-                var items = JsonSerializer.Deserialize<List<SoundData>>(File.ReadAllText(filepath));
-                var numSounds = items.Count;
-                var name = Path.GetFileNameWithoutExtension(filepath);
-                return new(name, numSounds, filepath);
-            }
-            catch
-            {
-                return null;
-            }
-
-
-
-        }
-    }
 }
