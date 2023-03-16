@@ -32,15 +32,24 @@ namespace Apollo.Forms
             try
             {
 
-
                 var mediaInfo = await FFmpeg.GetMediaInfo(input);
                 var streams = mediaInfo.AudioStreams;
                 foreach (var stream in streams)
                 {
 
-                    _ = stream.SetCodec(output.ToLower().EndsWith(".mp3") ? AudioCodec.mp3 : AudioCodec.wavpack);
+                    stream.SetCodec(output.ToLower().TakeLast(3).ToString() switch
+                    {
+                        "mp3" => AudioCodec.mp3,
+                        "ogg" => AudioCodec.libvorbis,
+                        "wav" => AudioCodec.wavpack,
+                        _ => AudioCodec.mp3
+                    });
                 }
-                string codec = output.EndsWith(".wav", StringComparison.OrdinalIgnoreCase) ? "pcm_s16le" : "libmp3lame";
+                string codec = output.ToLower().TakeLast(3).ToString() switch { 
+                "wav" =>"pcm_s16le",
+                "mp3" => "libmp3lame",
+                _ => "libvorbis"
+                };
                 Debug.Write(codec);
                 _ = await FFmpeg.Conversions.New()
                 .AddParameter($"-i \"{input}\"")
@@ -59,7 +68,7 @@ namespace Apollo.Forms
                     Downloading wait = new();
                     wait.Owner = error;
                     wait.TopMost = Settings.Default.AlwaysOnTop;
-                    _ = wait.ShowDialog();
+                    wait.ShowDialog();
                     await Convert(input, output);
 
                 }
@@ -73,12 +82,12 @@ namespace Apollo.Forms
         {
             FFmpeg.SetExecutablesPath(Directory.GetCurrentDirectory());
             SaveFileDialog ExportFile = new();
-            ExportFile.Filter = "MP3 files (*.mp3)|*.mp3|WAV files (*.wav)|*.wav";
+            ExportFile.Filter = "MP3 files (*.mp3)|*.mp3|WAV files (*.wav)|*.wav|OGG files (*.ogg)|*.ogg";
             DialogResult result = ExportFile.ShowDialog();
             if (result == DialogResult.OK)
             {
 
-                _ = Task.Run(() => Convert(InputFileBox.Text, ExportFile.FileName));
+                Task.Run(() => Convert(InputFileBox.Text, ExportFile.FileName));
 
             }
         }

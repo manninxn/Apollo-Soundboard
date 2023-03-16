@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Windows.Forms;
@@ -222,6 +223,7 @@ namespace Apollo.Forms
             QuickSwitchGrid.Columns[1].HeaderText = "#";
 
             QuickSwitchGrid.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            SetDoubleBuffer(SoundGrid, true);
 
             DataGridViewButtonColumn RemoveColumn = new DataGridViewButtonColumn();
             RemoveColumn.FlatStyle = FlatStyle.Flat;
@@ -908,7 +910,12 @@ namespace Apollo.Forms
             CycleHotkeys = CycleSelector.SelectedHotkeys;
         }
 
-
+        static void SetDoubleBuffer(Control dgv, bool DoubleBuffered)
+        {
+            typeof(Control).InvokeMember("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
+                null, dgv, new object[] { DoubleBuffered });
+        }
 
     }
 
@@ -960,6 +967,7 @@ namespace Apollo.Forms
         new Point(r.Left + r.Width /3,  r.Bottom),
         new Point(r.Right, r.Top)});
         }
+
     }
 
     class QuickSwitchItem
