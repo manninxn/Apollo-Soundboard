@@ -10,6 +10,7 @@ namespace Apollo.Forms
         public List<Keys> Hotkeys = new();
         public float Gain = 0;
         public bool HotkeyOrderMatters = false;
+        public bool OverlapSelf = true;
         public AddSoundPopup()
         {
             InitializeComponent();
@@ -30,6 +31,7 @@ namespace Apollo.Forms
             TopMost = Settings.Default.AlwaysOnTop;
             FilePathBox.Text = sound.FilePath;
             FileNameBox.Text = sound.SoundName;
+            OverlapSelf = sound.OverlapSelf;
             FilePath = sound.FilePath;
             SoundName = sound.SoundName;
             Hotkeys = sound.GetHotkeys();
@@ -38,9 +40,10 @@ namespace Apollo.Forms
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
+            OverlapSelfCheckbox.Checked = OverlapSelf;
         }
 
-        public AddSoundPopup(string filePath, string soundName, List<Keys> _Hotkeys, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        public AddSoundPopup(string filePath, string soundName, List<Keys> _Hotkeys, float _Gain = 0, bool _HotkeyOrderMatters = false, bool overlapSelf = true)
         {
             InitializeComponent();
             FilePathBox.Text = filePath;
@@ -49,10 +52,12 @@ namespace Apollo.Forms
             SoundName = soundName;
             Hotkeys = _Hotkeys;
             Gain = _Gain;
+            OverlapSelf = overlapSelf;
             HotkeyOrderMatters = _HotkeyOrderMatters;
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
+            OverlapSelfCheckbox.Checked = OverlapSelf;
         }
 
 
@@ -101,6 +106,11 @@ namespace Apollo.Forms
         private void HotkeyOrderMatters_CheckedChanged(object sender, EventArgs e)
         {
             HotkeyOrderMatters = HotkeyOrderMattersCheckbox.Checked;
+        }
+
+        private void OverlapSelfCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            OverlapSelf = OverlapSelfCheckbox.Checked;
         }
     }
 }

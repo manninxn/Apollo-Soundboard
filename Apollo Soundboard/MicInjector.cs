@@ -64,7 +64,7 @@ namespace Apollo
             }
         }
 
-        public MicInjector() { }
+
         public bool Initialize()
         {
             Enabled = Settings.Default.MicInjector;
@@ -116,6 +116,7 @@ namespace Apollo
             Enabled = false;
             Enabled = enabled;
         }
+
 
     }
 }

@@ -7,8 +7,11 @@ namespace Apollo
     public class PressedKeysEventArgs : EventArgs
     {
         public List<Keys> PressedKeys { get; set; }
-        public PressedKeysEventArgs(List<Keys> PressedKeys) {
+        public bool KeyDown { get; set; }
+        public PressedKeysEventArgs(List<Keys> PressedKeys, bool keyDown = false)
+        {
             this.PressedKeys = PressedKeys;
+            KeyDown = keyDown;
         }
     }
     public static class InputHandler
@@ -36,23 +39,8 @@ namespace Apollo
                 PressedKeysEventHandler raiseEvent = PressedKeysChanged;
                 if(raiseEvent != null )
                 {
-                    raiseEvent(null, new(PressedKeys));
+                    raiseEvent(null, new(PressedKeys, true));
                 }
-            }
-
-            if (Sound.ClearSounds.Count > 0 && PressedKeys.TakeLast(Sound.ClearSounds.Count).SequenceEqual(Sound.ClearSounds))
-            {
-                Sound.StopAllSounds();
-            }
-
-            if (MicInjector.ToggleInjector.Count > 0 && PressedKeys.TakeLast(MicInjector.ToggleInjector.Count).SequenceEqual(MicInjector.ToggleInjector))
-            {
-                MainForm.Instance.ToggleMicInjector();
-            }
-
-            if (MainForm.CycleHotkeys.Count > 0 && PressedKeys.TakeLast(MainForm.CycleHotkeys.Count).SequenceEqual(MainForm.CycleHotkeys))
-            {
-                MainForm.Instance.CycleSoundboard();
             }
         }
         private static void KeyUpListener(object? sender, KeyEventArgs e)
@@ -61,8 +49,16 @@ namespace Apollo
             PressedKeysEventHandler raiseEvent = PressedKeysChanged;
             if (raiseEvent != null)
             {
-                raiseEvent(null, new(PressedKeys));
+                raiseEvent(null, new(PressedKeys, false));
             }
+
+        }
+
+        public static bool CheckHotkeys(List<Keys> hotkeysToCheck, bool orderMatters = true)
+        {
+            var lastN = PressedKeys.TakeLast(hotkeysToCheck.Count());
+
+            return orderMatters ? lastN.SequenceEqual(hotkeysToCheck) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), hotkeysToCheck.OrderBy(e => e));
 
         }
 

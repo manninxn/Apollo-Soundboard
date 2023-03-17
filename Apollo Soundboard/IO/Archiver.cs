@@ -26,6 +26,7 @@ namespace Apollo.IO
 
             public bool HotkeyOrderMatters { get; set; }
             public float Gain { get; set; }
+            public bool OverlapSelf { get; set; }
 
         }
 
@@ -81,7 +82,8 @@ namespace Apollo.IO
                             Hotkeys = sound.GetHotkeys().Select(i => (int)i).ToArray(),
                             HotkeyOrderMatters = sound.HotkeyOrderMatters,
                             Gain = sound.Gain,
-                            SoundId = soundId
+                            SoundId = soundId,
+                            OverlapSelf = sound.OverlapSelf
                         });
                     }
                     metadata.Pages.Add(soundPageMetadata);

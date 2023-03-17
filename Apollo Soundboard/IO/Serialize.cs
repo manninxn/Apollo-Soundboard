@@ -21,6 +21,7 @@ namespace Apollo.IO
         public int[] Hotkeys { get; set; }
         public bool HotkeyOrderMatters { get; set; }
         public string SoundName { get; set; }
+        public bool OverlapSelf { get; set; }
     }
     public static class Serializer
     {

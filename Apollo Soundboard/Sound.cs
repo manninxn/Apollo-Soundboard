@@ -41,6 +41,8 @@ namespace Apollo
 
         private static List<WaveOut> PlayingSounds = new();
 
+        private List<WaveOut> PlayingInstances = new();
+
         private string _path = string.Empty;
         [Browsable(false)]
         public string FilePath
@@ -92,6 +94,8 @@ namespace Apollo
 
         public bool HotkeyOrderMatters = false;
 
+        public bool OverlapSelf = true;
+
         private List<Keys> Hotkeys { get; set; } = new List<Keys>();
 
         private Soundboard Owner;
@@ -110,9 +114,11 @@ namespace Apollo
 
             }
         }
+
+
         public Sound() { }
 
-        public Sound(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false, int timesPlayed = 0)
+        public Sound(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false, int timesPlayed = 0, bool overlapSelf = true)
         {
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
@@ -121,6 +127,7 @@ namespace Apollo
             HotkeyOrderMatters = _HotkeyOrderMatters;
             TimesPlayed = timesPlayed;
             InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+            OverlapSelf = overlapSelf;
         }
         public Sound(SoundData data)
         {
@@ -130,6 +137,7 @@ namespace Apollo
             Gain = data.Gain;
             HotkeyOrderMatters = data.HotkeyOrderMatters;
             TimesPlayed = data.TimesPlayed;
+            OverlapSelf = data.OverlapSelf;
             InputHandler.PressedKeysChanged += OnPressedKeysChanged;
 
         }
@@ -141,6 +149,7 @@ namespace Apollo
             Gain = data.Gain;
             HotkeyOrderMatters = data.HotkeyOrderMatters;
             TimesPlayed = data.TimesPlayed;
+            OverlapSelf = data.OverlapSelf;
             InputHandler.PressedKeysChanged += OnPressedKeysChanged;
 
         }
@@ -156,13 +165,7 @@ namespace Apollo
 
         public void OnPressedKeysChanged(object? sender, PressedKeysEventArgs e)
         {
-            var PressedKeys = e.PressedKeys;
-
-            if (GetHotkeys().Count == 0) return;
-
-            var lastN = PressedKeys.TakeLast(GetHotkeys().Count());
-
-            if (HotkeyOrderMatters ? lastN.SequenceEqual(GetHotkeys()) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), GetHotkeys().OrderBy(e => e)))
+            if (InputHandler.CheckHotkeys(GetHotkeys(), HotkeyOrderMatters) && e.KeyDown)
             {
                 Play();
             }
@@ -181,6 +184,7 @@ namespace Apollo
             WaveOut output = new() { DeviceNumber = Device };
 
             PlayingSounds.Add(output);
+            PlayingInstances.Add(output);
             var ext = Path.GetExtension(filePath);
             WaveStream reader = ext switch
             {
@@ -228,7 +232,17 @@ namespace Apollo
         public void Play(bool overrideActive = false)
         {
             if(!Active && !overrideActive) return;
-            try
+
+            if (!OverlapSelf)
+            {
+                foreach (WaveOut sound in PlayingInstances)
+                {
+                    sound.Stop();
+                }
+                PlayingInstances.Clear();
+            }
+
+                try
             {
 
                 if (MainForm.Devices.SecondaryOutput != -2)
@@ -259,8 +273,17 @@ namespace Apollo
             {
                 sound.Stop();
             }
+            PlayingSounds.Clear();
         }
 
+
+        static Sound()
+        {
+            InputHandler.PressedKeysChanged += (s, e) =>
+            {
+                if(InputHandler.CheckHotkeys(ClearSounds)) StopAllSounds();
+            };
+        }
 
     }
 
