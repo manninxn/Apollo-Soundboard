@@ -44,6 +44,7 @@ namespace Apollo.IO
                     data.SoundName = sound.SoundName;
                     data.Hotkeys = sound.GetHotkeys().Select(i => (int)i).ToArray();
                     data.HotkeyOrderMatters = sound.HotkeyOrderMatters;
+                    data.OverlapSelf = sound.OverlapSelf;
                     data.TimesPlayed = sound.TimesPlayed;
                     entries.Add(data);
                 }
