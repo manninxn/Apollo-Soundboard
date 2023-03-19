@@ -1,17 +1,22 @@
 ﻿using Apollo.Forms;
+using Apollo.IO;
 using Apollo.Properties;
 using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows.Input;
+using static Apollo.IO.Archiver;
+
 namespace Apollo
 {
-    public class SoundItem
+    public class Sound : IDisposable
     {
 
         private static string _ClearSounds = Settings.Default.StopAllSoundsHotkey;
 
+        public int TimesPlayed = 0;
         public static List<Keys> ClearSounds
         {
             get
@@ -34,10 +39,9 @@ namespace Apollo
             }
         }
 
-
-        public static OptimizedBindingList<SoundItem> AllSounds = new();
-
         private static List<WaveOut> PlayingSounds = new();
+
+        private List<WaveOut> PlayingInstances = new();
 
         private string _path = string.Empty;
         [Browsable(false)]
@@ -50,14 +54,20 @@ namespace Apollo
 
                     var ext = System.IO.Path.GetExtension(value);
                 Debug.WriteLine("Extension: " + ext);
-                   WaveStream reader = ext switch
-                   {
-                      ".ogg" => new VorbisWaveReader(value),
+
+                try
+                {
+                    WaveStream reader = ext switch
+                    {
+                        ".ogg" => new VorbisWaveReader(value),
                         _ => new AudioFileReader(value)
                     };
                     _length = TimeSpan.FromSeconds(Math.Ceiling(reader.TotalTime.TotalSeconds));
                     reader.Dispose();
-                
+                } catch
+                {
+                    _length = TimeSpan.FromSeconds(0);
+                }
 
             }
         }
@@ -90,36 +100,102 @@ namespace Apollo
 
         public bool HotkeyOrderMatters = false;
 
+        public bool OverlapSelf = true;
+
         private List<Keys> Hotkeys { get; set; } = new List<Keys>();
 
+        private Soundboard Owner;
 
-        public SoundItem() { }
-
-        public SoundItem(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        private bool Active
         {
+            get
+            {
+                if (Owner == null) return false;
+
+                if (!Owner.Active) return false;
+
+                if(Owner.ActivePage?.Sounds.Contains(this) ?? false) return true;
+
+                return false;
+
+            }
+        }
+
+
+        public Sound() { }
+
+        public Sound(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false, int timesPlayed = 0, bool overlapSelf = true)
+        {
+            
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
             SoundName = _soundName;
             Gain = _Gain;
             HotkeyOrderMatters = _HotkeyOrderMatters;
-            AllSounds.Add(this);
+            TimesPlayed = timesPlayed;
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+            
+            OverlapSelf = overlapSelf;
+        }
+        public Sound(SoundData data)
+        {
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+            Hotkeys = data.Hotkeys.Select(i => (Keys)i).ToList();
+            FilePath = data.FilePath;
+            SoundName = data.SoundName;
+            Gain = data.Gain;
+            HotkeyOrderMatters = data.HotkeyOrderMatters;
+            TimesPlayed = data.TimesPlayed;
+            OverlapSelf = data.OverlapSelf;
+            
 
         }
 
-        public void Destroy()
+        public Sound(SoundMetadata data)
         {
-            _ = AllSounds.Remove(this);
+            Hotkeys = data.Hotkeys.Select(i => (Keys)i).ToList();
+            SoundName = data.SoundName;
+            Gain = data.Gain;
+            HotkeyOrderMatters = data.HotkeyOrderMatters;
+            TimesPlayed = data.TimesPlayed;
+            OverlapSelf = data.OverlapSelf;
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+
+        }
+
+        ~Sound() {
+            Dispose();
+        }
+
+        public void SetOwner(Soundboard soundboard)
+        {
+            Owner = soundboard;
+        }
+
+        public void OnPressedKeysChanged(object? sender, PressedKeysEventArgs e)
+        {
+            Debug.WriteLine("pressed");
+            if (InputHandler.CheckHotkeys(GetHotkeys(), HotkeyOrderMatters) && e.KeyDown)
+            {
+                Play();
+            }
+        }
+
+
+        public void Dispose()
+        {
+            InputHandler.PressedKeysChanged -= OnPressedKeysChanged;
         }
 
 
 
         private void PlayThroughDevice(string filePath, int Device, float gain)
         {
-            Debug.WriteLine(Device);
             WaveOut output = new() { DeviceNumber = Device };
 
             PlayingSounds.Add(output);
-            var ext = System.IO.Path.GetExtension(filePath);
+            PlayingInstances.Add(output);
+            var ext = Path.GetExtension(filePath);
             WaveStream reader = ext switch
             {
                 ".ogg" => new VorbisWaveReader(FilePath),
@@ -132,7 +208,6 @@ namespace Apollo
             try
             {
 
-                Debug.WriteLine(FilePath.TakeLast(3));
                 var volumeSampleProvider = new VolumeSampleProvider(reader.ToSampleProvider());
                 volumeSampleProvider.Volume = gain;
 
@@ -164,18 +239,32 @@ namespace Apollo
 
         }
 
-        public void Play()
+        public void Play(bool overrideActive = false)
         {
-            try
-            {
-                Debug.WriteLine($"Gain: {Gain}");
-                if (Soundboard.Devices.SecondaryOutput != -2)
-                    PlayThroughDevice(FilePath, Soundboard.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+            if(!Active && !overrideActive) return;
 
-                PlayThroughDevice(FilePath, Soundboard.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
-            } catch
+            if (!OverlapSelf)
             {
-                Debug.WriteLine("rip");
+                foreach (WaveOut sound in PlayingInstances)
+                {
+                    sound.Stop();
+                }
+                PlayingInstances.Clear();
+            }
+
+                try
+            {
+
+                if (MainForm.Devices.SecondaryOutput != -2)
+                    PlayThroughDevice(FilePath, MainForm.Devices.SecondaryOutput, (1 + Settings.Default.SecondaryGain) * (1 + Gain));
+
+                PlayThroughDevice(FilePath, MainForm.Devices.PrimaryOutput, (1 + Settings.Default.PrimaryGain) * (1 + Gain));
+
+                TimesPlayed++;
+
+            } catch(Exception ex)
+            {
+                Debug.WriteLine(ex);
             }
         }
 
@@ -194,8 +283,17 @@ namespace Apollo
             {
                 sound.Stop();
             }
+            PlayingSounds.Clear();
         }
 
+
+        static Sound()
+        {
+            InputHandler.PressedKeysChanged += (s, e) =>
+            {
+                if(InputHandler.CheckHotkeys(ClearSounds)) StopAllSounds();
+            };
+        }
 
     }
 

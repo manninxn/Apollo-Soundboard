@@ -1,13 +1,27 @@
 ﻿using Apollo.Forms;
 using Gma.System.MouseKeyHook;
+using System.Runtime.CompilerServices;
 
 namespace Apollo
 {
+    public class PressedKeysEventArgs : EventArgs
+    {
+        public List<Keys> PressedKeys { get; set; }
+        public bool KeyDown { get; set; }
+        public PressedKeysEventArgs(List<Keys> PressedKeys, bool keyDown = false)
+        {
+            this.PressedKeys = PressedKeys;
+            KeyDown = keyDown;
+        }
+    }
     public static class InputHandler
     {
 
 
         public static IKeyboardMouseEvents _GlobalHook = Hook.GlobalEvents();
+
+        public delegate void PressedKeysEventHandler(object? sender, PressedKeysEventArgs args);
+        public static event PressedKeysEventHandler PressedKeysChanged;
         public static void Subscribe()
         {
             _GlobalHook.KeyDown += KeyboardListener;
@@ -15,44 +29,36 @@ namespace Apollo
         }
 
         static List<Keys> PressedKeys = new();
-        private static void KeyboardListener(object sender, KeyEventArgs e)
+        private static void KeyboardListener(object? sender, KeyEventArgs e)
         {
             Keys keyCode = KeyMap.ParseModifierKey(e.KeyCode);
 
             if (!PressedKeys.Contains(keyCode))
             {
                 PressedKeys.Add(keyCode);
-            }
-
-            for (int i = 0; i < SoundItem.AllSounds.Count; i++)
-            {
-                SoundItem sound = SoundItem.AllSounds[i];
-                if (sound.GetHotkeys().Count == 0) continue;
-                var lastN = PressedKeys.TakeLast(sound.GetHotkeys().Count());
-
-                if (sound.HotkeyOrderMatters ? lastN.SequenceEqual(sound.GetHotkeys()) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), sound.GetHotkeys().OrderBy(e => e)))
+                PressedKeysEventHandler raiseEvent = PressedKeysChanged;
+                if(raiseEvent != null )
                 {
-                    sound.Play();
+                    raiseEvent(null, new(PressedKeys, true));
                 }
             }
-
-            if (SoundItem.ClearSounds.Count > 0 && PressedKeys.TakeLast(SoundItem.ClearSounds.Count).SequenceEqual(SoundItem.ClearSounds))
-            {
-                SoundItem.StopAllSounds();
-            }
-
-            if(MicInjector.ToggleInjector.Count > 0 && PressedKeys.TakeLast(MicInjector.ToggleInjector.Count).SequenceEqual(MicInjector.ToggleInjector))
-            {
-                Soundboard.Instance.ToggleMicInjector();
-            }
-            if(Soundboard.CycleHotkeys.Count > 0 && PressedKeys.TakeLast(Soundboard.CycleHotkeys.Count).SequenceEqual(Soundboard.CycleHotkeys))
-            {
-                Soundboard.Instance.CycleSoundboard();
-            }
         }
-        private static void KeyUpListener(object sender, KeyEventArgs e)
+        private static void KeyUpListener(object? sender, KeyEventArgs e)
         {
-            _ = PressedKeys.Remove(KeyMap.ParseModifierKey(e.KeyCode));
+            PressedKeys.Remove(KeyMap.ParseModifierKey(e.KeyCode));
+            PressedKeysEventHandler raiseEvent = PressedKeysChanged;
+            if (raiseEvent != null)
+            {
+                raiseEvent(null, new(PressedKeys, false));
+            }
+
+        }
+
+        public static bool CheckHotkeys(List<Keys> hotkeysToCheck, bool orderMatters = true)
+        {
+            var lastN = PressedKeys.TakeLast(hotkeysToCheck.Count());
+
+            return orderMatters ? lastN.SequenceEqual(hotkeysToCheck) : Enumerable.SequenceEqual(lastN.OrderBy(e => e), hotkeysToCheck.OrderBy(e => e));
 
         }
 

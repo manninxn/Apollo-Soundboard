@@ -10,7 +10,7 @@ namespace Apollo.Forms
         public AudioConverter()
         {
             InitializeComponent();
-            Owner = Soundboard.Instance;
+            Owner = MainForm.Instance;
             TopMost = Settings.Default.AlwaysOnTop;
         }
 

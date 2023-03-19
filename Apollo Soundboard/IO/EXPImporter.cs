@@ -14,17 +14,17 @@ namespace Apollo.IO
     internal class EXPImporter
     {
 
-        public static List<SoundItem> Import(string filePath)
+        public static Soundboard Import(string filePath)
         {
             string json = File.ReadAllText(filePath);
             ItemList? itemList = JsonSerializer.Deserialize<ItemList>(json);
-            var sounds = new List<SoundItem>();
+            var sounds = new OptimizedBindingList<Sound>();
 
-            if (itemList == null) return sounds;
+            if (itemList == null) return new();
 
             foreach (ItemEntry item in itemList.soundboardEntries)
             {
-                SoundItem sound = new();
+                Sound sound = new();
                 var keys = new List<Keys>();
                 foreach (int i in item.activationKeysNumbers)
                 {
@@ -34,7 +34,8 @@ namespace Apollo.IO
                 sound.SetHotkeys(keys);
                 sounds.Add(sound);
             }
-            return sounds;
+
+            return new(Path.GetFileNameWithoutExtension(filePath), sounds);
         }
 
 

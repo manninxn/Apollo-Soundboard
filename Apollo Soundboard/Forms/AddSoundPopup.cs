@@ -10,11 +10,12 @@ namespace Apollo.Forms
         public List<Keys> Hotkeys = new();
         public float Gain = 0;
         public bool HotkeyOrderMatters = false;
+        public bool OverlapSelf = true;
         public AddSoundPopup()
         {
             InitializeComponent();
 
-            Owner = Soundboard.Instance;
+            Owner = MainForm.Instance;
             TopMost = Settings.Default.AlwaysOnTop;
         }
 
@@ -23,13 +24,14 @@ namespace Apollo.Forms
             return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
         }
 
-        public AddSoundPopup(SoundItem sound)
+        public AddSoundPopup(Sound sound)
         {
             InitializeComponent();
-            Owner = Soundboard.Instance;
+            Owner = MainForm.Instance;
             TopMost = Settings.Default.AlwaysOnTop;
             FilePathBox.Text = sound.FilePath;
             FileNameBox.Text = sound.SoundName;
+            OverlapSelf = sound.OverlapSelf;
             FilePath = sound.FilePath;
             SoundName = sound.SoundName;
             Hotkeys = sound.GetHotkeys();
@@ -38,9 +40,10 @@ namespace Apollo.Forms
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
+            OverlapSelfCheckbox.Checked = OverlapSelf;
         }
 
-        public AddSoundPopup(string filePath, string soundName, List<Keys> _Hotkeys, float _Gain = 0, bool _HotkeyOrderMatters = false)
+        public AddSoundPopup(string filePath, string soundName, List<Keys> _Hotkeys, float _Gain = 0, bool _HotkeyOrderMatters = false, bool overlapSelf = true)
         {
             InitializeComponent();
             FilePathBox.Text = filePath;
@@ -49,10 +52,12 @@ namespace Apollo.Forms
             SoundName = soundName;
             Hotkeys = _Hotkeys;
             Gain = _Gain;
+            OverlapSelf = overlapSelf;
             HotkeyOrderMatters = _HotkeyOrderMatters;
             GainBar.Value = (int)Remap(Gain, -1, 1, GainBar.Minimum, GainBar.Maximum);
             HotkeySelectorButton.SelectedHotkeys = Hotkeys;
             HotkeyOrderMattersCheckbox.Checked = HotkeyOrderMatters;
+            OverlapSelfCheckbox.Checked = OverlapSelf;
         }
 
 
@@ -61,8 +66,8 @@ namespace Apollo.Forms
 
             OpenFileDialog AudioFileSelector = new();
             //openfiledialog filter is only audio files
-            string list = String.Join(";", Soundboard.SupportedExtensions);
-            string listWithStars = String.Join(";", Soundboard.SupportedExtensions.Select(extension => "*" + extension));
+            string list = String.Join(";", MainForm.SupportedExtensions);
+            string listWithStars = String.Join(";", MainForm.SupportedExtensions.Select(extension => "*" + extension));
             AudioFileSelector.Filter = $"Audio files ({list})|{listWithStars}";
             DialogResult result = AudioFileSelector.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Test result.
@@ -101,6 +106,11 @@ namespace Apollo.Forms
         private void HotkeyOrderMatters_CheckedChanged(object sender, EventArgs e)
         {
             HotkeyOrderMatters = HotkeyOrderMattersCheckbox.Checked;
+        }
+
+        private void OverlapSelfCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            OverlapSelf = OverlapSelfCheckbox.Checked;
         }
     }
 }

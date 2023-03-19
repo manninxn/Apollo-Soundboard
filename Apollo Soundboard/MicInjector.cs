@@ -64,7 +64,7 @@ namespace Apollo
             }
         }
 
-        public MicInjector() { }
+
         public bool Initialize()
         {
             Enabled = Settings.Default.MicInjector;
@@ -75,11 +75,11 @@ namespace Apollo
         private void Start()
         {
 
-            if (Soundboard.Devices.SecondaryOutput == -2 | _running) return;
+            if (MainForm.Devices.SecondaryOutput == -2 | _running) return;
             _running = true;
-            micStream = new(Soundboard.Devices.MicrophoneDevice?.MMDevice, true, 50)
+            micStream = new(MainForm.Devices.MicrophoneDevice?.MMDevice, true, 50)
             {
-                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(Soundboard.Devices.Microphone).Channels)
+                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(MainForm.Devices.Microphone).Channels)
             };
 
             WaveInProvider waveIn = new(micStream);
@@ -90,7 +90,7 @@ namespace Apollo
                 Volume = 1 + Settings.Default.MicrophoneGain
             };
 
-            virtualCable = new(Soundboard.Devices.SecondaryDevice?.MMDevice, AudioClientShareMode.Shared, true, 50);
+            virtualCable = new(MainForm.Devices.SecondaryDevice?.MMDevice, AudioClientShareMode.Shared, true, 50);
             virtualCable.Init(volumeSampleProvider);
 
             micStream.StartRecording();
@@ -116,6 +116,7 @@ namespace Apollo
             Enabled = false;
             Enabled = enabled;
         }
+
 
     }
 }

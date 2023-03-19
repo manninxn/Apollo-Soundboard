@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 namespace Apollo.IO
 {
     [XmlRoot(ElementName = "Sound")]
-    public class Sound
+    public class SoundpadSound
     {
         [XmlAttribute(AttributeName = "url")]
         public string Url { get; set; }
@@ -20,26 +20,26 @@ namespace Apollo.IO
     public class Soundlist
     {
         [XmlElement(ElementName = "Sound")]
-        public List<Sound> Sound { get; set; }
+        public List<SoundpadSound> Sound { get; set; }
 
 
     }
     public static class SoundpadImporter
     {
-        public static List<SoundItem> Import(string path)
+        public static Soundboard Import(string path)
         {
 
-            var sounds = new List<SoundItem>();
+            var sounds = new OptimizedBindingList<Sound>();
             _ = XmlReader.Create(path);
             var serializer = new XmlSerializer(typeof(Soundlist));
             using (FileStream fs = new(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 var obj = (Soundlist?)serializer.Deserialize(fs);
-                if (obj is null) return sounds;
+                if (obj is null) return new();
                 Debug.WriteLine(obj.Sound[6].Key);
-                foreach (Sound sound in obj.Sound)
+                foreach (SoundpadSound sound in obj.Sound)
                 {
-                    var soundItem = new SoundItem();
+                    var soundItem = new Sound();
                     var keys = new List<Keys>();
                     soundItem.FilePath = sound.Url;
 
@@ -81,7 +81,7 @@ namespace Apollo.IO
                 }
             }
 
-            return sounds;
+            return new(Path.GetFileNameWithoutExtension(path), sounds);
         }
     }
 }

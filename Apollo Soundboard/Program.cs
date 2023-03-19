@@ -2,6 +2,9 @@ using AutoUpdaterDotNET;
 using System.ComponentModel;
 using Apollo.Forms;
 using System.Windows.Controls;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Apollo
 {
@@ -9,7 +12,7 @@ namespace Apollo
     {
 
 
-        private static string Version = "1.10.2";
+        public static string Version = "1.11.0";
 
         private static Mutex? _mutex = null;
         /// <summary>
@@ -43,12 +46,12 @@ namespace Apollo
             ApplicationConfiguration.Initialize();
             if (args.Length == 0)
             {
-                Application.Run(new Soundboard(null));
+                Application.Run(new MainForm(null));
             }
             else
             {
                 var FileToOpenWIth = args[0];
-                Application.Run(new Soundboard(FileToOpenWIth));
+                Application.Run(new MainForm(FileToOpenWIth));
             }
 
         }
@@ -104,5 +107,6 @@ namespace Apollo
                     ResetBindings();
             }
         }
+
     }
 }
