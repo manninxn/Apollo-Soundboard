@@ -2,6 +2,9 @@ using AutoUpdaterDotNET;
 using System.ComponentModel;
 using Apollo.Forms;
 using System.Windows.Controls;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Apollo
 {
@@ -9,7 +12,7 @@ namespace Apollo
     {
 
 
-        public static string Version = "1.10.2";
+        public static string Version = "1.11.0";
 
         private static Mutex? _mutex = null;
         /// <summary>
@@ -104,5 +107,6 @@ namespace Apollo
                     ResetBindings();
             }
         }
+
     }
 }

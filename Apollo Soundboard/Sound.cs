@@ -54,14 +54,20 @@ namespace Apollo
 
                     var ext = System.IO.Path.GetExtension(value);
                 Debug.WriteLine("Extension: " + ext);
-                   WaveStream reader = ext switch
-                   {
-                      ".ogg" => new VorbisWaveReader(value),
+
+                try
+                {
+                    WaveStream reader = ext switch
+                    {
+                        ".ogg" => new VorbisWaveReader(value),
                         _ => new AudioFileReader(value)
                     };
                     _length = TimeSpan.FromSeconds(Math.Ceiling(reader.TotalTime.TotalSeconds));
                     reader.Dispose();
-                
+                } catch
+                {
+                    _length = TimeSpan.FromSeconds(0);
+                }
 
             }
         }
@@ -120,6 +126,7 @@ namespace Apollo
 
         public Sound(List<Keys> _KeyCodes, string _FilePath, string _soundName, float _Gain = 0, bool _HotkeyOrderMatters = false, int timesPlayed = 0, bool overlapSelf = true)
         {
+            
             Hotkeys = _KeyCodes;
             FilePath = _FilePath;
             SoundName = _soundName;
@@ -127,10 +134,12 @@ namespace Apollo
             HotkeyOrderMatters = _HotkeyOrderMatters;
             TimesPlayed = timesPlayed;
             InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+            
             OverlapSelf = overlapSelf;
         }
         public Sound(SoundData data)
         {
+            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
             Hotkeys = data.Hotkeys.Select(i => (Keys)i).ToList();
             FilePath = data.FilePath;
             SoundName = data.SoundName;
@@ -138,7 +147,7 @@ namespace Apollo
             HotkeyOrderMatters = data.HotkeyOrderMatters;
             TimesPlayed = data.TimesPlayed;
             OverlapSelf = data.OverlapSelf;
-            InputHandler.PressedKeysChanged += OnPressedKeysChanged;
+            
 
         }
 
@@ -165,6 +174,7 @@ namespace Apollo
 
         public void OnPressedKeysChanged(object? sender, PressedKeysEventArgs e)
         {
+            Debug.WriteLine("pressed");
             if (InputHandler.CheckHotkeys(GetHotkeys(), HotkeyOrderMatters) && e.KeyDown)
             {
                 Play();

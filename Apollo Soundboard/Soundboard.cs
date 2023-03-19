@@ -33,7 +33,7 @@ namespace Apollo
 
         public SoundPage(string name)
         {
-            this.Name = name;
+            Name = name;
             Sounds = new OptimizedBindingList<Sound>();
         }
 

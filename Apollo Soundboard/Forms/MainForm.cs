@@ -174,6 +174,8 @@ namespace Apollo.Forms
             Instance = this;
             InitializeComponent();
 
+            InputHandler.Subscribe();
+
             if (file != null && Path.GetExtension(file) == ".asba")
             {
                 var result = Archiver.LoadFromArchive(file);
@@ -189,8 +191,12 @@ namespace Apollo.Forms
             {
                 FileName = file ?? Settings.Default.FileName;
             }
-            LoadFile();
-            //ActiveSoundboard = ActiveSoundboard ?? new();
+            
+            if(!LoadFile())
+            {
+                ActiveSoundboard = new();
+            }
+            
 
             SoundGrid.Columns[0].HeaderText = "Sound";
 
@@ -222,6 +228,7 @@ namespace Apollo.Forms
 
             PageSwitchGrid.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             SetDoubleBuffer(SoundGrid, true);
+            SetDoubleBuffer(PageSwitchGrid, true);
 
             DataGridViewButtonColumn RemoveColumn = new();
             RemoveColumn.FlatStyle = FlatStyle.Flat;
@@ -249,7 +256,7 @@ namespace Apollo.Forms
                 Debug.WriteLine(ex.Message);
             }
 
-            InputHandler.Subscribe();
+            
 
             StopAllHotkeySelector.Text = String.Join("+", Sound.ClearSounds.Select(i => KeyMap.KeyToChar(i)).ToList());
             MicInjectorToggleHotkey.Text = String.Join("+", MicInjector.ToggleInjector.Select(i => KeyMap.KeyToChar(i)).ToList());
@@ -307,13 +314,14 @@ namespace Apollo.Forms
 
         }
 
-        private void LoadFile()
+        private bool LoadFile()
         {
             if (FileName != string.Empty)
             {
                 ActiveSoundboard = Serializer.DeserializeFile(FileName);
-
+                return true;
             }
+            return false;
         }
         private void ExitApplication()
         {
@@ -803,9 +811,40 @@ namespace Apollo.Forms
             ExitApplication();
         }
 
+
+       
+
         private void SoundGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            string Sort(Sound sound)
+            {
+                switch (e.ColumnIndex)
+                {
+                    case 0:
+                        return sound.SoundName;
+                    case 1:
+                        return sound.Hotkey;
+                    case 2:
+                        return sound.Length;
+                    default:
+                        return "";
+                }
+            }
             sortDirection = sortDirection == ListSortDirection.Descending ? ListSortDirection.Ascending : ListSortDirection.Descending;
+            var page = ActiveSoundboard.ActivePage;
+            if (page == null) return;
+
+            var ordered = sortDirection switch
+            {
+
+                ListSortDirection.Ascending => page.Sounds.OrderBy(Sort),
+                _ => page.Sounds.OrderByDescending(Sort)
+            };
+
+            page.Sounds = new OptimizedBindingList<Sound>();
+            page.Sounds.AddRange(ordered);
+            SoundGrid.DataSource = page.Sounds;
+            Saved = false;
 
         }
 
